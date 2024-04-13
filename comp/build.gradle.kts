@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":isa"))
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
