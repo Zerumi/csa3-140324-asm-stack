@@ -4,7 +4,7 @@ fun meaningfulToken(line: String): String {
     return line.split(";")[0].trim()
 }
 
-data class LabelInstruction(val instruction: Instruction, val label: String)
+data class LabelInstruction(val instruction: Instruction, val label: String = "")
 
 val POSSIBLE_LABEL_INSTRUCTIONS = setOf(
     Opcode.LOAD, Opcode.STORE,
@@ -32,36 +32,29 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
             // this is a label
             val label = token.substringBefore(":")
             labels[label] = --nextInstructionLine
-
-        } else if (token.contains(" ")) {
-            // this is an operand instruction
+        } else {
+            // this is an opcode instruction
             val instruction = token.split(" ")
 
             val opcode = instruction[0]
             val parsedOpcode = Opcode.valueOf(opcode.uppercase())
 
-            val operand = instruction[1]
+            val operand = if (instruction.size == 2) instruction[1] else ""
 
             when (parsedOpcode) {
                 in POSSIBLE_LABEL_INSTRUCTIONS -> {
                     // operand is a label
                     instructions.add(LabelInstruction(Instruction(parsedOpcode), operand))
                 }
-
                 in POSSIBLE_OPERAND_INSTRUCTIONS -> {
                     // operand is a number
-                    instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt()), ""))
+                    instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt())))
                 }
-
                 else -> {
-                    // invalid syntax
+                    // it's just an opcode w/o operand
+                    instructions.add(LabelInstruction(Instruction(parsedOpcode)))
                 }
             }
-
-        } else {
-            // in every other case it's just an opcode
-            val opcode = Opcode.valueOf(token.uppercase())
-            instructions.add(LabelInstruction(Instruction(opcode), ""))
         }
     }
 

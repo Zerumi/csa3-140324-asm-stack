@@ -1,5 +1,5 @@
 enum class Opcode {
-    WORD, // Define a constant
+    WORD, // Define a numeric constant
     LOAD, // Load value to data stack
     STORE, // Push value from data stack to memory
     ADD, // Add 2 elements from stack, push result on stack
@@ -15,5 +15,5 @@ enum class Opcode {
     RET, // Return from a subroutine
     IN, // Get buffer symbol from IO to stack
     OUT, // Write symbol from stack to buffer
-    HALT // Terminate CPU
+    HALT, // Terminate CPU
 }
