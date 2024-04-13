@@ -5,3 +5,4 @@ rootProject.name = "csa3-140324-asm-stack"
 
 include("asm")
 include("comp")
+include("isa")
