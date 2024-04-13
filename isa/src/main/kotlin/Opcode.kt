@@ -1,4 +1,5 @@
 enum class Opcode {
+    WORD, // Define a constant
     LOAD, // Load value to data stack
     STORE, // Push value from data stack to memory
     ADD, // Add 2 elements from stack, push result on stack

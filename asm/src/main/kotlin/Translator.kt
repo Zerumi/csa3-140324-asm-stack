@@ -4,49 +4,86 @@ fun meaningfulToken(line: String): String {
     return line.split(";")[0].trim()
 }
 
-fun translatePart1(text: String): Pair<Map<String, Int>, List<Pair<Opcode, String>>> {
+data class LabelInstruction(val instruction: Instruction, val label: String)
+
+val POSSIBLE_LABEL_INSTRUCTIONS = setOf(
+    Opcode.LOAD, Opcode.STORE,
+    Opcode.JZ, Opcode.JUMP,
+    Opcode.CALL,
+)
+
+val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
+    Opcode.WORD,
+)
+
+fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>> {
     val labels = emptyMap<String, Int>().toMutableMap()
-    val instructions = emptyList<Pair<Opcode, String>>().toMutableList()
+    val instructions = emptyList<LabelInstruction>().toMutableList()
 
     var nextInstructionLine = 1
 
     for (line in text.lines()) {
         val token = meaningfulToken(line)
         if (token.isEmpty()) continue
+
         nextInstructionLine++
 
         if (token.endsWith(":")) {
             // this is a label
             val label = token.substringBefore(":")
             labels[label] = --nextInstructionLine
+
         } else if (token.contains(" ")) {
             // this is an operand instruction
             val instruction = token.split(" ")
 
             val opcode = instruction[0]
+            val parsedOpcode = Opcode.valueOf(opcode.uppercase())
+
             val operand = instruction[1]
 
-            val parsedOpcode = Opcode.valueOf(opcode.uppercase())
-            // assert this is an operand opcode
-            instructions.add(Pair(parsedOpcode, operand))
+            when (parsedOpcode) {
+                in POSSIBLE_LABEL_INSTRUCTIONS -> {
+                    // operand is a label
+                    instructions.add(LabelInstruction(Instruction(parsedOpcode), operand))
+                }
+
+                in POSSIBLE_OPERAND_INSTRUCTIONS -> {
+                    // operand is a number
+                    instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt()), ""))
+                }
+
+                else -> {
+                    // invalid syntax
+                }
+            }
+
         } else {
+            // in every other case it's just an opcode
             val opcode = Opcode.valueOf(token.uppercase())
-            instructions.add(Pair(opcode, ""))
+            instructions.add(LabelInstruction(Instruction(opcode), ""))
         }
     }
 
     return Pair(labels, instructions)
 }
 
-fun translatePart2(labels: Map<String, Int>, instructions: List<Pair<Opcode, String>>): List<Instruction> {
+fun translatePart2(
+    labels: Map<String, Int>,
+    instructions: List<LabelInstruction>
+): List<Instruction> {
+
     val resultInstructions = emptyList<Instruction>().toMutableList()
 
-    for (instruction in instructions) {
-        if (instruction.second.isEmpty()) {
-            resultInstructions.add(Instruction(instruction.first))
-        }
-        else {
-            resultInstructions.add(Instruction(instruction.first, labels[instruction.second]!!))
+    for (labelInstruction in instructions) {
+        if (labelInstruction.label.isEmpty()) {
+            resultInstructions.add(labelInstruction.instruction)
+        } else {
+            resultInstructions.add(
+                Instruction(
+                    labelInstruction.instruction.opcode, labels[labelInstruction.label]!!
+                )
+            )
         }
     }
 
