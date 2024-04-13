@@ -1,0 +1,22 @@
+[
+  {
+    "opcode": "IN"
+  },
+  {
+    "opcode": "JZ",
+    "operand": 6
+  },
+  {
+    "opcode": "OUT"
+  },
+  {
+    "opcode": "IN"
+  },
+  {
+    "opcode": "JUMP",
+    "operand": 2
+  },
+  {
+    "opcode": "HALT"
+  }
+]

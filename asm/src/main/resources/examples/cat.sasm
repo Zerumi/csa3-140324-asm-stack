@@ -1,0 +1,8 @@
+        in
+loop:
+        jz break
+        out
+        in
+        jump loop
+break:
+        halt
