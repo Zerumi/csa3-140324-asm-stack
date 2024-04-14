@@ -1,0 +1,63 @@
+[
+  {
+    "opcode": "WORD",
+    "operand": 2
+  },
+  {
+    "opcode": "WORD",
+    "operand": 104
+  },
+  {
+    "opcode": "WORD",
+    "operand": 101
+  },
+  {
+    "opcode": "WORD",
+    "operand": 108
+  },
+  {
+    "opcode": "WORD",
+    "operand": 108
+  },
+  {
+    "opcode": "WORD",
+    "operand": 111
+  },
+  {
+    "opcode": "WORD",
+    "operand": 0
+  },
+  {
+    "opcode": "LIT",
+    "operand": 1
+  },
+  {
+    "opcode": "LOAD"
+  },
+  {
+    "opcode": "DUP"
+  },
+  {
+    "opcode": "LOAD"
+  },
+  {
+    "opcode": "DUP"
+  },
+  {
+    "opcode": "JZ",
+    "operand": 17
+  },
+  {
+    "opcode": "OUT"
+  },
+  {
+    "opcode": "INC"
+  },
+  {
+    "opcode": "JUMP",
+    "operand": 10
+  },
+  {
+    "opcode": "HALT"
+  }
+]

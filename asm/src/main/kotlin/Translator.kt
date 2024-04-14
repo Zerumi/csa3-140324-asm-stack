@@ -6,14 +6,9 @@ fun meaningfulToken(line: String): String {
 
 data class LabelInstruction(val instruction: Instruction, val label: String = "")
 
-val POSSIBLE_LABEL_INSTRUCTIONS = setOf(
-    Opcode.LOAD, Opcode.STORE,
-    Opcode.JZ, Opcode.JUMP,
-    Opcode.CALL,
-)
-
 val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
-    Opcode.WORD,
+    Opcode.JZ, Opcode.JUMP,
+    Opcode.WORD, Opcode.LIT,
 )
 
 fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>> {
@@ -42,13 +37,12 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
             val operand = if (instruction.size == 2) instruction[1] else ""
 
             when (parsedOpcode) {
-                in POSSIBLE_LABEL_INSTRUCTIONS -> {
-                    // operand is a label
-                    instructions.add(LabelInstruction(Instruction(parsedOpcode), operand))
-                }
                 in POSSIBLE_OPERAND_INSTRUCTIONS -> {
-                    // operand is a number
-                    instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt())))
+                    // operand may be a number, otherwise this is a label
+                    if (operand.toIntOrNull() != null)
+                        instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt())))
+                    else
+                        instructions.add(LabelInstruction(Instruction(parsedOpcode), operand))
                 }
                 else -> {
                     // it's just an opcode w/o operand

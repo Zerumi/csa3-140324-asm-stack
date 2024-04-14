@@ -1,0 +1,22 @@
+hello_str_addr:
+    WORD hello_str
+hello_str:
+    WORD 104
+    WORD 101
+    WORD 108
+    WORD 108
+    WORD 111
+    WORD 0
+start:
+    LIT hello_str_addr
+    LOAD                ; on stack 2
+print:
+    DUP                 ; 2 2
+    LOAD                ; on stack 2 104
+    DUP                 ; 2 104 104
+    JZ exit             ; 2 104
+    OUT                 ; 2
+    INC                 ; 3
+    JUMP print          ; 3
+exit:
+    HALT

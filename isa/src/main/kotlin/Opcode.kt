@@ -1,9 +1,12 @@
 enum class Opcode {
     WORD, // Define a numeric constant
+    LIT, // Push literal on stack
     LOAD, // Load value to data stack
     STORE, // Push value from data stack to memory
     ADD, // Add 2 elements from stack, push result on stack
     SUB, // Subtract 2 elements from stack, push result on stack
+    INC, // Increase TOS by 1
+    DEC, // Decrease TOS by 1
     DROP, // Throw out value from stack
     DUP, // Duplicate TOS on stack
     OR, // Or 2 elements from stack, push result on stack
