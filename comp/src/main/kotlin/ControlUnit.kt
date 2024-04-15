@@ -78,7 +78,7 @@ class ControlUnit(val initPc: Int,
                     Signal.LatchPC, Signal.JumpTypeNext),
     )
 
-    fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
+    private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
         Opcode.NOP -> 1
         Opcode.LIT -> 2
         Opcode.LOAD -> 4
@@ -121,18 +121,40 @@ class ControlUnit(val initPc: Int,
     }
 
     private fun onSignalLatchPC(microcode: Array<Signal>) {
-        TODO("Not yet implemented")
+        if (Signal.JumpTypeNext in microcode) {
+            pc++
+        }
+        else if (Signal.JumpTypeJUMP in microcode) {
+            pc = dataPath.memory[pc].operand
+        }
+        else if (Signal.JumpTypeJZ in microcode) {
+            if (dataPath.tos == 0)
+                pc = dataPath.memory[pc].operand
+            else
+                pc++
+        }
+        else if (Signal.JumpTypeRET in microcode) {
+            pc = returnStack.last()
+        }
     }
 
     private fun onSignalReturnStackPop() {
-        TODO("Not yet implemented")
+        returnStack.removeLast()
     }
 
     private fun onSignalReturnStackPush() {
-        TODO("Not yet implemented")
+        returnStack.addLast(dataPath.memory[pc].operand)
     }
 
     private fun onSignalLatchMPCounter(microcode: Array<Signal>) {
-        TODO("Not yet implemented")
+        if (Signal.MicroProgramCounterNext in microcode) {
+            mPc++
+        }
+        else if (Signal.MicroProgramCounterZero in microcode) {
+            mPc = 0
+        }
+        else if (Signal.MicroProgramCounterOpcode in microcode) {
+            mPc = opcodeToMpc(dataPath.memory[pc].opcode)
+        }
     }
 }
