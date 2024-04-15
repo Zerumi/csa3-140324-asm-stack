@@ -9,4 +9,4 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class Instruction(val opcode: Opcode, val operand: Int = -1)
+data class Instruction(val opcode: Opcode, var operand: Int = -1)

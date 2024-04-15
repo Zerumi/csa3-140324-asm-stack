@@ -1,3 +1,4 @@
+start:
         in
 loop:
         jz break

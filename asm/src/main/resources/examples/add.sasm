@@ -1,0 +1,5 @@
+start:
+    LIT 2
+    LIT 2
+    ADD
+    HALT

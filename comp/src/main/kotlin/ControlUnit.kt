@@ -30,60 +30,63 @@ enum class Signal {
     ALUSum, ALUSub, ALUMul, ALUDiv, ALUAnd, ALUOr, ALUXor,
 }
 
-class ControlUnit(val initPc: Int,
-                  val program: Array<Instruction>,
-                  private val dataPath: DataPath,
-                  returnStackSize: Int)
+class ControlUnit(
+    initPc: Int,
+    private val dataPath: DataPath,
+    returnStackSize: Int)
 {
-    private var pc: Int = 0
+    var pc: Int = initPc
     private var mPc: Int = 0
     private var modelTick: Int = 0
     private val returnStack = ArrayDeque<Int>(returnStackSize)
 
     val mProgram = arrayOf(
         /* Instruction fetch */
-        /* 0 */ arrayOf(Signal.LatchMPCounter, Signal.MicroProgramCounterOpcode),
+        /* 0 */ arrayOf(Signal.LatchAR, Signal.ARSelectPC,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 1 */ arrayOf(Signal.LatchMPCounter, Signal.MicroProgramCounterOpcode),
         /* NOP */
-        /* 1 */ arrayOf(
+        /* 2 */ arrayOf(
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.JumpTypeNext),
         /* LIT */
-        /* 2 */ arrayOf(Signal.DataStackPush,
+        /* 3 */ arrayOf(Signal.DataStackPush, Signal.LatchAR, Signal.ARSelectPC,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 3 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectMemory,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 4 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectMemory,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.JumpTypeNext),
         /* LOAD */
-        /* 4 */ arrayOf(Signal.LatchAR, Signal.ARSelectTOS,
+        /* 5 */ arrayOf(Signal.LatchAR, Signal.ARSelectTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 5 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectMemory,
+        /* 6 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectMemory,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.JumpTypeNext),
         /* STORE */
-        /* 6 */ arrayOf(Signal.LatchAR, Signal.ARSelectTOS,
+        /* 7 */ arrayOf(Signal.LatchAR, Signal.ARSelectTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 7 */ arrayOf(Signal.MemoryWrite,
+        /* 8 */ arrayOf(Signal.MemoryWrite,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 8 */ arrayOf(Signal.DataStackPop,
+        /* 9 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 9 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+        /* 10 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 10 */ arrayOf(Signal.DataStackPop,
+        /* 11 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.JumpTypeNext),
         /* ADD */
-        /* 11 */ arrayOf(Signal.ALUSum, Signal.TOSSelectALU, Signal.LatchTOS,
+        /* 12 */ arrayOf(Signal.ALUSum, Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 12 */ arrayOf(Signal.DataStackPop,
+        /* 13 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.JumpTypeNext),
     )
 
     private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
-        Opcode.NOP -> 1
-        Opcode.LIT -> 2
-        Opcode.LOAD -> 4
-        Opcode.STORE -> 6
-        Opcode.ADD -> 11
+        Opcode.NOP -> 2
+        Opcode.LIT -> 3
+        Opcode.LOAD -> 5
+        Opcode.STORE -> 7
+        Opcode.ADD -> 12
         Opcode.SUB -> TODO()
         Opcode.INC -> TODO()
         Opcode.DEC -> TODO()
@@ -98,8 +101,8 @@ class ControlUnit(val initPc: Int,
         Opcode.RET -> TODO()
         Opcode.IN -> TODO()
         Opcode.OUT -> TODO()
-        Opcode.HALT -> TODO()
-        else -> exitProcess(-1)
+        Opcode.HALT -> throw HaltedException()
+        else -> exitProcess(0)
     }
 
     fun dispatchMicroInstruction(microcode: Array<Signal>) {
@@ -120,16 +123,32 @@ class ControlUnit(val initPc: Int,
         }
     }
 
+    private fun updateTick() {
+        modelTick++
+    }
+
+    fun simulate() {
+        try {
+            while (true) {
+                dispatchMicroInstruction(mProgram[mPc])
+                updateTick()
+                println("tick...")
+            }
+        } catch (_: HaltedException) {
+            println("halted")
+        }
+    }
+
     private fun onSignalLatchPC(microcode: Array<Signal>) {
         if (Signal.JumpTypeNext in microcode) {
             pc++
         }
         else if (Signal.JumpTypeJUMP in microcode) {
-            pc = dataPath.memory[pc].operand
+            pc = dataPath.memory[dataPath.ar].operand
         }
         else if (Signal.JumpTypeJZ in microcode) {
             if (dataPath.tos == 0)
-                pc = dataPath.memory[pc].operand
+                pc = dataPath.memory[dataPath.ar].operand
             else
                 pc++
         }
@@ -143,7 +162,7 @@ class ControlUnit(val initPc: Int,
     }
 
     private fun onSignalReturnStackPush() {
-        returnStack.addLast(dataPath.memory[pc].operand)
+        returnStack.addLast(dataPath.memory[dataPath.ar].operand)
     }
 
     private fun onSignalLatchMPCounter(microcode: Array<Signal>) {
@@ -154,7 +173,9 @@ class ControlUnit(val initPc: Int,
             mPc = 0
         }
         else if (Signal.MicroProgramCounterOpcode in microcode) {
-            mPc = opcodeToMpc(dataPath.memory[pc].opcode)
+            mPc = opcodeToMpc(dataPath.memory[dataPath.ar].opcode)
         }
     }
 }
+
+class HaltedException : Throwable()

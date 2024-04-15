@@ -1,33 +1,85 @@
 import kotlin.collections.ArrayDeque
 
-class DataPath(dataStackSize: Int, memoryInitialSize : Int) {
+class DataPath(dataStackSize: Int,
+               memoryInitialSize : Int,
+               program: Array<Instruction>,
+               private val inputBuffer : ArrayDeque<Int>) {
 
-    private val dataStack = ArrayDeque<Int>(dataStackSize)
+    lateinit var controlUnit: ControlUnit
+
+    val dataStack = ArrayDeque<Int>(dataStackSize)
     var tos = 0
-    private var ar = 0
+    var ar = 0
     val memory = Array(memoryInitialSize) { Instruction(Opcode.WORD) }
 
+    init {
+        for (i in program.indices)
+            memory[i] = program[i]
+    }
+
+    private val alu = ALU(this)
+
+    val outputBuffer = emptyList<Int>().toMutableList()
+
     fun onSignalDataStackPush() {
-        TODO("Not yet implemented")
+        dataStack.addLast(tos)
     }
 
     fun onSignalDataStackPop() {
-        TODO("Not yet implemented")
+        dataStack.removeLast()
     }
 
     fun onSignalLatchAR(microcode: Array<Signal>) {
-        TODO("Not yet implemented")
+        if (Signal.ARSelectTOS in microcode) {
+            ar = tos
+        }
+        else if (Signal.ARSelectPC in microcode) {
+            ar = controlUnit.pc
+        }
     }
 
     fun onSignalLatchTOS(microcode: Array<Signal>) {
-        TODO("Not yet implemented")
+        if (Signal.TOSSelectDS in microcode) {
+            tos = dataStack.last()
+        }
+        else if (Signal.TOSSelectMemory in microcode) {
+            tos = memory[ar].operand
+        }
+        else if (Signal.TOSSelectALU in microcode) {
+            tos = alu.output(microcode)
+        }
+        else if (Signal.TOSSelectInput in microcode) {
+            tos = inputBuffer.first()
+            inputBuffer.removeFirst()
+        }
     }
 
     fun onSignalOutput() {
-        TODO("Not yet implemented")
+        outputBuffer.add(tos)
     }
 
     fun onSignalMemoryWrite() {
-        TODO("Not yet implemented")
+        memory[ar].operand = dataStack.last()
     }
+}
+
+class ALU(private val dataPath: DataPath) {
+    fun output(microcode: Array<Signal>): Int =
+        if (Signal.ALUSum in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else if (Signal.ALUSub in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else if (Signal.ALUMul in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else if (Signal.ALUDiv in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else if (Signal.ALUAnd in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else if (Signal.ALUOr in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else if (Signal.ALUXor in microcode) {
+            dataPath.tos + dataPath.dataStack.last()
+        } else {
+            0 // UB
+        }
 }
