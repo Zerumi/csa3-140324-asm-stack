@@ -1,4 +1,12 @@
-class DataPath {
+import kotlin.collections.ArrayDeque
+
+class DataPath(dataStackSize: Int, memoryInitialSize : Int) {
+
+    private val dataStack = ArrayDeque<Int>(dataStackSize)
+    private var tos = 0
+    private var ar = 0
+    private val memory = Array(memoryInitialSize) { Instruction(Opcode.WORD) }
+
     fun onSignalDataStackPush() {
         TODO("Not yet implemented")
     }

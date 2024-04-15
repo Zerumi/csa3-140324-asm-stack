@@ -1,4 +1,5 @@
 enum class Opcode {
+    NOP, // No operation
     WORD, // Define a numeric constant
     LIT, // Push literal on stack
     LOAD, // Load value to data stack
