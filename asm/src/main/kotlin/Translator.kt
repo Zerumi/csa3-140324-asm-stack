@@ -7,8 +7,6 @@ fun meaningfulToken(line: String): String {
 data class LabelInstruction(val instruction: Instruction, val label: String = "")
 
 val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
-    Opcode.JZ, Opcode.JUMP,
-    Opcode.CALL,
     Opcode.WORD, Opcode.LIT,
 )
 

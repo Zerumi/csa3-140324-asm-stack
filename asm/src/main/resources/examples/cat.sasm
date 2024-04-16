@@ -1,9 +1,20 @@
+port:
+        WORD 1      ; first i/o port
 start:
-        in
+        lit break   ; stack: break
+        lit port    ; break port_addr
+        load        ; break port
+        in          ; break in
 loop:
-        jz break
-        out
-        in
-        jump loop
+        over        ; in break in
+        jz          ; if on stack: break 0 -> jump break
+        lit break   ; in break
+        swap        ; break in
+        lit port    ; stack: break in port_addr
+        load        ; break in port
+        out         ; break
+        in          ; break in
+        lit loop    ; break in loop
+        jump        ; break in
 break:
         halt

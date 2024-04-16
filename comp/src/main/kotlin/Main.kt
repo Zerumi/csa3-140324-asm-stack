@@ -7,7 +7,9 @@ fun main(args: Array<String>) {
     val program = readCode(programFile)
 
     val inputFile = args[1]
-    val inputBuffer = ArrayDeque(inputFile.chars().toList())
+    val inputFileContent = File(inputFile).readText()
+    val inputBuffer = ArrayDeque(inputFileContent.chars().toList())
+    inputBuffer.addLast(0)
 
     // solution
     val dataPath = DataPath(10, 20, program.program)
@@ -16,7 +18,7 @@ fun main(args: Array<String>) {
     ioController.connectDevice(1, ioUnit)
     val controlUnit = ControlUnit(program.initCommand, dataPath, 10)
     dataPath.controlUnit = controlUnit
-    dataPath.ioController = IOController()
+    dataPath.ioController = ioController
 
     controlUnit.simulate()
 

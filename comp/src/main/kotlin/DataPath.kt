@@ -9,6 +9,7 @@ class DataPath(
 
     val dataStack = ArrayDeque<Int>(dataStackSize)
     var tos = 0
+    var br = 0
     var ar = 0
     val memory = Array(memoryInitialSize) { Instruction(Opcode.WORD) }
 
@@ -43,6 +44,8 @@ class DataPath(
             tos = alu.output(microcode)
         } else if (Signal.TOSSelectInput in microcode) {
             tos = ioController.input(tos)
+        } else if (Signal.TOSSelectBR in microcode) {
+            tos = br
         }
     }
 
@@ -52,6 +55,10 @@ class DataPath(
 
     fun onSignalMemoryWrite() {
         memory[ar].operand = dataStack.last()
+    }
+
+    fun onSignalLatchBR() {
+        br = dataStack.last()
     }
 }
 
