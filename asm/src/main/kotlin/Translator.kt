@@ -8,6 +8,7 @@ data class LabelInstruction(val instruction: Instruction, val label: String = ""
 
 val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
     Opcode.JZ, Opcode.JUMP,
+    Opcode.CALL,
     Opcode.WORD, Opcode.LIT,
 )
 
@@ -15,7 +16,7 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
     val labels = emptyMap<String, Int>().toMutableMap()
     val instructions = emptyList<LabelInstruction>().toMutableList()
 
-    var nextInstructionLine = 1
+    var nextInstructionLine = 0
 
     for (line in text.lines()) {
         val token = meaningfulToken(line)
@@ -26,7 +27,7 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
         if (token.endsWith(":")) {
             // this is a label
             val label = token.substringBefore(":")
-            labels[label] = --nextInstructionLine
+            labels[label.lowercase()] = --nextInstructionLine
         } else {
             // this is an opcode instruction
             val instruction = token.split(" ")
@@ -42,7 +43,7 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
                     if (operand.toIntOrNull() != null)
                         instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt())))
                     else
-                        instructions.add(LabelInstruction(Instruction(parsedOpcode), operand))
+                        instructions.add(LabelInstruction(Instruction(parsedOpcode), operand.lowercase()))
                 }
                 else -> {
                     // it's just an opcode w/o operand
@@ -58,7 +59,7 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
 fun translatePart2(
     labels: Map<String, Int>,
     instructions: List<LabelInstruction>
-): List<Instruction> {
+): Program {
 
     val resultInstructions = emptyList<Instruction>().toMutableList()
 
@@ -74,14 +75,17 @@ fun translatePart2(
         }
     }
 
-    return resultInstructions
+    val firstAddress = labels["start"]!!
+    val program = Program(firstAddress, resultInstructions.toTypedArray())
+
+    return program
 }
 
-fun translateAsm(filename: String): Array<Instruction> {
+fun translateAsm(filename: String): Program {
     val text = File(filename).readText(Charsets.UTF_8)
 
     val resultOfFirstPart = translatePart1(text)
     val resultOfSecondPart = translatePart2(resultOfFirstPart.first, resultOfFirstPart.second)
 
-    return resultOfSecondPart.toTypedArray()
+    return resultOfSecondPart
 }

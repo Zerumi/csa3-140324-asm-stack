@@ -10,15 +10,19 @@ fun main(args: Array<String>) {
     val inputBuffer = ArrayDeque(inputFile.chars().toList())
 
     // solution
-    val dataPath = DataPath(10, 20, program, inputBuffer)
-    val controlUnit = ControlUnit(0, dataPath, 10)
+    val dataPath = DataPath(10, 20, program.program)
+    val ioController = IOController()
+    val ioUnit = IOUnit(inputBuffer)
+    ioController.connectDevice(1, ioUnit)
+    val controlUnit = ControlUnit(program.initCommand, dataPath, 10)
     dataPath.controlUnit = controlUnit
+    dataPath.ioController = IOController()
 
     controlUnit.simulate()
 
     // output
     val outputFile = args[2]
     File(outputFile).printWriter().use { out ->
-        out.println(dataPath.outputBuffer.map{x -> Char(x)}.joinToString(separator = ""))
+        out.println(ioUnit.outputBuffer.map{x -> Char(x)}.joinToString(separator = ""))
     }
 }

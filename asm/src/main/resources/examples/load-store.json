@@ -1,0 +1,44 @@
+{
+  "initCommand": 3,
+  "program": [
+    {
+      "opcode": "WORD",
+      "operand": 120
+    },
+    {
+      "opcode": "WORD",
+      "operand": 130
+    },
+    {
+      "opcode": "WORD",
+      "operand": 0
+    },
+    {
+      "opcode": "LIT",
+      "operand": 0
+    },
+    {
+      "opcode": "LOAD"
+    },
+    {
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "opcode": "LOAD"
+    },
+    {
+      "opcode": "ADD"
+    },
+    {
+      "opcode": "LIT",
+      "operand": 2
+    },
+    {
+      "opcode": "STORE"
+    },
+    {
+      "opcode": "HALT"
+    }
+  ]
+}

@@ -15,7 +15,8 @@ print:
     LOAD                ; on stack 2 104
     DUP                 ; 2 104 104
     JZ exit             ; 2 104
-    OUT                 ; 2
+    LIT 1               ; 2 104 1
+    OUT                 ; 2 104
     INC                 ; 3
     JUMP print          ; 3
 exit:

@@ -40,7 +40,8 @@ class ControlUnit(
     private var modelTick: Int = 0
     private val returnStack = ArrayDeque<Int>(returnStackSize)
 
-    val mProgram = arrayOf(
+    // wont fix: Latching parallel registers in sequential model of computation
+    private val mProgram = arrayOf(
         /* Instruction fetch */
         /* 0 */ arrayOf(Signal.LatchAR, Signal.ARSelectPC,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
@@ -105,7 +106,7 @@ class ControlUnit(
         else -> exitProcess(0)
     }
 
-    fun dispatchMicroInstruction(microcode: Array<Signal>) {
+    private fun dispatchMicroInstruction(microcode: Array<Signal>) {
         for (signal in microcode) {
             when (signal) {
                 Signal.DataStackPush -> dataPath.onSignalDataStackPush()
