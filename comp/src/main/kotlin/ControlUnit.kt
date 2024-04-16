@@ -9,10 +9,10 @@ enum class Signal {
     LatchAR, LatchTOS, LatchPC, LatchMPCounter,
 
     // Multiplexers latch
-    JumpTypeJZ,
-    JumpTypeJUMP,
-    JumpTypeRET,
-    JumpTypeNext,
+    PCJumpTypeJZ,
+    PCJumpTypeTOS,
+    PCJumpTypeRET,
+    PCJumpTypeNext,
     MicroProgramCounterZero,
     MicroProgramCounterOpcode,
     MicroProgramCounterNext,
@@ -22,12 +22,14 @@ enum class Signal {
     TOSSelectALU,
     ARSelectTOS,
     ARSelectPC,
+    ALULeftOPZero,
+    ALULeftOPDataStack,
 
     // I/O, Memory
     MemoryWrite, Output,
 
     // ALU operations
-    ALUSum, ALUSub, ALUMul, ALUDiv, ALUAnd, ALUOr, ALUXor,
+    ALUSum, ALUSub, ALUMul, ALUDiv, ALUAnd, ALUOr, ALUXor, ALUPlus1, ALUMinus1,
 }
 
 class ControlUnit(
@@ -49,19 +51,19 @@ class ControlUnit(
         /* NOP */
         /* 2 */ arrayOf(
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.JumpTypeNext),
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
         /* LIT */
         /* 3 */ arrayOf(Signal.DataStackPush, Signal.LatchAR, Signal.ARSelectPC,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 4 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectMemory,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.JumpTypeNext),
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
         /* LOAD */
         /* 5 */ arrayOf(Signal.LatchAR, Signal.ARSelectTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 6 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectMemory,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.JumpTypeNext),
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
         /* STORE */
         /* 7 */ arrayOf(Signal.LatchAR, Signal.ARSelectTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
@@ -73,13 +75,103 @@ class ControlUnit(
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 11 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.JumpTypeNext),
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
         /* ADD */
-        /* 12 */ arrayOf(Signal.ALUSum, Signal.TOSSelectALU, Signal.LatchTOS,
+        /* 12 */ arrayOf(Signal.ALUSum, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 13 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.JumpTypeNext),
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* SUB */
+        /* 14 */ arrayOf(Signal.ALUSub, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 15 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* MUL */
+        /* 16 */ arrayOf(Signal.ALUMul, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 17 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DIV */
+        /* 18 */ arrayOf(Signal.ALUDiv, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 19 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* INC */
+        /* 20 */ arrayOf(Signal.ALUPlus1, Signal.ALUSum, Signal.ALULeftOPZero,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DEC */
+        /* 21 */ arrayOf(Signal.ALUMinus1, Signal.ALUSum, Signal.ALULeftOPZero,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DROP */
+        /* 22 */ arrayOf(Signal.TOSSelectDS, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 23 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DUP */
+        /* 24 */ arrayOf(Signal.DataStackPush,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* OR */
+        /* 25 */ arrayOf(Signal.ALUOr, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 26 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* AND */
+        /* 27 */ arrayOf(Signal.ALUAnd, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 28 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* XOR */
+        /* 29 */ arrayOf(Signal.ALUXor, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 30 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* JZ */
+        /* 31 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeJZ,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
+        /* JUMP */
+        /* 32 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
+        /* CALL */
+        /* 33 */ arrayOf(Signal.ReturnStackPush,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 34 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
+        /* RET */
+        /* 35 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeRET,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 36 */ arrayOf(Signal.ReturnStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* IN */
+        /* 37 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectInput,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* OUT */
+        /* 38 */ arrayOf(Signal.Output,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 39 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext)
     )
 
     private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
@@ -88,22 +180,24 @@ class ControlUnit(
         Opcode.LOAD -> 5
         Opcode.STORE -> 7
         Opcode.ADD -> 12
-        Opcode.SUB -> TODO()
-        Opcode.INC -> TODO()
-        Opcode.DEC -> TODO()
-        Opcode.DROP -> TODO()
-        Opcode.DUP -> TODO()
-        Opcode.OR -> TODO()
-        Opcode.AND -> TODO()
-        Opcode.XOR -> TODO()
-        Opcode.JZ -> TODO()
-        Opcode.JUMP -> TODO()
-        Opcode.CALL -> TODO()
-        Opcode.RET -> TODO()
-        Opcode.IN -> TODO()
-        Opcode.OUT -> TODO()
+        Opcode.SUB -> 14
+        Opcode.MUL -> 16
+        Opcode.DIV -> 18
+        Opcode.INC -> 20
+        Opcode.DEC -> 21
+        Opcode.DROP -> 22
+        Opcode.DUP -> 24
+        Opcode.OR -> 25
+        Opcode.AND -> 27
+        Opcode.XOR -> 29
+        Opcode.JZ -> 31
+        Opcode.JUMP -> 32
+        Opcode.CALL -> 33
+        Opcode.RET -> 35
+        Opcode.IN -> 37
+        Opcode.OUT -> 38
         Opcode.HALT -> throw HaltedException()
-        else -> exitProcess(0)
+        else -> exitProcess(0) // WORD, etc..
     }
 
     private fun dispatchMicroInstruction(microcode: Array<Signal>) {
@@ -141,19 +235,19 @@ class ControlUnit(
     }
 
     private fun onSignalLatchPC(microcode: Array<Signal>) {
-        if (Signal.JumpTypeNext in microcode) {
+        if (Signal.PCJumpTypeNext in microcode) {
             pc++
         }
-        else if (Signal.JumpTypeJUMP in microcode) {
-            pc = dataPath.memory[dataPath.ar].operand
+        else if (Signal.PCJumpTypeTOS in microcode) {
+            pc = dataPath.tos
         }
-        else if (Signal.JumpTypeJZ in microcode) {
+        else if (Signal.PCJumpTypeJZ in microcode) {
             if (dataPath.tos == 0)
-                pc = dataPath.memory[dataPath.ar].operand
+                pc = dataPath.dataStack.last()
             else
                 pc++
         }
-        else if (Signal.JumpTypeRET in microcode) {
+        else if (Signal.PCJumpTypeRET in microcode) {
             pc = returnStack.last()
         }
     }
@@ -163,7 +257,7 @@ class ControlUnit(
     }
 
     private fun onSignalReturnStackPush() {
-        returnStack.addLast(dataPath.memory[dataPath.ar].operand)
+        returnStack.addLast(this.pc + 1)
     }
 
     private fun onSignalLatchMPCounter(microcode: Array<Signal>) {

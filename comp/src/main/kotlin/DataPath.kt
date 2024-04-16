@@ -56,22 +56,40 @@ class DataPath(
 }
 
 class ALU(private val dataPath: DataPath) {
-    fun output(microcode: Array<Signal>): Int = if (Signal.ALUSum in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else if (Signal.ALUSub in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else if (Signal.ALUMul in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else if (Signal.ALUDiv in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else if (Signal.ALUAnd in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else if (Signal.ALUOr in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else if (Signal.ALUXor in microcode) {
-        dataPath.tos + dataPath.dataStack.last()
-    } else {
-        0 // UB
+    fun output(microcode: Array<Signal>): Int {
+        val rightOperand = dataPath.tos
+        val leftOperand = if (Signal.ALULeftOPDataStack in microcode) {
+            dataPath.dataStack.last()
+        } else if (Signal.ALULeftOPZero in microcode) {
+            0
+        } else {
+            0 // UB
+        }
+
+        var result = if (Signal.ALUSum in microcode) {
+            leftOperand + rightOperand
+        } else if (Signal.ALUSub in microcode) {
+            leftOperand - rightOperand
+        } else if (Signal.ALUMul in microcode) {
+            leftOperand * rightOperand
+        } else if (Signal.ALUDiv in microcode) {
+            leftOperand / rightOperand
+        } else if (Signal.ALUAnd in microcode) {
+            leftOperand and rightOperand
+        } else if (Signal.ALUOr in microcode) {
+            leftOperand or rightOperand
+        } else if (Signal.ALUXor in microcode) {
+            leftOperand xor rightOperand
+        } else {
+            0 // UB
+        }
+        if (Signal.ALUPlus1 in microcode) {
+            result++
+        }
+        if (Signal.ALUMinus1 in microcode) {
+            result--
+        }
+        return result
     }
 }
 
