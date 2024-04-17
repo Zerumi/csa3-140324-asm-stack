@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
 
     // output
     val outputFile = args[2]
+    ioUnit.outputBuffer.removeIf { x -> x == 0 }
     File(outputFile).printWriter().use { out ->
         out.println(ioUnit.outputBuffer.map{x -> Char(x)}.joinToString(separator = ""))
     }

@@ -12,7 +12,8 @@ loop:
         swap        ; break in
         lit port    ; stack: break in port_addr
         load        ; break in port
-        out         ; break
+        over        ; break port in port
+        out         ; break port
         in          ; break in
         lit loop    ; break in loop
         jump        ; break in

@@ -1,0 +1,1 @@
+{"initCommand":1,"program":[{"opcode":"WORD","operand":1},{"opcode":"LIT","operand":12},{"opcode":"LIT"},{"opcode":"LOAD"},{"opcode":"IN"},{"opcode":"DUP"},{"opcode":"LIT"},{"opcode":"LOAD"},{"opcode":"OUT"},{"opcode":"JZ"},{"opcode":"LIT","operand":1},{"opcode":"JUMP"},{"opcode":"HALT"}]}

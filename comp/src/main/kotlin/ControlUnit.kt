@@ -207,12 +207,12 @@ class ControlUnit(
         /* 54 */ arrayOf(Signal.Output,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 55 */ arrayOf(Signal.DataStackPop,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.PCJumpTypeNext),
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 56 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 57 */ arrayOf(Signal.DataStackPop,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
     )
 
     private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
