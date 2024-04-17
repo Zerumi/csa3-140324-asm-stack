@@ -192,25 +192,28 @@ class ControlUnit(
         /* 49 */ arrayOf(Signal.ReturnStackPush,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 50 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 51 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 52 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
         /* RET */
-        /* 51 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeRET,
+        /* 53 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeRET,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 52 */ arrayOf(Signal.ReturnStackPop,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* 54 */ arrayOf(Signal.ReturnStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
         /* IN */
-        /* 53 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectInput,
+        /* 55 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectInput,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* OUT */
-        /* 54 */ arrayOf(Signal.Output,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 55 */ arrayOf(Signal.DataStackPop,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 56 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+        /* 56 */ arrayOf(Signal.Output,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 57 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 58 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 59 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
     )
@@ -236,9 +239,9 @@ class ControlUnit(
         Opcode.JZ -> 42
         Opcode.JUMP -> 46
         Opcode.CALL -> 49
-        Opcode.RET -> 51
-        Opcode.IN -> 53
-        Opcode.OUT -> 54
+        Opcode.RET -> 53
+        Opcode.IN -> 55
+        Opcode.OUT -> 56
         Opcode.HALT -> throw HaltedException()
         else -> exitProcess(0) // WORD, etc..
     }
