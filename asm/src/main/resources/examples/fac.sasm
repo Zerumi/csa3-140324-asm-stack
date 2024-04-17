@@ -16,7 +16,9 @@ break:
         ret         ; arg/res
 
 start:
-        lit 3
+        lit 11
         lit fac
         call
+        lit res
+        store
         halt
