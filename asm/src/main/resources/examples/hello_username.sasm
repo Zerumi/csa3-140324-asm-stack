@@ -74,11 +74,11 @@ stop_read:
                 ret             ;
 
 start:
-                lit 62          ; >
-                lit print_char  ; > print_char
+                lit 62          ; '>'
+                lit print_char  ; '>' print_char
                 call            ;
-                lit 32          ;
-                lit print_char  ;   print_char
+                lit 32          ; ' '
+                lit print_char  ; ' ' print_char
                 call            ;
 
                 lit hello_str   ; hello_str
@@ -89,34 +89,34 @@ start:
                 lit read_string ; user_input read_string
                 call            ;
 
-                lit 60          ; <
-                lit print_char  ; < print_char
+                lit 60          ; '<'
+                lit print_char  ; '<' print_char
                 call            ;
-                lit 32          ;
-                lit print_char  ;   print_char
+                lit 32          ; ' '
+                lit print_char  ; ' ' print_char
                 call            ;
 
                 lit user_input  ; user_input
                 lit print_str   ; user_input print_str
                 call            ;
 
-                lit 10          ; \n
-                lit print_char  ; \n print_char
+                lit 10          ; '\n'
+                lit print_char  ; '\n' print_char
                 call            ;
 
-                lit 62          ; >
-                lit print_char  ; > print_char
+                lit 62          ; '>'
+                lit print_char  ; '>' print_char
                 call            ;
-                lit 32          ;
-                lit print_char  ;   print_char
+                lit 32          ; ' '
+                lit print_char  ; ' ' print_char
                 call            ;
 
                 lit hello_user  ; hello_user
                 lit print_str   ; hello_user print_str
                 call            ;
 
-                lit 33          ; !
-                lit print_char  ; ! print_char
+                lit 33          ; '!'
+                lit print_char  ; '!' print_char
                 call            ;
 
                 halt            ;

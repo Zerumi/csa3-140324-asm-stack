@@ -9,14 +9,14 @@ print_digit:
                 ret                 ;
 
 print_number:
-                lit 0               ; num 0
-                swap                ; 0 num
-                dup                 ; 0 num num
-                lit negate          ; 0 num num negate
-                swap                ; 0 num negate num
-                jn                  ; 0 num
-                lit loop1           ; 0 num loop1
-                jump                ; 0 num
+                lit -1              ; num -1
+                swap                ; -1 num
+                dup                 ; -1 num num
+                lit negate          ; -1 num num negate
+                swap                ; -1 num negate num
+                jn                  ; -1 num
+                lit loop1           ; -1 num loop1
+                jump                ; -1 num
 negate:
                 lit 45              ; [...] 45
                 lit port            ; [...] 45 port_a
@@ -45,7 +45,7 @@ loop2:
                 dup                 ; digit digit
                 lit break           ; digit digit break
                 swap                ; digit break digit
-                jz                  ; digit
+                jn                  ; digit
                 lit print_digit     ; digit print_digit
                 call                ; digit
                 lit loop2           ; loop2
@@ -54,7 +54,7 @@ break:
                 ret                 ;
 
 start:
-                lit -7777777
+                lit 1008
                 lit print_number
                 call
                 halt
