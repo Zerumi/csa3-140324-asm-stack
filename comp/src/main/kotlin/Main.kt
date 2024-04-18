@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     inputBuffer.addLast(0)
 
     // solution
-    val dataPath = DataPath(10, 50, program.program)
+    val dataPath = DataPath(10, 150, program.program)
     val ioController = IOController()
     val ioUnit = IOUnit(inputBuffer)
     ioController.connectDevice(1, ioUnit)
