@@ -10,6 +10,7 @@ enum class Signal {
 
     // Multiplexers latch
     PCJumpTypeJZ,
+    PCJumpTypeJN,
     PCJumpTypeTOS,
     PCJumpTypeRET,
     PCJumpTypeNext,
@@ -30,7 +31,7 @@ enum class Signal {
     MemoryWrite, Output,
 
     // ALU operations
-    ALUSum, ALUSub, ALUMul, ALUDiv, ALUAnd, ALUOr, ALUXor, ALUPlus1, ALUMinus1,
+    ALUSum, ALUSub, ALUMul, ALUDiv, ALUMod, ALUAnd, ALUOr, ALUXor, ALUPlus1, ALUMinus1,
 }
 
 class ControlUnit(
@@ -105,115 +106,131 @@ class ControlUnit(
         /* 19 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DIV */
+        /* 20 */ arrayOf(Signal.ALUMod, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 21 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
         /* INC */
-        /* 20 */ arrayOf(Signal.ALUPlus1, Signal.ALUSum, Signal.ALULeftOPZero,
+        /* 22 */ arrayOf(Signal.ALUPlus1, Signal.ALUSum, Signal.ALULeftOPZero,
                     Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* DEC */
-        /* 21 */ arrayOf(Signal.ALUMinus1, Signal.ALUSum, Signal.ALULeftOPZero,
+        /* 23 */ arrayOf(Signal.ALUMinus1, Signal.ALUSum, Signal.ALULeftOPZero,
                     Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* DROP */
-        /* 22 */ arrayOf(Signal.TOSSelectDS, Signal.LatchTOS,
+        /* 24 */ arrayOf(Signal.TOSSelectDS, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 23 */ arrayOf(Signal.DataStackPop,
+        /* 25 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* DUP */
-        /* 24 */ arrayOf(Signal.DataStackPush,
+        /* 26 */ arrayOf(Signal.DataStackPush,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* SWAP */
-        /* 25 */ arrayOf(Signal.LatchBR,
+        /* 27 */ arrayOf(Signal.LatchBR,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 26 */ arrayOf(Signal.DataStackPop,
+        /* 28 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 27 */ arrayOf(Signal.DataStackPush,
+        /* 29 */ arrayOf(Signal.DataStackPush,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 28 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectBR,
+        /* 30 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectBR,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* OVER */
-        /* 29 */ arrayOf(Signal.LatchBR,
+        /* 31 */ arrayOf(Signal.LatchBR,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 30 */ arrayOf(Signal.DataStackPop,
+        /* 32 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 31 */ arrayOf(Signal.DataStackPush,
+        /* 33 */ arrayOf(Signal.DataStackPush,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 32 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectBR,
+        /* 34 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectBR,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 33 */ arrayOf(Signal.LatchBR,
+        /* 35 */ arrayOf(Signal.LatchBR,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 34 */ arrayOf(Signal.DataStackPush,
+        /* 36 */ arrayOf(Signal.DataStackPush,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 35 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectBR,
+        /* 37 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectBR,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* OR */
-        /* 36 */ arrayOf(Signal.ALUOr, Signal.ALULeftOPDataStack,
-                    Signal.TOSSelectALU, Signal.LatchTOS,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 37 */ arrayOf(Signal.DataStackPop,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
-                    Signal.LatchPC, Signal.PCJumpTypeNext),
-        /* AND */
-        /* 38 */ arrayOf(Signal.ALUAnd, Signal.ALULeftOPDataStack,
+        /* 38 */ arrayOf(Signal.ALUOr, Signal.ALULeftOPDataStack,
                     Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 39 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
-        /* XOR */
-        /* 40 */ arrayOf(Signal.ALUXor, Signal.ALULeftOPDataStack,
+        /* AND */
+        /* 40 */ arrayOf(Signal.ALUAnd, Signal.ALULeftOPDataStack,
                     Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 41 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
-        /* JZ */
-        /* 42 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeJZ,
+        /* XOR */
+        /* 42 */ arrayOf(Signal.ALUXor, Signal.ALULeftOPDataStack,
+                    Signal.TOSSelectALU, Signal.LatchTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 43 */ arrayOf(Signal.DataStackPop,
-                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 44 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+                    Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* JZ */
+        /* 44 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeJZ,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
         /* 45 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 46 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 47 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
+        /* JN */
+        /* 48 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeJN,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 49 */ arrayOf(Signal.DataStackPop,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 50 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+                    Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 51 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
         /* JUMP */
-        /* 46 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
+        /* 52 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 47 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+        /* 53 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 48 */ arrayOf(Signal.DataStackPop,
+        /* 54 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
         /* CALL */
-        /* 49 */ arrayOf(Signal.ReturnStackPush,
+        /* 55 */ arrayOf(Signal.ReturnStackPush,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 50 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
+        /* 56 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeTOS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 51 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+        /* 57 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 52 */ arrayOf(Signal.DataStackPop,
+        /* 58 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
         /* RET */
-        /* 53 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeRET,
+        /* 59 */ arrayOf(Signal.LatchPC, Signal.PCJumpTypeRET,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 54 */ arrayOf(Signal.ReturnStackPop,
+        /* 60 */ arrayOf(Signal.ReturnStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero),
         /* IN */
-        /* 55 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectInput,
+        /* 61 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectInput,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
         /* OUT */
-        /* 56 */ arrayOf(Signal.Output,
+        /* 62 */ arrayOf(Signal.Output,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 57 */ arrayOf(Signal.DataStackPop,
+        /* 63 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 58 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
+        /* 64 */ arrayOf(Signal.LatchTOS, Signal.TOSSelectDS,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
-        /* 59 */ arrayOf(Signal.DataStackPop,
+        /* 65 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
     )
@@ -227,21 +244,23 @@ class ControlUnit(
         Opcode.SUB -> 14
         Opcode.MUL -> 16
         Opcode.DIV -> 18
-        Opcode.INC -> 20
-        Opcode.DEC -> 21
-        Opcode.DROP -> 22
-        Opcode.DUP -> 24
-        Opcode.SWAP -> 25
-        Opcode.OVER -> 29
-        Opcode.OR -> 36
-        Opcode.AND -> 38
-        Opcode.XOR -> 40
-        Opcode.JZ -> 42
-        Opcode.JUMP -> 46
-        Opcode.CALL -> 49
-        Opcode.RET -> 53
-        Opcode.IN -> 55
-        Opcode.OUT -> 56
+        Opcode.MOD -> 20
+        Opcode.INC -> 22
+        Opcode.DEC -> 23
+        Opcode.DROP -> 24
+        Opcode.DUP -> 26
+        Opcode.SWAP -> 27
+        Opcode.OVER -> 31
+        Opcode.OR -> 38
+        Opcode.AND -> 40
+        Opcode.XOR -> 42
+        Opcode.JZ -> 44
+        Opcode.JN -> 48
+        Opcode.JUMP -> 52
+        Opcode.CALL -> 55
+        Opcode.RET -> 59
+        Opcode.IN -> 61
+        Opcode.OUT -> 62
         Opcode.HALT -> throw HaltedException()
         else -> exitProcess(0) // WORD, etc..
     }
@@ -290,6 +309,12 @@ class ControlUnit(
         }
         else if (Signal.PCJumpTypeJZ in microcode) {
             if (dataPath.tos == 0)
+                pc = dataPath.dataStack.last()
+            else
+                pc++
+        }
+        else if (Signal.PCJumpTypeJN in microcode) {
+            if (dataPath.tos < 0)
                 pc = dataPath.dataStack.last()
             else
                 pc++

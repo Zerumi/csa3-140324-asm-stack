@@ -9,7 +9,7 @@ class DataPath(
 
     val dataStack = ArrayDeque<Int>(dataStackSize)
     var tos = 0
-    var br = 0
+    private var br = 0
     var ar = 0
     val memory = Array(memoryInitialSize) { Instruction(Opcode.WORD) }
 
@@ -81,6 +81,8 @@ class ALU(private val dataPath: DataPath) {
             leftOperand * rightOperand
         } else if (Signal.ALUDiv in microcode) {
             leftOperand / rightOperand
+        } else if (Signal.ALUMod in microcode) {
+            leftOperand % rightOperand
         } else if (Signal.ALUAnd in microcode) {
             leftOperand and rightOperand
         } else if (Signal.ALUOr in microcode) {
