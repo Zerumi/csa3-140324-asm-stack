@@ -1,5 +1,4 @@
 import kotlin.collections.ArrayDeque
-import kotlin.system.exitProcess
 
 enum class Signal {
     // Stack operations
@@ -236,33 +235,33 @@ class ControlUnit(
     )
 
     private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
-        Opcode.NOP -> 2
-        Opcode.LIT -> 3
-        Opcode.LOAD -> 5
-        Opcode.STORE -> 7
-        Opcode.ADD -> 12
-        Opcode.SUB -> 14
-        Opcode.MUL -> 16
-        Opcode.DIV -> 18
-        Opcode.MOD -> 20
-        Opcode.INC -> 22
-        Opcode.DEC -> 23
-        Opcode.DROP -> 24
-        Opcode.DUP -> 26
-        Opcode.SWAP -> 27
-        Opcode.OVER -> 31
-        Opcode.OR -> 38
-        Opcode.AND -> 40
-        Opcode.XOR -> 42
-        Opcode.JZ -> 44
-        Opcode.JN -> 48
-        Opcode.JUMP -> 52
-        Opcode.CALL -> 55
-        Opcode.RET -> 59
-        Opcode.IN -> 61
-        Opcode.OUT -> 62
-        Opcode.HALT -> throw HaltedException()
-        else -> exitProcess(0) // WORD, etc..
+        Opcode.NOP      -> 2
+        Opcode.LIT      -> 3
+        Opcode.LOAD     -> 5
+        Opcode.STORE    -> 7
+        Opcode.ADD      -> 12
+        Opcode.SUB      -> 14
+        Opcode.MUL      -> 16
+        Opcode.DIV      -> 18
+        Opcode.MOD      -> 20
+        Opcode.INC      -> 22
+        Opcode.DEC      -> 23
+        Opcode.DROP     -> 24
+        Opcode.DUP      -> 26
+        Opcode.SWAP     -> 27
+        Opcode.OVER     -> 31
+        Opcode.OR       -> 38
+        Opcode.AND      -> 40
+        Opcode.XOR      -> 42
+        Opcode.JZ       -> 44
+        Opcode.JN       -> 48
+        Opcode.JUMP     -> 52
+        Opcode.CALL     -> 55
+        Opcode.RET      -> 59
+        Opcode.IN       -> 61
+        Opcode.OUT      -> 62
+        Opcode.HALT     -> throw HaltedException()
+        else            -> throw UnknownOpcodeException() // WORD, etc..
     }
 
     private fun dispatchMicroInstruction(microcode: Array<Signal>) {
@@ -288,9 +287,20 @@ class ControlUnit(
         modelTick++
     }
 
+    // логгирование по инструкциям
+    // и по тактам
+
+    // показать состояние регистров
+    // первые 3 элемента стека
+
+
     fun simulate() {
         try {
             while (true) {
+                if (mPc == 0) {
+                    // instruction changed
+                    println("instr")
+                }
                 dispatchMicroInstruction(mProgram[mPc])
                 updateTick()
                 println("tick...")
@@ -340,9 +350,16 @@ class ControlUnit(
             mPc = 0
         }
         else if (Signal.MicroProgramCounterOpcode in microcode) {
-            mPc = opcodeToMpc(dataPath.memory[dataPath.ar].opcode)
+            val memoryCell = dataPath.memory[dataPath.ar]
+            mPc = opcodeToMpc(when (memoryCell) {
+                is MemoryCell.Instruction -> memoryCell.opcode
+                is MemoryCell.OperandInstruction -> memoryCell.opcode
+                else -> Opcode.WORD
+            })
         }
     }
 }
 
 class HaltedException : Throwable()
+
+class UnknownOpcodeException : Throwable("Defined opcode is not implemented!")

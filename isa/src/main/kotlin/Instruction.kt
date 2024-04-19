@@ -1,12 +1,14 @@
 import kotlinx.serialization.*
 
 /**
- * Data class that holds an instruction.
- * Instruction represents by its opcode (from isa) and possible operand
- *
- * Data classes in Kotlin is just simplification of classes,
- * whose objects only holds some values
+ * Memory cell may be an operand/no operand instruction, or a data.
  */
-
 @Serializable
-data class Instruction(val opcode: Opcode, var operand: Int = 0)
+sealed class MemoryCell {
+    @Serializable
+    data class Instruction(val opcode: Opcode) : MemoryCell()
+    @Serializable
+    data class OperandInstruction(val opcode: Opcode, val operand: Int = 0) : MemoryCell()
+    @Serializable
+    data class Data(var value: Int = 0) : MemoryCell()
+}

@@ -4,10 +4,10 @@ fun meaningfulToken(line: String): String {
     return line.split(";")[0].trim()
 }
 
-data class LabelInstruction(val instruction: Instruction, val label: String = "")
+data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
 val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
-    Opcode.WORD, Opcode.LIT,
+    Opcode.LIT,
 )
 
 fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>> {
@@ -36,16 +36,33 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
             val operand = if (instruction.size == 2) instruction[1] else ""
 
             when (parsedOpcode) {
+                Opcode.WORD -> {
+                    // data may be a number, otherwise this is a label
+                    if (operand.toIntOrNull() != null) instructions.add(
+                        LabelInstruction(
+                            MemoryCell.Data(
+                                operand.toInt()
+                            )
+                        )
+                    )
+                    else instructions.add(LabelInstruction(MemoryCell.Data(), operand.lowercase()))
+                }
+
                 in POSSIBLE_OPERAND_INSTRUCTIONS -> {
                     // operand may be a number, otherwise this is a label
-                    if (operand.toIntOrNull() != null)
-                        instructions.add(LabelInstruction(Instruction(parsedOpcode, operand.toInt())))
-                    else
-                        instructions.add(LabelInstruction(Instruction(parsedOpcode), operand.lowercase()))
+                    if (operand.toIntOrNull() != null) instructions.add(
+                        LabelInstruction(
+                            MemoryCell.OperandInstruction(
+                                parsedOpcode, operand.toInt()
+                            )
+                        )
+                    )
+                    else instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode), operand.lowercase()))
                 }
+
                 else -> {
                     // it's just an opcode w/o operand
-                    instructions.add(LabelInstruction(Instruction(parsedOpcode)))
+                    instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode)))
                 }
             }
         }
@@ -55,21 +72,34 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
 }
 
 fun translatePart2(
-    labels: Map<String, Int>,
-    instructions: List<LabelInstruction>
+    labels: Map<String, Int>, instructions: List<LabelInstruction>
 ): Program {
 
-    val resultInstructions = emptyList<Instruction>().toMutableList()
+    val resultInstructions = emptyList<MemoryCell>().toMutableList()
 
     for (labelInstruction in instructions) {
         if (labelInstruction.label.isEmpty()) {
             resultInstructions.add(labelInstruction.instruction)
         } else {
-            resultInstructions.add(
-                Instruction(
-                    labelInstruction.instruction.opcode, labels[labelInstruction.label]!!
-                )
-            )
+            when (val memoryCell = labelInstruction.instruction) {
+                is MemoryCell.Instruction -> {
+                    resultInstructions.add(
+                        MemoryCell.OperandInstruction(
+                            memoryCell.opcode, labels[labelInstruction.label]!!
+                        )
+                    )
+                }
+
+                is MemoryCell.Data -> {
+                    resultInstructions.add(
+                        MemoryCell.Data(
+                            labels[labelInstruction.label]!!
+                        )
+                    )
+                }
+
+                else -> Unit
+            }
         }
     }
 

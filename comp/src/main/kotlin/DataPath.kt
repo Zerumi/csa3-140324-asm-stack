@@ -1,7 +1,7 @@
 import kotlin.collections.ArrayDeque
 
 class DataPath(
-    dataStackSize: Int, memoryInitialSize: Int, program: Array<Instruction>
+    dataStackSize: Int, memoryInitialSize: Int, program: Array<MemoryCell>
 ) {
 
     lateinit var controlUnit: ControlUnit
@@ -11,7 +11,7 @@ class DataPath(
     var tos = 0
     private var br = 0
     var ar = 0
-    val memory = Array(memoryInitialSize) { Instruction(Opcode.WORD) }
+    val memory = Array<MemoryCell>(memoryInitialSize) { MemoryCell.Data() }
 
     init {
         for (i in program.indices) memory[i] = program[i]
@@ -39,7 +39,11 @@ class DataPath(
         if (Signal.TOSSelectDS in microcode) {
             tos = dataStack.last()
         } else if (Signal.TOSSelectMemory in microcode) {
-            tos = memory[ar].operand
+            tos = when (val cell = memory[ar]) {
+                is MemoryCell.Data -> cell.value
+                is MemoryCell.OperandInstruction -> cell.operand
+                else -> 0 // UB
+            }
         } else if (Signal.TOSSelectALU in microcode) {
             tos = alu.output(microcode)
         } else if (Signal.TOSSelectInput in microcode) {
@@ -54,7 +58,7 @@ class DataPath(
     }
 
     fun onSignalMemoryWrite() {
-        memory[ar].operand = dataStack.last()
+        memory[ar] = MemoryCell.Data(dataStack.last()) // assert in memory[ar] was data, won't fix
     }
 
     fun onSignalLatchBR() {

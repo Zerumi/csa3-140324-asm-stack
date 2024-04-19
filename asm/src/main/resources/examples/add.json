@@ -1,1 +1,1 @@
-{"initCommand":0,"program":[{"opcode":"LIT","operand":2},{"opcode":"LIT","operand":2},{"opcode":"ADD"},{"opcode":"HALT"}]}
+{"initCommand":0,"program":[{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":2},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":2},{"type":"MemoryCell.Instruction","opcode":"ADD"},{"type":"MemoryCell.Instruction","opcode":"HALT"}]}

@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * whose objects only holds some values.
  */
 @Serializable
-data class Program(val initCommand: Int, val program: Array<Instruction>) {
+data class Program(val initCommand: Int, val program: Array<MemoryCell>) {
 
     /*
      * We override these functions because arrays equality should be checked by
