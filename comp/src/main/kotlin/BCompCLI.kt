@@ -51,6 +51,8 @@ class BCompCLI : CliktCommand() {
     private val dataStackSize: Int by option(help = "Data stack size").int().default(defaultStackSize)
     private val returnStackSize: Int by option(help = "Return Stack size").int().default(defaultStackSize)
 
+    private val defaultMemoryMultiplier = 1.1
+
     override fun run() {
         when (outputCompLog) {
             is LogPolicy.LogPolicyStdout -> {
@@ -71,7 +73,7 @@ class BCompCLI : CliktCommand() {
         val program = readCode(programFile)
 
         val finalMemoryInitSize: Int = if (memoryInitialSize == uninitializedMemorySize) {
-            (program.program.size * 1.1).toInt()
+            (program.program.size * defaultMemoryMultiplier).toInt()
         } else memoryInitialSize
 
         val inputBuffer = ArrayDeque(inputFile.readText(Charsets.UTF_8).chars().toList())

@@ -235,6 +235,9 @@ class ControlUnit(
                     Signal.LatchPC, Signal.PCJumpTypeNext),
     )
 
+    // suppress it because numbers matches with the microprogram above
+    // also it's forced to be cyclomatic complex, but it's still easy to read
+    @Suppress("MagicNumber", "CyclomaticComplexMethod")
     private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
         Opcode.NOP -> 2
         Opcode.LIT -> 3
@@ -292,8 +295,10 @@ class ControlUnit(
 
     private fun generateTickLogString(): String =
         "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
-                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(stackDebugOverview).reversed().joinToString(", ")}]\n" +
-                "Return stack: [${returnStack.takeLast(stackDebugOverview).reversed().joinToString(", ")}]\n" +
+                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(stackDebugOverview)
+                    .reversed().joinToString(", ")}]\n" +
+                "Return stack: [${returnStack.takeLast(stackDebugOverview)
+                    .reversed().joinToString(", ")}]\n" +
                 "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
 
     private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
