@@ -1,0 +1,19 @@
+; optimized version of cat program
+; but it puts '\0' symbol at the end of the output
+
+port:
+        word 1
+start:
+        lit break   ; break
+        lit port    ; break port_addr
+        load        ; break port
+        in          ; break in
+        dup         ; break in in
+        lit port    ; break in in port_addr
+        load        ; break in in port
+        out         ; break in
+        jz          ;
+        lit start   ; start
+        jump        ;
+break:
+        halt

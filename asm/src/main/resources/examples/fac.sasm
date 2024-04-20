@@ -1,0 +1,24 @@
+res:
+        word 0
+fac:
+        dup         ; arg arg
+        lit 1       ; arg arg 1
+        sub         ; arg 0/pos_num
+        lit break   ; arg 0/pos_num break
+        swap        ; arg break 0/pos_num
+        jz          ; arg
+        dup         ; arg arg
+        dec         ; arg (arg - 1) -> arg
+        lit fac     ; [...] arg fac
+        call        ; [...] res
+        mul         ; res
+break:
+        ret         ; arg/res
+
+start:
+        lit 11
+        lit fac
+        call
+        lit res
+        store
+        halt

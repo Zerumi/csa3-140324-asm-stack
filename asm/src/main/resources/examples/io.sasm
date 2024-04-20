@@ -1,0 +1,60 @@
+port:
+                word 1
+print_digit:
+                lit 48              ; arg 48
+                add                 ; arg -> char
+                lit port            ; char port_addr
+                load                ; char port
+                out                 ;
+                ret                 ;
+
+print_number:
+                lit -1              ; num -1
+                swap                ; -1 num
+                dup                 ; -1 num num
+                lit negate          ; -1 num num negate
+                swap                ; -1 num negate num
+                jn                  ; -1 num
+                lit loop1           ; -1 num loop1
+                jump                ; -1 num
+negate:
+                lit 45              ; [...] 45
+                lit port            ; [...] 45 port_a
+                load                ; [...] 45 port
+                out                 ; [...]
+                lit -1              ; 0 num -1
+                mul                 ; 0 -num -> num
+loop1:
+                dup                 ; 0 num num
+                lit 10              ; 0 num num 10
+                mod                 ; 0 num digit
+                swap                ; 0 digit num
+                lit 10              ; 0 digit num 10
+                div                 ; 0 digit num/10 -> num
+                over                ; 0 num digit num
+                lit loop1exit       ; [...] num loop2
+                swap                ; [...] loop2 num
+                jz                  ; [...] num digit
+                swap
+                lit loop1           ; [...] num loop1
+                jump                ; [...] num
+loop1exit:
+                swap                ; [...] 0 digit
+                drop                ; [...] digit
+loop2:
+                dup                 ; digit digit
+                lit break           ; digit digit break
+                swap                ; digit break digit
+                jn                  ; digit
+                lit print_digit     ; digit print_digit
+                call                ; digit
+                lit loop2           ; loop2
+                jump                ;
+break:
+                ret                 ;
+
+start:
+                lit 1008
+                lit print_number
+                call
+                halt

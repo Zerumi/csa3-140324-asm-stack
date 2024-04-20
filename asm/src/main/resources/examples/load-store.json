@@ -1,0 +1,50 @@
+{
+  "initCommand": 3,
+  "program": [
+    {
+      "type": "MemoryCell.Data",
+      "value": 120
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 130
+    },
+    {
+      "type": "MemoryCell.Data"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "ADD"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 2
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "STORE"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "HALT"
+    }
+  ]
+}

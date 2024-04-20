@@ -1,0 +1,52 @@
+port:
+                word 1
+
+hello_str_addr:
+                word hello_str
+
+hello_str:
+                word 72             ; 'H'
+                word 101            ; 'e'
+                word 108            ; 'l'
+                word 108            ; 'l'
+                word 111            ; 'o'
+                word 44             ; ','
+                word 32             ; ' '
+                word 119            ; 'w'
+                word 111            ; 'o'
+                word 114            ; 'r'
+                word 108            ; 'l'
+                word 100            ; 'd'
+                word 33             ; '!'
+                word 0              ; \0
+
+
+print_char:
+                lit port            ; symbol port_addr
+                load                ; symbol port
+                out                 ;
+                ret                 ;
+print_str:
+                dup                 ; str_addr str_addr
+                load                ; str_addr symbol
+                dup                 ; str_addr symbol symbol
+                lit ps_ret          ; str_addr symbol symbol ps_ret
+                swap                ; str_addr symbol ps_ret symbol
+                jz                  ; str_addr symbol
+                lit print_char      ; str_addr symbol
+                call                ; str_addr
+                inc                 ; str_addr + 1 -> str_addr
+                lit print_str       ; str_addr print_str
+                jump                ; str_addr
+ps_ret:
+                drop                ; str_addr (symbol)
+                drop                ; (str_addr)
+                ret                 ;
+
+start:
+                lit hello_str_addr  ; hello_str_addr_addr
+                load                ; hello_str_addr
+                lit print_str       ; hello_str_addr print_str
+                call                ;
+exit:
+                halt                ;
