@@ -63,7 +63,7 @@ class BCompCLI : CliktCommand() {
         option(
             "-l",
             "--log-file"
-        ).convert { LogPolicy.LogPolicyFile(File(it).toPath()) },
+        ).convert { LogPolicy.LogPolicyFile(File(it).toPath()) }
     ).default(LogPolicy.LogPolicyStdout)
 
     private val memoryInitialSize: Int by option(help = "Memory initial size").int().default(UNINITIALIZED_MEMORY_SIZE)

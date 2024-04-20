@@ -2,7 +2,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.collections.ArrayDeque
 
 class DataPath(
-    dataStackSize: Int, memoryInitialSize: Int, program: Array<MemoryCell>
+    dataStackSize: Int,
+    memoryInitialSize: Int,
+    program: Array<MemoryCell>
 ) {
     private val logger = KotlinLogging.logger {}
 
