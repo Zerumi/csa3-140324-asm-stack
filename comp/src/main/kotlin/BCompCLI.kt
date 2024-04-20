@@ -14,6 +14,12 @@ import kotlin.streams.toList
 
 class BCompCLI : CliktCommand() {
 
+    companion object {
+        private const val UNINITIALIZED_MEMORY_SIZE = -1
+        private const val DEFAULT_STACK_SIZE = 20
+        private const val DEFAULT_MEMORY_SCALE = 1.1
+    }
+
     private val programFile: Path by option(
         "-p", "--program-file", help = "Path to JSON program file for execution"
     ).path(
@@ -42,16 +48,10 @@ class BCompCLI : CliktCommand() {
         option("-l", "--log-file").convert { LogPolicy.LogPolicyFile(File(it).toPath()) },
     ).default(LogPolicy.LogPolicyStdout)
 
-    private val uninitializedMemorySize = -1
+    private val memoryInitialSize: Int by option(help = "Memory initial size").int().default(UNINITIALIZED_MEMORY_SIZE)
 
-    private val memoryInitialSize: Int by option(help = "Memory initial size").int().default(uninitializedMemorySize)
-
-    private val defaultStackSize = 20
-
-    private val dataStackSize: Int by option(help = "Data stack size").int().default(defaultStackSize)
-    private val returnStackSize: Int by option(help = "Return Stack size").int().default(defaultStackSize)
-
-    private val defaultMemoryMultiplier = 1.1
+    private val dataStackSize: Int by option(help = "Data stack size").int().default(DEFAULT_STACK_SIZE)
+    private val returnStackSize: Int by option(help = "Return Stack size").int().default(DEFAULT_STACK_SIZE)
 
     override fun run() {
         when (outputCompLog) {
@@ -72,8 +72,8 @@ class BCompCLI : CliktCommand() {
 
         val program = readCode(programFile)
 
-        val finalMemoryInitSize: Int = if (memoryInitialSize == uninitializedMemorySize) {
-            (program.program.size * defaultMemoryMultiplier).toInt()
+        val finalMemoryInitSize: Int = if (memoryInitialSize == UNINITIALIZED_MEMORY_SIZE) {
+            (program.program.size * DEFAULT_MEMORY_SCALE).toInt()
         } else memoryInitialSize
 
         val inputBuffer = ArrayDeque(inputFile.readText(Charsets.UTF_8).chars().toList())

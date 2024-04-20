@@ -37,6 +37,10 @@ enum class Signal {
 class ControlUnit(
     initPc: Int, private val dataPath: DataPath, returnStackSize: Int
 ) {
+    companion object {
+        private const val DEBUG_STACK_OVERVIEW = 3
+    }
+
     var pc: Int = initPc
     private var mPc: Int = 0
     private var modelTick: Int = 0
@@ -291,13 +295,11 @@ class ControlUnit(
         modelTick++
     }
 
-    private val stackDebugOverview = 3
-
     private fun generateTickLogString(): String =
         "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
-                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(stackDebugOverview)
+                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
                     .reversed().joinToString(", ")}]\n" +
-                "Return stack: [${returnStack.takeLast(stackDebugOverview)
+                "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
                     .reversed().joinToString(", ")}]\n" +
                 "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
 
