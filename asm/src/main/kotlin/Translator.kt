@@ -10,6 +10,39 @@ private val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
     Opcode.LIT,
 )
 
+private fun addInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) {
+    when (parsedOpcode) {
+        Opcode.WORD -> {
+            // data may be a number, otherwise this is a label
+            if (operand.toIntOrNull() != null) instructions.add(
+                LabelInstruction(
+                    MemoryCell.Data(
+                        operand.toInt()
+                    )
+                )
+            )
+            else instructions.add(LabelInstruction(MemoryCell.Data(), operand.lowercase()))
+        }
+
+        in POSSIBLE_OPERAND_INSTRUCTIONS -> {
+            // operand may be a number, otherwise this is a label
+            if (operand.toIntOrNull() != null) instructions.add(
+                LabelInstruction(
+                    MemoryCell.OperandInstruction(
+                        parsedOpcode, operand.toInt()
+                    )
+                )
+            )
+            else instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode), operand.lowercase()))
+        }
+
+        else -> {
+            // it's just an opcode w/o operand
+            instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode)))
+        }
+    }
+}
+
 /**
  * The First stage of translation needs to fetch all labels in code,
  * and translate opcodes to instructions
@@ -39,36 +72,7 @@ private fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstr
 
             val operand = if (instruction.size == 2) instruction[1] else ""
 
-            when (parsedOpcode) {
-                Opcode.WORD -> {
-                    // data may be a number, otherwise this is a label
-                    if (operand.toIntOrNull() != null) instructions.add(
-                        LabelInstruction(
-                            MemoryCell.Data(
-                                operand.toInt()
-                            )
-                        )
-                    )
-                    else instructions.add(LabelInstruction(MemoryCell.Data(), operand.lowercase()))
-                }
-
-                in POSSIBLE_OPERAND_INSTRUCTIONS -> {
-                    // operand may be a number, otherwise this is a label
-                    if (operand.toIntOrNull() != null) instructions.add(
-                        LabelInstruction(
-                            MemoryCell.OperandInstruction(
-                                parsedOpcode, operand.toInt()
-                            )
-                        )
-                    )
-                    else instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode), operand.lowercase()))
-                }
-
-                else -> {
-                    // it's just an opcode w/o operand
-                    instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode)))
-                }
-            }
+            addInstruction(instructions, parsedOpcode, operand)
         }
     }
 

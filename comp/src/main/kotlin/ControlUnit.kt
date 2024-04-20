@@ -288,15 +288,18 @@ class ControlUnit(
         modelTick++
     }
 
+    private val stackDebugOverview = 3
+
     private fun generateTickLogString(): String =
         "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
-                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(3).reversed().joinToString(", ")}]\n" +
-                "Return stack: [${returnStack.takeLast(3).reversed().joinToString(", ")}]\n" +
+                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(stackDebugOverview).reversed().joinToString(", ")}]\n" +
+                "Return stack: [${returnStack.takeLast(stackDebugOverview).reversed().joinToString(", ")}]\n" +
                 "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
 
     private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
         is MemoryCell.Instruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode}"
-        is MemoryCell.OperandInstruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}"
+        is MemoryCell.OperandInstruction -> "NOW EXECUTING INSTRUCTION " +
+                "PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}"
         is MemoryCell.Data -> "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!"
     }
 

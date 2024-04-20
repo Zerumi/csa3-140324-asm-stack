@@ -1,4 +1,4 @@
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 /**
  * Memory cell may be an operand/no operand instruction, or data.
