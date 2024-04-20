@@ -1,15 +1,17 @@
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.collections.ArrayDeque
 
 class DataPath(
     dataStackSize: Int, memoryInitialSize: Int, program: Array<MemoryCell>
 ) {
+    private val logger = KotlinLogging.logger {}
 
     lateinit var controlUnit: ControlUnit
     lateinit var ioController: IOController
 
     val dataStack = ArrayDeque<Int>(dataStackSize)
     var tos = 0
-    private var br = 0
+    var br = 0
     var ar = 0
     val memory = Array<MemoryCell>(memoryInitialSize) { MemoryCell.Data() }
 
@@ -57,8 +59,12 @@ class DataPath(
         ioController.output(tos, dataStack.last())
     }
 
+    private fun generateMemoryWriteLog() : String =
+        "MEMORY WRITTEN VALUE: AR: $ar <--- ${dataStack.last()}\n"
+
     fun onSignalMemoryWrite() {
         memory[ar] = MemoryCell.Data(dataStack.last()) // assert in memory[ar] was data, won't fix
+        logger.info { generateMemoryWriteLog() }
     }
 
     fun onSignalLatchBR() {
@@ -109,14 +115,24 @@ class ALU(private val dataPath: DataPath) {
 class IOController {
     private val connectedDevices = emptyMap<Int, IOUnit>().toMutableMap()
 
+    private val logger = KotlinLogging.logger {}
+
+    private fun generateIOOutputLog(port: Int, value: Int) : String =
+        "I/O OPERATION OCCURS (OUT): port: $port <--- value: $value"
+
+    private fun generateIOInLog(port: Int, value: Int) : String =
+        "I/O OPERATION OCCURS (IN): port: $port ---> value: $value"
+
     fun input(port: Int): Int {
         val input = connectedDevices[port]!!.inputBuffer.first()
         connectedDevices[port]!!.inputBuffer.removeFirst()
+        logger.info { generateIOInLog(port, input) }
         return input
     }
 
     fun output(port: Int, value: Int) {
         connectedDevices[port]!!.outputBuffer.add(value)
+        logger.info { generateIOOutputLog(port, value) }
     }
 
     fun connectDevice(port: Int, ioUnit: IOUnit) {

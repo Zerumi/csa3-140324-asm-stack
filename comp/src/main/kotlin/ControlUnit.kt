@@ -1,3 +1,4 @@
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.collections.ArrayDeque
 
 enum class Signal {
@@ -34,14 +35,14 @@ enum class Signal {
 }
 
 class ControlUnit(
-    initPc: Int,
-    private val dataPath: DataPath,
-    returnStackSize: Int)
-{
+    initPc: Int, private val dataPath: DataPath, returnStackSize: Int
+) {
     var pc: Int = initPc
     private var mPc: Int = 0
     private var modelTick: Int = 0
     private val returnStack = ArrayDeque<Int>(returnStackSize)
+
+    private val logger = KotlinLogging.logger {}
 
     // wont fix: Latching parallel registers in sequential model of computation
     private val mProgram = arrayOf(
@@ -235,33 +236,33 @@ class ControlUnit(
     )
 
     private fun opcodeToMpc(opcode: Opcode): Int = when (opcode) {
-        Opcode.NOP      -> 2
-        Opcode.LIT      -> 3
-        Opcode.LOAD     -> 5
-        Opcode.STORE    -> 7
-        Opcode.ADD      -> 12
-        Opcode.SUB      -> 14
-        Opcode.MUL      -> 16
-        Opcode.DIV      -> 18
-        Opcode.MOD      -> 20
-        Opcode.INC      -> 22
-        Opcode.DEC      -> 23
-        Opcode.DROP     -> 24
-        Opcode.DUP      -> 26
-        Opcode.SWAP     -> 27
-        Opcode.OVER     -> 31
-        Opcode.OR       -> 38
-        Opcode.AND      -> 40
-        Opcode.XOR      -> 42
-        Opcode.JZ       -> 44
-        Opcode.JN       -> 48
-        Opcode.JUMP     -> 52
-        Opcode.CALL     -> 55
-        Opcode.RET      -> 59
-        Opcode.IN       -> 61
-        Opcode.OUT      -> 62
-        Opcode.HALT     -> throw HaltedException()
-        else            -> throw UnknownOpcodeException() // WORD, etc..
+        Opcode.NOP -> 2
+        Opcode.LIT -> 3
+        Opcode.LOAD -> 5
+        Opcode.STORE -> 7
+        Opcode.ADD -> 12
+        Opcode.SUB -> 14
+        Opcode.MUL -> 16
+        Opcode.DIV -> 18
+        Opcode.MOD -> 20
+        Opcode.INC -> 22
+        Opcode.DEC -> 23
+        Opcode.DROP -> 24
+        Opcode.DUP -> 26
+        Opcode.SWAP -> 27
+        Opcode.OVER -> 31
+        Opcode.OR -> 38
+        Opcode.AND -> 40
+        Opcode.XOR -> 42
+        Opcode.JZ -> 44
+        Opcode.JN -> 48
+        Opcode.JUMP -> 52
+        Opcode.CALL -> 55
+        Opcode.RET -> 59
+        Opcode.IN -> 61
+        Opcode.OUT -> 62
+        Opcode.HALT -> throw HaltedException()
+        else -> throw UnknownOpcodeException() // WORD, etc..
     }
 
     private fun dispatchMicroInstruction(microcode: Array<Signal>) {
@@ -287,49 +288,46 @@ class ControlUnit(
         modelTick++
     }
 
-    // логгирование по инструкциям
-    // и по тактам
+    private fun generateTickLogString(): String =
+        "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
+                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(3).reversed().joinToString(", ")}]\n" +
+                "Return stack: [${returnStack.takeLast(3).reversed().joinToString(", ")}]\n" +
+                "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}\n"
 
-    // показать состояние регистров
-    // первые 3 элемента стека
-
+    private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
+        is MemoryCell.Instruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode}\n"
+        is MemoryCell.OperandInstruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}\n"
+        is MemoryCell.Data -> "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!\n"
+    }
 
     fun simulate() {
         try {
             while (true) {
                 if (mPc == 0) {
                     // instruction changed
-                    println("instr")
+                    logger.info { generateInstrLogString() }
                 }
+                logger.info { generateTickLogString() }
                 dispatchMicroInstruction(mProgram[mPc])
                 updateTick()
-                println("tick...")
             }
         } catch (_: HaltedException) {
-            println("halted")
+            logger.info { "[HALTED] ${generateTickLogString()}" }
         }
     }
 
     private fun onSignalLatchPC(microcode: Array<Signal>) {
         if (Signal.PCJumpTypeNext in microcode) {
             pc++
-        }
-        else if (Signal.PCJumpTypeTOS in microcode) {
+        } else if (Signal.PCJumpTypeTOS in microcode) {
             pc = dataPath.tos
-        }
-        else if (Signal.PCJumpTypeJZ in microcode) {
-            if (dataPath.tos == 0)
-                pc = dataPath.dataStack.last()
-            else
-                pc++
-        }
-        else if (Signal.PCJumpTypeJN in microcode) {
-            if (dataPath.tos < 0)
-                pc = dataPath.dataStack.last()
-            else
-                pc++
-        }
-        else if (Signal.PCJumpTypeRET in microcode) {
+        } else if (Signal.PCJumpTypeJZ in microcode) {
+            if (dataPath.tos == 0) pc = dataPath.dataStack.last()
+            else pc++
+        } else if (Signal.PCJumpTypeJN in microcode) {
+            if (dataPath.tos < 0) pc = dataPath.dataStack.last()
+            else pc++
+        } else if (Signal.PCJumpTypeRET in microcode) {
             pc = returnStack.last()
         }
     }
@@ -345,17 +343,17 @@ class ControlUnit(
     private fun onSignalLatchMPCounter(microcode: Array<Signal>) {
         if (Signal.MicroProgramCounterNext in microcode) {
             mPc++
-        }
-        else if (Signal.MicroProgramCounterZero in microcode) {
+        } else if (Signal.MicroProgramCounterZero in microcode) {
             mPc = 0
-        }
-        else if (Signal.MicroProgramCounterOpcode in microcode) {
+        } else if (Signal.MicroProgramCounterOpcode in microcode) {
             val memoryCell = dataPath.memory[dataPath.ar]
-            mPc = opcodeToMpc(when (memoryCell) {
-                is MemoryCell.Instruction -> memoryCell.opcode
-                is MemoryCell.OperandInstruction -> memoryCell.opcode
-                else -> Opcode.WORD
-            })
+            mPc = opcodeToMpc(
+                when (memoryCell) {
+                    is MemoryCell.Instruction -> memoryCell.opcode
+                    is MemoryCell.OperandInstruction -> memoryCell.opcode
+                    else -> Opcode.WORD
+                }
+            )
         }
     }
 }
