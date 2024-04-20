@@ -292,12 +292,12 @@ class ControlUnit(
         "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
                 "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(3).reversed().joinToString(", ")}]\n" +
                 "Return stack: [${returnStack.takeLast(3).reversed().joinToString(", ")}]\n" +
-                "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}\n"
+                "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
 
     private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
-        is MemoryCell.Instruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode}\n"
-        is MemoryCell.OperandInstruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}\n"
-        is MemoryCell.Data -> "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!\n"
+        is MemoryCell.Instruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode}"
+        is MemoryCell.OperandInstruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}"
+        is MemoryCell.Data -> "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!"
     }
 
     fun simulate() {

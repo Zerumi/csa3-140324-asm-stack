@@ -1,9 +1,10 @@
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.io.File
+import java.nio.file.Path
 
-fun readCode(filename: String): Program {
-    val text = File(filename).readText(Charsets.UTF_8)
+fun readCode(filename: Path): Program {
+    val text = filename.toFile().readText(Charsets.UTF_8)
 
     val jsonInstructions = Json.decodeFromString<Program>(text)
     return jsonInstructions

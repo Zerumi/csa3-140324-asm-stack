@@ -60,7 +60,7 @@ class DataPath(
     }
 
     private fun generateMemoryWriteLog() : String =
-        "MEMORY WRITTEN VALUE: AR: $ar <--- ${dataStack.last()}\n"
+        "MEMORY WRITTEN VALUE: AR: $ar <--- ${dataStack.last()}"
 
     fun onSignalMemoryWrite() {
         memory[ar] = MemoryCell.Data(dataStack.last()) // assert in memory[ar] was data, won't fix
