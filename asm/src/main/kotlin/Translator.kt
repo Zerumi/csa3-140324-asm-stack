@@ -7,7 +7,7 @@ private fun meaningfulToken(line: String): String {
 data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
 private val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
-    Opcode.LIT,
+    Opcode.LIT
 )
 
 private fun addInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) {
@@ -29,7 +29,8 @@ private fun addInstruction(instructions: MutableList<LabelInstruction>, parsedOp
             if (operand.toIntOrNull() != null) instructions.add(
                 LabelInstruction(
                     MemoryCell.OperandInstruction(
-                        parsedOpcode, operand.toInt()
+                        parsedOpcode,
+                        operand.toInt()
                     )
                 )
             )
@@ -83,9 +84,9 @@ private fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstr
  * The second stage of translation needs for replace labels to addresses, fetched in stage 1
  */
 private fun translatePart2(
-    labels: Map<String, Int>, instructions: List<LabelInstruction>
+    labels: Map<String, Int>,
+    instructions: List<LabelInstruction>
 ): Program {
-
     val resultInstructions = emptyList<MemoryCell>().toMutableList()
 
     for (labelInstruction in instructions) {
@@ -96,7 +97,8 @@ private fun translatePart2(
                 is MemoryCell.Instruction -> {
                     resultInstructions.add(
                         MemoryCell.OperandInstruction(
-                            memoryCell.opcode, labels[labelInstruction.label]!!
+                            memoryCell.opcode,
+                            labels[labelInstruction.label]!!
                         )
                     )
                 }

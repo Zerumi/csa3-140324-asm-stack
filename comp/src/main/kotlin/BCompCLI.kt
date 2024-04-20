@@ -21,21 +21,33 @@ class BCompCLI : CliktCommand() {
     }
 
     private val programFile: Path by option(
-        "-p", "--program-file", help = "Path to JSON program file for execution"
+        "-p",
+        "--program-file",
+        help = "Path to JSON program file for execution"
     ).path(
-        mustExist = true, canBeFile = true, canBeDir = false
+        mustExist = true,
+        canBeFile = true,
+        canBeDir = false
     ).prompt("Input path to program file")
 
     private val inputFile: Path by option(
-        "-i", "--input-file", help = "Path to standard input file"
+        "-i",
+        "--input-file",
+        help = "Path to standard input file"
     ).path(
-        mustExist = true, canBeFile = true, canBeDir = false
+        mustExist = true,
+        canBeFile = true,
+        canBeDir = false
     ).prompt("Input path to standard input file")
 
     private val outputFile: Path by option(
-        "-o", "--output-file", help = "Path to output file"
+        "-o",
+        "--output-file",
+        help = "Path to output file"
     ).path(
-        mustExist = false, canBeFile = true, canBeDir = false
+        mustExist = false,
+        canBeFile = true,
+        canBeDir = false
     ).prompt("Input path to standard output file")
 
     sealed class LogPolicy {
@@ -44,8 +56,14 @@ class BCompCLI : CliktCommand() {
     }
 
     private val outputCompLog: LogPolicy by mutuallyExclusiveOptions(
-        option("-stdout", "--log-stdout").convert { LogPolicy.LogPolicyStdout },
-        option("-l", "--log-file").convert { LogPolicy.LogPolicyFile(File(it).toPath()) },
+        option(
+            "-stdout",
+            "--log-stdout"
+        ).convert { LogPolicy.LogPolicyStdout },
+        option(
+            "-l",
+            "--log-file"
+        ).convert { LogPolicy.LogPolicyFile(File(it).toPath()) },
     ).default(LogPolicy.LogPolicyStdout)
 
     private val memoryInitialSize: Int by option(help = "Memory initial size").int().default(UNINITIALIZED_MEMORY_SIZE)

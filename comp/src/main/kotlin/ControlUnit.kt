@@ -35,7 +35,9 @@ enum class Signal {
 }
 
 class ControlUnit(
-    initPc: Int, private val dataPath: DataPath, returnStackSize: Int
+    initPc: Int,
+    private val dataPath: DataPath,
+    returnStackSize: Int
 ) {
     companion object {
         private const val DEBUG_STACK_OVERVIEW = 3
@@ -299,17 +301,19 @@ class ControlUnit(
 
     private fun generateTickLogString(): String =
         "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
-                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
-                    .reversed().joinToString(", ")}]\n" +
-                "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
-                    .reversed().joinToString(", ")}]\n" +
-                "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
+            "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
+                .reversed().joinToString(", ")}]\n" +
+            "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
+                .reversed().joinToString(", ")}]\n" +
+            "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
 
     private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
-        is MemoryCell.Instruction -> "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode}"
-        is MemoryCell.OperandInstruction -> "NOW EXECUTING INSTRUCTION " +
-                "PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}"
-        is MemoryCell.Data -> "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!"
+        is MemoryCell.Instruction ->
+            "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode}"
+        is MemoryCell.OperandInstruction ->
+            "NOW EXECUTING INSTRUCTION PC: $pc --> ${currentInstr.opcode} ${currentInstr.operand}"
+        is MemoryCell.Data ->
+            "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!"
     }
 
     fun simulate() {
