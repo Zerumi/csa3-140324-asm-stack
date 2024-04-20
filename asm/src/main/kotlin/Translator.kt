@@ -116,6 +116,12 @@ private fun translatePart2(
     return program
 }
 
+/**
+ * This function translates code provided in {filename} file
+ * to machine code for stack computer
+ *
+ * Please, remember to put the label "start:" before first instruction!
+ */
 fun translateAsm(filename: String): Program {
     val text = File(filename).readText(Charsets.UTF_8)
 
