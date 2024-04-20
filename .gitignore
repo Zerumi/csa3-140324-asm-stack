@@ -40,3 +40,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### log ###
+/isa/src/main/resources/comp_log

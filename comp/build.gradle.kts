@@ -33,8 +33,8 @@ application {
 
 dependencies {
     implementation(project(":isa"))
-    implementation("org.slf4j:slf4j-simple:2.0.3")
-    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+    implementation("org.slf4j:slf4j-log4j12:2.0.3")
+    implementation("io.github.oshai:kotlin-logging-jvm:6.0.0")
     implementation("com.github.ajalt.clikt:clikt:4.3.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
