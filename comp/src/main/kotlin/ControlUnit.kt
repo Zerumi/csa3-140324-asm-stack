@@ -48,7 +48,9 @@ class ControlUnit(
 
     private val logger = KotlinLogging.logger {}
 
-    // wont fix: Latching parallel registers in sequential model of computation
+    // won't fix: Latching parallel registers in a sequential model of computation
+    // linter rules suppressed here because microprogram had a custom format
+    @Suppress("ktlint")
     private val mProgram = arrayOf(
         /* Instruction fetch */
         /* 0 */ arrayOf(Signal.LatchAR, Signal.ARSelectPC,
