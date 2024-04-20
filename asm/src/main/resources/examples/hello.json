@@ -1,1 +1,165 @@
-{"initCommand":34,"program":[{"type":"MemoryCell.Data","value":1},{"type":"MemoryCell.Data","value":2},{"type":"MemoryCell.Data","value":72},{"type":"MemoryCell.Data","value":101},{"type":"MemoryCell.Data","value":108},{"type":"MemoryCell.Data","value":108},{"type":"MemoryCell.Data","value":111},{"type":"MemoryCell.Data","value":44},{"type":"MemoryCell.Data","value":32},{"type":"MemoryCell.Data","value":119},{"type":"MemoryCell.Data","value":111},{"type":"MemoryCell.Data","value":114},{"type":"MemoryCell.Data","value":108},{"type":"MemoryCell.Data","value":100},{"type":"MemoryCell.Data","value":33},{"type":"MemoryCell.Data"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"MemoryCell.Instruction","opcode":"LOAD"},{"type":"MemoryCell.Instruction","opcode":"OUT"},{"type":"MemoryCell.Instruction","opcode":"RET"},{"type":"MemoryCell.Instruction","opcode":"DUP"},{"type":"MemoryCell.Instruction","opcode":"LOAD"},{"type":"MemoryCell.Instruction","opcode":"DUP"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":31},{"type":"MemoryCell.Instruction","opcode":"SWAP"},{"type":"MemoryCell.Instruction","opcode":"JZ"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":16},{"type":"MemoryCell.Instruction","opcode":"CALL"},{"type":"MemoryCell.Instruction","opcode":"INC"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":20},{"type":"MemoryCell.Instruction","opcode":"JUMP"},{"type":"MemoryCell.Instruction","opcode":"DROP"},{"type":"MemoryCell.Instruction","opcode":"DROP"},{"type":"MemoryCell.Instruction","opcode":"RET"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":1},{"type":"MemoryCell.Instruction","opcode":"LOAD"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":20},{"type":"MemoryCell.Instruction","opcode":"CALL"},{"type":"MemoryCell.Instruction","opcode":"HALT"}]}
+{
+  "initCommand": 34,
+  "program": [
+    {
+      "type": "MemoryCell.Data",
+      "value": 1
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 2
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 72
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 101
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 108
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 108
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 111
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 44
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 32
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 119
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 111
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 114
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 108
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 100
+    },
+    {
+      "type": "MemoryCell.Data",
+      "value": 33
+    },
+    {
+      "type": "MemoryCell.Data"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "OUT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "RET"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DUP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DUP"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 31
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "SWAP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "JZ"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 16
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "CALL"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "INC"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 20
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "JUMP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DROP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DROP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "RET"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 20
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "CALL"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "HALT"
+    }
+  ]
+}

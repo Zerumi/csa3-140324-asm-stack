@@ -2,10 +2,10 @@ import kotlinx.serialization.Serializable
 
 /**
  * Data class that holds a finite program.
- * Program represents by its first command address (in memory) and array of instructions
+ * The Program represents by its first command address (in memory) and array of instructions
  *
- * Data classes in Kotlin is just simplification of classes,
- * whose objects only holds some values.
+ * Data classes in Kotlin are just simplification of classes,
+ * whose objects only hold some values.
  */
 @Serializable
 data class Program(val initCommand: Int, val program: Array<MemoryCell>) {

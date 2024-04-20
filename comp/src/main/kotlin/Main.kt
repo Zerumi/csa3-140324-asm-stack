@@ -56,11 +56,13 @@ class BCompCLI : CliktCommand() {
             is LogPolicy.LogPolicyFile -> {
                 System.setProperty("log.console.level", "off")
                 System.setProperty("log.file.level", "debug")
-                System.setProperty("logfile.name", (outputCompLog as LogPolicy.LogPolicyFile).fp.toAbsolutePath().toString())
-                (outputCompLog as LogPolicy.LogPolicyFile).fp.toFile().printWriter().use {""}
+                System.setProperty(
+                    "logfile.name",
+                    (outputCompLog as LogPolicy.LogPolicyFile).fp.toAbsolutePath().toString()
+                )
+                (outputCompLog as LogPolicy.LogPolicyFile).fp.toFile().printWriter().use { "" }
             }
         }
-
 
         val program = readCode(programFile)
 

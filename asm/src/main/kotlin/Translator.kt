@@ -1,16 +1,20 @@
 import java.io.File
 
-fun meaningfulToken(line: String): String {
+private fun meaningfulToken(line: String): String {
     return line.split(";")[0].trim()
 }
 
 data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
-val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
+private val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
     Opcode.LIT,
 )
 
-fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>> {
+/**
+ * The First stage of translation needs to fetch all labels in code,
+ * and translate opcodes to instructions
+ */
+private fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>> {
     val labels = emptyMap<String, Int>().toMutableMap()
     val instructions = emptyList<LabelInstruction>().toMutableList()
 
@@ -71,7 +75,10 @@ fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstruction>>
     return Pair(labels, instructions)
 }
 
-fun translatePart2(
+/**
+ * The second stage of translation needs for replace labels to addresses, fetched in stage 1
+ */
+private fun translatePart2(
     labels: Map<String, Int>, instructions: List<LabelInstruction>
 ): Program {
 

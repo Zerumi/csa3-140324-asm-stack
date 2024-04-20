@@ -1,1 +1,59 @@
-{"initCommand":1,"program":[{"type":"MemoryCell.Data","value":1},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":12},{"type":"MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"MemoryCell.Instruction","opcode":"LOAD"},{"type":"MemoryCell.Instruction","opcode":"IN"},{"type":"MemoryCell.Instruction","opcode":"DUP"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"MemoryCell.Instruction","opcode":"LOAD"},{"type":"MemoryCell.Instruction","opcode":"OUT"},{"type":"MemoryCell.Instruction","opcode":"JZ"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":1},{"type":"MemoryCell.Instruction","opcode":"JUMP"},{"type":"MemoryCell.Instruction","opcode":"HALT"}]}
+{
+  "initCommand": 1,
+  "program": [
+    {
+      "type": "MemoryCell.Data",
+      "value": 1
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 12
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "IN"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DUP"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "OUT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "JZ"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "JUMP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "HALT"
+    }
+  ]
+}

@@ -59,8 +59,7 @@ class DataPath(
         ioController.output(tos, dataStack.last())
     }
 
-    private fun generateMemoryWriteLog() : String =
-        "MEMORY WRITTEN VALUE: AR: $ar <--- ${dataStack.last()}"
+    private fun generateMemoryWriteLog(): String = "MEMORY WRITTEN VALUE: AR: $ar <--- ${dataStack.last()}"
 
     fun onSignalMemoryWrite() {
         memory[ar] = MemoryCell.Data(dataStack.last()) // assert in memory[ar] was data, won't fix
@@ -117,10 +116,10 @@ class IOController {
 
     private val logger = KotlinLogging.logger {}
 
-    private fun generateIOOutputLog(port: Int, value: Int) : String =
+    private fun generateIOOutputLog(port: Int, value: Int): String =
         "I/O OPERATION OCCURS (OUT): port: $port <--- value: $value"
 
-    private fun generateIOInLog(port: Int, value: Int) : String =
+    private fun generateIOInLog(port: Int, value: Int): String =
         "I/O OPERATION OCCURS (IN): port: $port ---> value: $value"
 
     fun input(port: Int): Int {

@@ -1,5 +1,6 @@
 ; optimized version of cat program
 ; but it puts '\0' symbol at the end of the output
+
 port:
         word 1
 start:

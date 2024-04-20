@@ -1,1 +1,85 @@
-{"initCommand":13,"program":[{"type":"MemoryCell.Data"},{"type":"MemoryCell.Instruction","opcode":"DUP"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":1},{"type":"MemoryCell.Instruction","opcode":"SUB"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":12},{"type":"MemoryCell.Instruction","opcode":"SWAP"},{"type":"MemoryCell.Instruction","opcode":"JZ"},{"type":"MemoryCell.Instruction","opcode":"DUP"},{"type":"MemoryCell.Instruction","opcode":"DEC"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":1},{"type":"MemoryCell.Instruction","opcode":"CALL"},{"type":"MemoryCell.Instruction","opcode":"MUL"},{"type":"MemoryCell.Instruction","opcode":"RET"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":11},{"type":"MemoryCell.OperandInstruction","opcode":"LIT","operand":1},{"type":"MemoryCell.Instruction","opcode":"CALL"},{"type":"MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"MemoryCell.Instruction","opcode":"STORE"},{"type":"MemoryCell.Instruction","opcode":"HALT"}]}
+{
+  "initCommand": 13,
+  "program": [
+    {
+      "type": "MemoryCell.Data"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DUP"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "SUB"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 12
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "SWAP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "JZ"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DUP"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "DEC"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "CALL"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "MUL"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "RET"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 11
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 1
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "CALL"
+    },
+    {
+      "type": "MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "STORE"
+    },
+    {
+      "type": "MemoryCell.Instruction",
+      "opcode": "HALT"
+    }
+  ]
+}

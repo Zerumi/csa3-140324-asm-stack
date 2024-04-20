@@ -1,15 +1,15 @@
 A:
-    WORD 120
+            WORD 120
 B:
-    WORD 130
+            WORD 130
 Res:
-    WORD 0
+            WORD 0
 start:
-    LIT A
-    LOAD
-    LIT B
-    LOAD
-    ADD
-    LIT Res
-    STORE
-    HALT
+            LIT A
+            LOAD
+            LIT B
+            LOAD
+            ADD
+            LIT Res
+            STORE
+            HALT
