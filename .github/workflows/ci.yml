@@ -28,7 +28,31 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run DeteKt check
         uses: natiginfo/action-detekt-all@1.23.6
-
+        
       # Runs a set of commands using the runners shell
       - name: Run Kotlin linter
         uses: vroy/gha-kotlin-linter@v4
+        
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Gradle Build Action
+        uses: gradle/gradle-build-action@v3.3.1
+        with:
+          gradle-version: 8.4
+          
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Golden tests
+        run: |
+          ./gradlew :comp:integrationTest --tests "AlgorithmTest.catTest" 
+          ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloTest"
+          ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloUserNameTest" 
+          ./gradlew :comp:integrationTest --tests "AlgorithmTest.prob2Test"
