@@ -1,3 +1,6 @@
+package io.github.zerumi.csa3.comp
+
+import io.github.zerumi.csa3.isa.MemoryCell
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.collections.ArrayDeque
 
@@ -60,6 +63,8 @@ class DataPath(
     fun onSignalOutput() {
         ioController.output(tos, dataStack.last())
     }
+
+    fun generateMemoryReadLog(): String = "MEMORY READ VALUE: AR: $ar ---> ${memory[ar]}"
 
     private fun generateMemoryWriteLog(): String = "MEMORY WRITTEN VALUE: AR: $ar <--- ${dataStack.last()}"
 

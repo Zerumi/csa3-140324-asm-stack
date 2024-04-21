@@ -1,3 +1,5 @@
+package io.github.zerumi.csa3.isa
+
 enum class Opcode {
     NOP, // No operation
     WORD, // Define a numeric constant

@@ -20,7 +20,6 @@ hello_str:
                 word 33             ; '!'
                 word 0              ; \0
 
-
 print_char:
                 lit port            ; symbol port_addr
                 load                ; symbol port
