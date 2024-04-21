@@ -34,11 +34,11 @@ class AlgorithmTest {
     private fun abstractAlgorithmTest(directoryName: String) {
         // load resources (assembly code)
         val classLoader = javaClass.classLoader
-        val propFs = classLoader.getResourceAsStream("${directoryName}/comp.properties")!!.bufferedReader()
+        val propFs = classLoader.getResourceAsStream("$directoryName/comp.properties")!!.bufferedReader()
         val props = Properties()
         props.load(propFs)
 
-        val asmFile = File(classLoader.getResource("${directoryName}/${props.getProperty("assembly")}")!!.file)
+        val asmFile = File(classLoader.getResource("$directoryName/${props.getProperty("assembly")}")!!.file)
         val translatorOutput = File.createTempFile(props.getProperty("name"), ".json")
         translatorOutput.deleteOnExit()
 
@@ -51,18 +51,18 @@ class AlgorithmTest {
         )
 
         // prepare comp arguments
-        val stdin = File(classLoader.getResource("${directoryName}/${props.getProperty("stdin")}")!!.file)
-        val stdout = File(classLoader.getResource("${directoryName}/${props.getProperty("stdout")}")!!.file)
-        val logFile = File(classLoader.getResource("${directoryName}/${props.getProperty("logfile")}")!!.file)
+        val stdin = File(classLoader.getResource("$directoryName/${props.getProperty("stdin")}")!!.file)
+        val stdout = File(classLoader.getResource("$directoryName/${props.getProperty("stdout")}")!!.file)
+        val logFile = File(classLoader.getResource("$directoryName/${props.getProperty("logfile")}")!!.file)
 
         // load expected results
         val stdoutExpected =
             File(
-                classLoader.getResource("${directoryName}/${props.getProperty("expected_out")}")!!.file
+                classLoader.getResource("$directoryName/${props.getProperty("expected_out")}")!!.file
             )
         val logFileExpected =
             File(
-                classLoader.getResource("${directoryName}/${props.getProperty("expected_log")}")!!.file
+                classLoader.getResource("$directoryName/${props.getProperty("expected_log")}")!!.file
             )
 
         // run comp
