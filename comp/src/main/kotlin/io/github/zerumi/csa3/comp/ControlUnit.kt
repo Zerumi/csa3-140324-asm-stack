@@ -1,4 +1,8 @@
+package io.github.zerumi.csa3.comp
+
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.zerumi.csa3.isa.MemoryCell
+import io.github.zerumi.csa3.isa.Opcode
 import kotlin.collections.ArrayDeque
 
 enum class Signal {
@@ -299,13 +303,17 @@ class ControlUnit(
         modelTick++
     }
 
-    private fun generateTickLogString(): String =
-        "TICK $modelTick -- MPC: $mPc / MicroInstruction: ${mProgram[mPc].joinToString()} \n" +
+    private fun generateTickLogString(prevMpc: Int): String =
+        "\nTICK $modelTick -- MPC: $prevMpc / MicroInstruction: ${mProgram[prevMpc].joinToString()} \n" +
             "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
-                .reversed().joinToString(", ")}]\n" +
+                .reversed().joinToString(", ")
+            }]\n" +
             "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
-                .reversed().joinToString(", ")}]\n" +
-            "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}"
+                .reversed().joinToString(", ")
+            }]\n" +
+            "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}" +
+            if (Signal.TOSSelectMemory in mProgram[prevMpc]) "\n${dataPath.generateMemoryReadLog()}\n"
+            else "\n"
 
     private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
         is MemoryCell.Instruction ->
@@ -323,12 +331,13 @@ class ControlUnit(
                     // instruction changed
                     logger.info { generateInstrLogString() }
                 }
-                logger.info { generateTickLogString() }
+                val prevMpc = mPc // mpc will change, mProgram[mpc] will change too
                 dispatchMicroInstruction(mProgram[mPc])
+                logger.info { generateTickLogString(prevMpc) }
                 updateTick()
             }
         } catch (_: HaltedException) {
-            logger.info { "[HALTED] ${generateTickLogString()}" }
+            logger.info { "[HALTED]" }
         }
     }
 

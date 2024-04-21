@@ -1,3 +1,8 @@
+package io.github.zerumi.csa3.asm
+
+import io.github.zerumi.csa3.isa.MemoryCell
+import io.github.zerumi.csa3.isa.Opcode
+import io.github.zerumi.csa3.isa.Program
 import java.io.File
 
 private fun meaningfulToken(line: String): String {

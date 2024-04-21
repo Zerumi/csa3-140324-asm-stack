@@ -1,3 +1,5 @@
+package io.github.zerumi.csa3.comp
+
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.groups.default
 import com.github.ajalt.clikt.parameters.groups.mutuallyExclusiveOptions
@@ -7,6 +9,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.prompt
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.path
+import io.github.zerumi.csa3.isa.readCode
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.readText

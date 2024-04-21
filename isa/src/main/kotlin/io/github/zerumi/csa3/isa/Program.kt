@@ -1,3 +1,5 @@
+package io.github.zerumi.csa3.isa
+
 import kotlinx.serialization.Serializable
 
 /**
