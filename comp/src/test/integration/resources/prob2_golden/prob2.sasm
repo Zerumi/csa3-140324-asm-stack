@@ -1,0 +1,99 @@
+port:
+                    word 1
+print_digit:
+                    lit 48              ; arg 48
+                    add                 ; arg -> char
+                    lit port            ; char port_addr
+                    load                ; char port
+                    out                 ;
+                    ret                 ;
+
+print_number:
+                    lit -1              ; num -1
+                    swap                ; -1 num
+                    dup                 ; -1 num num
+                    lit negate          ; -1 num num negate
+                    swap                ; -1 num negate num
+                    jn                  ; -1 num
+                    lit loop1           ; -1 num loop1
+                    jump                ; -1 num
+negate:
+                    lit 45              ; [...] 45
+                    lit port            ; [...] 45 port_a
+                    load                ; [...] 45 port
+                    out                 ; [...]
+                    lit -1              ; 0 num -1
+                    mul                 ; 0 -num -> num
+loop1:
+                    dup                 ; 0 num num
+                    lit 10              ; 0 num num 10
+                    mod                 ; 0 num digit
+                    swap                ; 0 digit num
+                    lit 10              ; 0 digit num 10
+                    div                 ; 0 digit num/10 -> num
+                    over                ; 0 num digit num
+                    lit loop1exit       ; [...] num loop2
+                    swap                ; [...] loop2 num
+                    jz                  ; [...] num digit
+                    swap
+                    lit loop1           ; [...] num loop1
+                    jump                ; [...] num
+loop1exit:
+                    swap                ; [...] 0 digit
+                    drop                ; [...] digit
+loop2:
+                    dup                 ; digit digit
+                    lit break           ; digit digit break
+                    swap                ; digit break digit
+                    jn                  ; digit
+                    lit print_digit     ; digit print_digit
+                    call                ; digit
+                    lit loop2           ; loop2
+                    jump                ;
+break:
+                    ret                 ;
+
+sum_res:
+                    word 2              ; 2 because we it's a start of sequence
+
+accumulate_sum:
+                    over                ; op sum op
+                    add                 ; op sum+op -> sum
+                    ret
+
+start:
+                    lit 1               ; 1
+                    lit 2               ; 1 2
+loop:
+                    over                ; 2 1 2
+                    add                 ; 2 3
+                    dup                 ; 2 3 3
+                    lit 2               ; 2 3 3 2
+                    mod                 ; 2 3 1
+                    lit even            ; 2 3 1 even
+                    swap                ; 2 3 even 1
+                    jz                  ; 2 3
+                    lit exit            ; 2 3 exit
+                    jump                ; 2 3
+even:
+                    lit sum_res         ; 2 3 sum_addr
+                    load                ; 2 3 sum
+                    swap                ; 2 sum 3
+                    lit accumulate_sum  ; 2 sum 3 accumulate_sum
+                    call                ; 2 3 sum
+                    lit sum_res         ; 2 3 sum sum_addr
+                    store               ; 2 3
+exit:
+                    dup                 ; 2 3 3
+                    lit 4000000         ; 2 3 3 4000000
+                    sub                 ; 2 3 -3999997
+                    lit loop            ; 2 3 -3999997 loop
+                    swap                ; 2 3 loop -3999997
+                    jn                  ; 2 3
+                    drop                ; 2
+                    drop                ;
+                    lit sum_res         ; sum_addr
+                    load                ; sum
+                    lit print_number    ; sum print_number
+                    call                ;
+                    halt                ;
