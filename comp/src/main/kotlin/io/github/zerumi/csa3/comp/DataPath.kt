@@ -1,7 +1,7 @@
 package io.github.zerumi.csa3.comp
 
-import io.github.zerumi.csa3.isa.MemoryCell
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.zerumi.csa3.isa.MemoryCell
 import kotlin.collections.ArrayDeque
 
 class DataPath(

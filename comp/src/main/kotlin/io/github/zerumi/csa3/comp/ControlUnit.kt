@@ -305,15 +305,15 @@ class ControlUnit(
 
     private fun generateTickLogString(prevMpc: Int): String =
         "\nTICK $modelTick -- MPC: $prevMpc / MicroInstruction: ${mProgram[prevMpc].joinToString()} \n" +
-                "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
-                    .reversed().joinToString(", ")
-                }]\n" +
-                "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
-                    .reversed().joinToString(", ")
-                }]\n" +
-                "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}" +
-                if (Signal.TOSSelectMemory in mProgram[prevMpc]) "\n${dataPath.generateMemoryReadLog()}\n"
-                else "\n"
+            "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
+                .reversed().joinToString(", ")
+            }]\n" +
+            "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
+                .reversed().joinToString(", ")
+            }]\n" +
+            "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}" +
+            if (Signal.TOSSelectMemory in mProgram[prevMpc]) "\n${dataPath.generateMemoryReadLog()}\n"
+            else "\n"
 
     private fun generateInstrLogString(): String = when (val currentInstr = dataPath.memory[pc]) {
         is MemoryCell.Instruction ->
