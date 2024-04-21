@@ -1,11 +1,16 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.*
-import kotlin.io.path.fileSize
+import java.util.Properties
 
+/**
+ * Important notice!
+ * You shouldn't run these tests simultaneously!
+ *
+ * Example of correct test usage:
+ * gradlew :comp:integrationTest --tests "AlgorithmTest.helloUserNameTest"
+ */
 class AlgorithmTest {
-
     @Test
     fun catTest() {
         abstractAlgorithmTest("cat_golden")
@@ -34,7 +39,7 @@ class AlgorithmTest {
         props.load(propFs)
 
         val asmFile = File(classLoader.getResource("${directoryName}/${props.getProperty("assembly")}")!!.file)
-        val translatorOutput = File.createTempFile("transtator_output_${props.getProperty("name")}", ".json")
+        val translatorOutput = File.createTempFile(props.getProperty("name"), ".json")
         translatorOutput.deleteOnExit()
 
         // run translator
@@ -70,20 +75,25 @@ class AlgorithmTest {
                 "--output-file",
                 stdout.absolutePath,
                 "--log-file",
-                logFile.absolutePath.toString()
+                logFile.absolutePath
             )
         )
 
-        if (System.getProperty("updateExpected").equals("true", ignoreCase = true)) {
+        if (System.getProperty("updateGolden") == "true") {
             val outExpectedResourceFile = File(props.getProperty("expected_out_resource"))
             stdout.copyTo(outExpectedResourceFile, true)
 
             val logExpectedResourceFile = File(props.getProperty("expected_log_resource"))
-            logExpectedResourceFile.printWriter().use { out -> out.println(logFile.toPath().fileSize()) }
+            logFile.copyTo(logExpectedResourceFile, true)
         } else {
             // assert results
-            assertEquals(stdout.readText(Charsets.UTF_8), stdoutExpected.readText(Charsets.UTF_8))
-            assertEquals(logFile.readText(Charsets.UTF_8), logFileExpected.readText(Charsets.UTF_8))
+            val stdoutText = stdout.readText(Charsets.UTF_8)
+            val stdoutExpectedText = stdoutExpected.readText(Charsets.UTF_8)
+            assertEquals(stdoutText, stdoutExpectedText)
+
+            val logText = logFile.readText(Charsets.UTF_8)
+            val logExpectedText = logFileExpected.readText(Charsets.UTF_8)
+            assertEquals(logText, logExpectedText)
         }
     }
 }
