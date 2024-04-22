@@ -28,11 +28,11 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run DeteKt check
         uses: natiginfo/action-detekt-all@1.23.6
-
+        
       # Runs a set of commands using the runners shell
       - name: Run Kotlin linter
         uses: vroy/gha-kotlin-linter@v4
-
+        
   build:
     runs-on: ubuntu-latest
 
@@ -43,7 +43,7 @@ jobs:
         uses: gradle/gradle-build-action@v3.3.1
         with:
           gradle-version: 8.4
-
+          
   test:
     runs-on: ubuntu-latest
 
