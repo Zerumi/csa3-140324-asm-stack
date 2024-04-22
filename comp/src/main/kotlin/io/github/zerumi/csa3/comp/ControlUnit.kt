@@ -305,10 +305,10 @@ class ControlUnit(
 
     private fun generateTickLogString(prevMpc: Int): String =
         "\nTICK $modelTick -- MPC: $prevMpc / MicroInstruction: ${mProgram[prevMpc].joinToString()} \n" +
-            "Stack: [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
+            "Stack (size = ${dataPath.dataStack.size + 1}): [${dataPath.tos} | ${dataPath.dataStack.takeLast(DEBUG_STACK_OVERVIEW)
                 .reversed().joinToString(", ")
             }]\n" +
-            "Return stack: [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
+            "Return stack (size = ${returnStack.size}): [${returnStack.takeLast(DEBUG_STACK_OVERVIEW)
                 .reversed().joinToString(", ")
             }]\n" +
             "PC: $pc AR: ${dataPath.ar} BR: ${dataPath.br}" +

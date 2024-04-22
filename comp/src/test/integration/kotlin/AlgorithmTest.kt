@@ -1,3 +1,4 @@
+import io.github.zerumi.csa3.isa.readCode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -31,6 +32,11 @@ class AlgorithmTest {
         abstractAlgorithmTest("prob2_golden")
     }
 
+    @Test
+    fun facTest() {
+        abstractAlgorithmTest("fac_golden")
+    }
+
     private fun abstractAlgorithmTest(directoryName: String) {
         // load resources (assembly code)
         val classLoader = javaClass.classLoader
@@ -42,6 +48,10 @@ class AlgorithmTest {
         val translatorOutput = File.createTempFile(props.getProperty("name"), ".json")
         translatorOutput.deleteOnExit()
 
+        val expectedAssemblyCode = File(
+            classLoader.getResource("$directoryName/${props.getProperty("expected_assembly")}")!!.file
+        )
+
         // run translator
         io.github.zerumi.csa3.asm.main(
             arrayOf(
@@ -52,8 +62,10 @@ class AlgorithmTest {
 
         // prepare comp arguments
         val stdin = File(classLoader.getResource("$directoryName/${props.getProperty("stdin")}")!!.file)
-        val stdout = File(classLoader.getResource("$directoryName/${props.getProperty("stdout")}")!!.file)
-        val logFile = File(classLoader.getResource("$directoryName/${props.getProperty("logfile")}")!!.file)
+        val stdout = File.createTempFile("${props.getProperty("name")}_stdout", ".txt")
+        val logFile = File.createTempFile("${props.getProperty("name")}_log", ".txt")
+        stdout.deleteOnExit()
+        logFile.deleteOnExit()
 
         // load expected results
         val stdoutExpected =
@@ -80,6 +92,9 @@ class AlgorithmTest {
         )
 
         if (System.getProperty("updateGolden") == "true") {
+            val assemblyExpectedResourceFile = File(props.getProperty("expected_assembly_resource"))
+            translatorOutput.copyTo(assemblyExpectedResourceFile, true)
+
             val outExpectedResourceFile = File(props.getProperty("expected_out_resource"))
             stdout.copyTo(outExpectedResourceFile, true)
 
@@ -87,6 +102,8 @@ class AlgorithmTest {
             logFile.copyTo(logExpectedResourceFile, true)
         } else {
             // assert results
+            assertEquals(readCode(expectedAssemblyCode.toPath()), readCode(translatorOutput.toPath()))
+
             val stdoutText = stdout.readText(Charsets.UTF_8)
             val stdoutExpectedText = stdoutExpected.readText(Charsets.UTF_8)
             assertEquals(stdoutText, stdoutExpectedText)

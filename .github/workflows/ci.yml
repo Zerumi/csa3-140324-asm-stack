@@ -56,3 +56,4 @@ jobs:
           ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloTest"
           ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloUserNameTest" 
           ./gradlew :comp:integrationTest --tests "AlgorithmTest.prob2Test"
+          ./gradlew :comp:integrationTest --tests "AlgorithmTest.facTest"
