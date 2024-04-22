@@ -3,8 +3,8 @@ plugins {
     application
 }
 
-group = "io.github"
-version = "1.0-SNAPSHOT"
+group = "io.github.zerumi"
+version = "1.0"
 
 repositories {
     mavenCentral()
