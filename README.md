@@ -10,8 +10,10 @@ Full variant --
 
 Aimed for 30/40 points (variant made w/o complication)
 
-Full report (in Russian) you may see here (Markdown): [report](/docs/report.md)  
-Also in .pdf: [here](/docs/P3206%20Афанасьев_Кирилл_Александрович%20ЛР3%20Отчёт.pdf)
+Full report (in Russian) you may see here (Markdown):
+[report](/docs/report.md)  
+Also in .pdf:
+[here](/docs/P3206%20Афанасьев_Кирилл_Александрович%20ЛР3%20Отчёт.pdf)
 
 Task details: <https://gitlab.se.ifmo.ru/computer-systems/csa-rolling/-/blob/master/lab3-task.md>
 
@@ -156,7 +158,8 @@ CLI: `java -jar asm-1.0.jar <input_file> <target_file>`
 Implemented in [asm](/asm) module.  
 Two passes:
 
-1) Generation of machine code without jump addresses and calculation of jump label values.
+1) Generation of machine code without jump addresses
+   and calculation of jump label values.
    Assembly mnemonics are translated one-to-one
    into machine instructions; except for the WORD mnemonics.
    In its case, a variable is initialized in memory without any opcode.
