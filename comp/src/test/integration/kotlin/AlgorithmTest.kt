@@ -60,7 +60,6 @@ class AlgorithmTest {
             )
         )
 
-
         // prepare comp arguments
         val stdin = File(classLoader.getResource("$directoryName/${props.getProperty("stdin")}")!!.file)
         val stdout = File.createTempFile("${props.getProperty("name")}_stdout", ".txt")
