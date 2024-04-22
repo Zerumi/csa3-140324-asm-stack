@@ -61,18 +61,27 @@ class BCompCLI : CliktCommand() {
     private val outputCompLog: LogPolicy by mutuallyExclusiveOptions(
         option(
             "-stdout",
-            "--log-stdout"
+            "--log-stdout",
+            help = "Use stdout for logging"
         ).convert { LogPolicy.LogPolicyStdout },
         option(
             "-l",
-            "--log-file"
+            "--log-file",
+            help = "Use log file. Specify a file, or use /dev/null for suppress logs"
         ).convert { LogPolicy.LogPolicyFile(File(it).toPath()) }
     ).default(LogPolicy.LogPolicyStdout)
 
-    private val memoryInitialSize: Int by option(help = "Memory initial size").int().default(UNINITIALIZED_MEMORY_SIZE)
+    private val memoryInitialSize: Int by option(
+        "--memory-initial-size",
+        help = "Memory initial size"
+    ).int().default(UNINITIALIZED_MEMORY_SIZE)
 
-    private val dataStackSize: Int by option(help = "Data stack size").int().default(DEFAULT_STACK_SIZE)
-    private val returnStackSize: Int by option(help = "Return Stack size").int().default(DEFAULT_STACK_SIZE)
+    private val dataStackSize: Int by option(
+        "--data-stack-size",
+        help = "Data stack size").int().default(DEFAULT_STACK_SIZE)
+    private val returnStackSize: Int by option(
+        "--return-stack-size",
+        help = "Return Stack size").int().default(DEFAULT_STACK_SIZE)
 
     override fun run() {
         when (outputCompLog) {

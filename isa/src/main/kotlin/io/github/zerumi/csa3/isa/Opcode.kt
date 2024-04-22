@@ -16,9 +16,9 @@ enum class Opcode {
     DROP, // Throw out value from stack
     DUP, // Duplicate TOS on stack
     SWAP, // Swap TOS and pre-last element
-    OVER, // Push TOS over pre-last element of the stack
-    OR, // Or 2 elements from stack, push result on stack
-    AND, // And 2 elements from stack, push result on stack
+    OVER, // Push TOS over a pre-last element of the stack
+    AND, // And 2 elements from stack, push a result on stack
+    OR, // Or 2 elements from stack, push a result on stack
     XOR, // Xor 2 elements from stack, push result on stack
     JZ, // If Top Of DS = 0, jump by TOS
     JN, // If Top Of DS < 0, jump by TOS

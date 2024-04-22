@@ -4,11 +4,18 @@ import java.io.File
 import java.util.Properties
 
 /**
- * Important notice!
+ * Class with golden tests definition
+ *
+ * <b>Important notice!</b>
  * You shouldn't run these tests simultaneously!
  *
+ * JUnit 5 doesn't have support for golden tests
+ * (see https://github.com/junit-team/junit5/discussions/2697)
+ *
+ * I've fixed this problem as much as it possible...
+ *
  * Example of correct test usage:
- * gradlew :comp:integrationTest --tests "AlgorithmTest.helloUserNameTest"
+ * ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloUserNameTest"
  */
 class AlgorithmTest {
     @Test

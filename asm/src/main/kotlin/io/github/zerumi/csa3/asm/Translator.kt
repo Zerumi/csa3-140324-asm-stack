@@ -5,17 +5,17 @@ import io.github.zerumi.csa3.isa.Opcode
 import io.github.zerumi.csa3.isa.Program
 import java.io.File
 
-private fun meaningfulToken(line: String): String {
-    return line.split(";")[0].trim()
-}
-
 data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
 private val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
     Opcode.LIT
 )
 
-private fun addInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) {
+private fun meaningfulToken(line: String): String {
+    return line.split(";")[0].trim()
+}
+
+private fun addLabelInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) {
     when (parsedOpcode) {
         Opcode.WORD -> {
             // data may be a number, otherwise this is a label
@@ -78,7 +78,7 @@ private fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstr
 
             val operand = if (instruction.size == 2) instruction[1] else ""
 
-            addInstruction(instructions, parsedOpcode, operand)
+            addLabelInstruction(instructions, parsedOpcode, operand)
         }
     }
 
