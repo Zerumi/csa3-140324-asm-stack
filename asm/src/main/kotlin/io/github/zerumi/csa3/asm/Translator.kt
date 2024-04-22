@@ -5,8 +5,6 @@ import io.github.zerumi.csa3.isa.Opcode
 import io.github.zerumi.csa3.isa.Program
 import java.io.File
 
-data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
-
 private val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
     Opcode.LIT
 )
@@ -14,6 +12,8 @@ private val POSSIBLE_OPERAND_INSTRUCTIONS = setOf(
 private fun meaningfulToken(line: String): String {
     return line.split(";")[0].trim()
 }
+
+data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
 private fun addLabelInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) {
     when (parsedOpcode) {
