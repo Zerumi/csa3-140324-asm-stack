@@ -32,6 +32,9 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run Kotlin linter
         uses: vroy/gha-kotlin-linter@v4
+
+      - name: markdown-lint
+        uses: articulate/actions-markdownlint@v1.1.0
         
   build:
     runs-on: ubuntu-latest
