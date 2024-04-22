@@ -2,7 +2,7 @@
 
 Computer system architecture laboratory work #3  
 Full variant --
-`asm | stack | neum | mc | tick 
+`asm | stack | neum | mc | tick
 | struct | stream | port | cstr | prob2 | -`
 
 (source: `asm | stack | neum | mc -> hw | tick -> instr
@@ -13,7 +13,7 @@ Aimed for 30/40 points (variant made w/o complication)
 Full report (in Russian) you may see here (Markdown): [report](/docs/report.md)  
 Also in .pdf: [here](/docs/P3206%20Афанасьев_Кирилл_Александрович%20ЛР3%20Отчёт.pdf)
 
-Task details: https://gitlab.se.ifmo.ru/computer-systems/csa-rolling/-/blob/master/lab3-task.md
+Task details: <https://gitlab.se.ifmo.ru/computer-systems/csa-rolling/-/blob/master/lab3-task.md>
 
 ## Assembly language
 
@@ -72,7 +72,8 @@ Syntax:
 <comment> ::= " "* ";" " "* <letter_or_number_with_underscore>*
 ```
 
-The Program completes sequentially, one instruction after another. Example of a program that calculates a factorial
+The Program completes sequentially, one instruction after another.
+Example of a program that calculates a factorial:
 
 ```asm
 res:
@@ -108,31 +109,45 @@ start:
 * `LIT <literal>` – push literal on top of the stack.
 * `LOAD { address }` – load value in memory by address.
 * `STORE { address, element }` – push value in memory by address.
-* `ADD { e1, e2 }` – push the result of the addition operation onto the stack e2 + e1.
-* `SUB { e1, e2 }` – push the result of the subtraction operation onto the stack e2 – e1.
-* `MUL { e1, e2 }` – push the result of the multiplication operation onto the stack e2 * e1.
-* `DIV { e1, e2 }` – push the result of the division operation onto the stack e2 / e1.
-* `MOD { e1, e2 }` – push the result of the mod operation onto the stack e2 % e1.
+* `ADD { e1, e2 }` – push the result of the addition operation
+  onto the stack e2 + e1.
+* `SUB { e1, e2 }` – push the result of the subtraction operation
+  onto the stack e2 – e1.
+* `MUL { e1, e2 }` – push the result of the multiplication operation
+  onto the stack e2 * e1.
+* `DIV { e1, e2 }` – push the result of the division operation
+  onto the stack e2 / e1.
+* `MOD { e1, e2 }` – push the result of the mod operation
+  onto the stack e2 % e1.
 * `INC { element }` – increment top of the stack.
 * `DEC { element }` – decrement top of the stack.
 * `DROP { element }` – remove element from stack.
 * `DUP { element }` – duplicate the first element (tos) on stack.
 * `SWAP { e1, e2 }` – swap 2 elements.
-* `OVER { e1 } [ e2 ]` – duplicate the first element on the stack through the second. If there is only one element on
-  the stack, the behavior is undefined.
-* `AND { e1, e2 }` – push the result of a logical "AND" operation onto the stack e2 & e1.
-* `OR { e1, e2 }` – push the result of a logical "OR" operation onto the stack e2 | e1.
-* `XOR { e1, e2 }` – push the result of a logical "XOR" operation onto the stack e2 ^ e1.
-* `JZ { element, address }` – if the element is 0, start executing instructions at the specified address. A type of
-  conditional jump.
-* `JN { element, address }` – if the element is negative, start executing instructions at the specified address. A type
-  of conditional jump.
-* `JUMP { address }` – proceed an unconditional transition to the specified address.
-* `CALL { address }` – start execution of the procedure by the specified address.
+* `OVER { e1 } [ e2 ]` – duplicate the first element
+  on the stack through the second.
+  If there is only one element on the stack, the behavior is undefined.
+* `AND { e1, e2 }` – push the result of a logical "AND" operation
+  onto the stack e2 & e1.
+* `OR { e1, e2 }` – push the result of a logical "OR" operation
+  onto the stack e2 | e1.
+* `XOR { e1, e2 }` – push the result of a logical "XOR" operation
+  onto the stack e2 ^ e1.
+* `JZ { element, address }` – if the element is 0, start executing instructions
+  at the specified address.
+  A type of conditional jump.
+* `JN { element, address }` – if the element is negative, start executing
+  instructions at the specified address.
+  A type of conditional jump.
+* `JUMP { address }` – proceed an unconditional transition
+  to the specified address.
+* `CALL { address }` – start execution of the procedure
+  by the specified address.
 * `RET` – return from a procedure.
 * `IN { port }` – receive data from an external device by a specified port.
-* `OUT { port, value }` – receive data to an external device by a specified port.
-* `HALT` – stop clock generator and modeling process
+* `OUT { port, value }` – receive data to an external device
+  by a specified port.
+* `HALT` – stop clock generator and modeling process.
 
 ## Assembly translator
 
@@ -142,7 +157,8 @@ Implemented in [asm](/asm) module.
 Two passes:
 
 1) Generation of machine code without jump addresses and calculation of jump label values.
-   Assembly mnemonics are translated one-to-one into machine instructions; except for the WORD mnemonics.
+   Assembly mnemonics are translated one-to-one
+   into machine instructions; except for the WORD mnemonics.
    In its case, a variable is initialized in memory without any opcode.
    However, WORD, along with instructions, also supports labels.
 2) Substitution of transition marks in instructions.
