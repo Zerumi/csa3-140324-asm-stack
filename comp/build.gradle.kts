@@ -84,7 +84,7 @@ tasks.named<Test>("integrationTest") {
 tasks.withType(Jar::class) {
     manifest {
         attributes["Manifest-Version"] = "1.0"
-        attributes["Main-Class"] = "MainKt"
+        attributes["Main-Class"] = "io.github.zerumi.csa3.comp.MainKt"
     }
     // To avoid the duplicate handling strategy error
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

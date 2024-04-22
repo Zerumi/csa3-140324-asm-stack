@@ -1,24 +1,24 @@
 res:
-        word 0
+        word 0      ; result accumulator
 fac:
-        dup         ; arg arg
-        lit 1       ; arg arg 1
-        sub         ; arg 0/pos_num
-        lit break   ; arg 0/pos_num break
-        swap        ; arg break 0/pos_num
-        jz          ; arg
-        dup         ; arg arg
-        dec         ; arg (arg - 1) -> arg
-        lit fac     ; [...] arg fac
-        call        ; [...] res
-        mul         ; res
+        dup         ; Stack: arg arg
+        lit 1       ; Stack: arg arg 1
+        sub         ; Stack: arg 0/pos_num
+        lit break   ; Stack: arg 0/pos_num break
+        swap        ; Stack: arg break 0/pos_num
+        jz          ; Stack: arg
+        dup         ; Stack: arg arg
+        dec         ; Stack: arg (arg - 1) -> arg
+        lit fac     ; Stack: [...] arg fac
+        call        ; Stack: [...] res
+        mul         ; Stack: res
 break:
-        ret         ; arg/res
+        ret         ; Stack: arg/res
 
 start:
-        lit 11
-        lit fac
-        call
-        lit res
-        store
-        halt
+        lit 11      ; Stack: 11
+        lit fac     ; Stack: 11 fac
+        call        ; Stack: 11!
+        lit res     ; Stack: 11! res_addr
+        store       ; Stack: <empty>
+        halt        ; halted
