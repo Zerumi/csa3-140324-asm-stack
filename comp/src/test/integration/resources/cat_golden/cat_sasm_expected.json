@@ -1,1 +1,76 @@
-{"initCommand":1,"program":[{"type":"io.github.zerumi.csa3.isa.MemoryCell.Data","value":1},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT","operand":16},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"LOAD"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"IN"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"OVER"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"JZ"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT","operand":16},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"SWAP"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"LOAD"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"OVER"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"OUT"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"IN"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT","operand":5},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"JUMP"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"HALT"}]}
+{
+  "initCommand": 1,
+  "program": [
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Data",
+      "value": 1
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 16
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "IN"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "OVER"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "JZ"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 16
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "SWAP"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
+      "opcode": "LIT"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "LOAD"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "OVER"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "OUT"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "IN"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
+      "opcode": "LIT",
+      "operand": 5
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "JUMP"
+    },
+    {
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
+      "opcode": "HALT"
+    }
+  ]
+}

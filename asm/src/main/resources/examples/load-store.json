@@ -2,48 +2,48 @@
   "initCommand": 3,
   "program": [
     {
-      "type": "MemoryCell.Data",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Data",
       "value": 120
     },
     {
-      "type": "MemoryCell.Data",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Data",
       "value": 130
     },
     {
-      "type": "MemoryCell.Data"
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Data"
     },
     {
-      "type": "MemoryCell.OperandInstruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
       "opcode": "LIT"
     },
     {
-      "type": "MemoryCell.Instruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
       "opcode": "LOAD"
     },
     {
-      "type": "MemoryCell.OperandInstruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
       "opcode": "LIT",
       "operand": 1
     },
     {
-      "type": "MemoryCell.Instruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
       "opcode": "LOAD"
     },
     {
-      "type": "MemoryCell.Instruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
       "opcode": "ADD"
     },
     {
-      "type": "MemoryCell.OperandInstruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction",
       "opcode": "LIT",
       "operand": 2
     },
     {
-      "type": "MemoryCell.Instruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
       "opcode": "STORE"
     },
     {
-      "type": "MemoryCell.Instruction",
+      "type": "io.github.zerumi.csa3.isa.MemoryCell.Instruction",
       "opcode": "HALT"
     }
   ]
