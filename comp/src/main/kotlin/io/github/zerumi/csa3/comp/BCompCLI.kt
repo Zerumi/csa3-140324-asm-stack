@@ -78,10 +78,12 @@ class BCompCLI : CliktCommand() {
 
     private val dataStackSize: Int by option(
         "--data-stack-size",
-        help = "Data stack size").int().default(DEFAULT_STACK_SIZE)
+        help = "Data stack size"
+    ).int().default(DEFAULT_STACK_SIZE)
     private val returnStackSize: Int by option(
         "--return-stack-size",
-        help = "Return Stack size").int().default(DEFAULT_STACK_SIZE)
+        help = "Return Stack size"
+    ).int().default(DEFAULT_STACK_SIZE)
 
     override fun run() {
         when (outputCompLog) {
