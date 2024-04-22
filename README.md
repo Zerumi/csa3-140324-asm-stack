@@ -18,6 +18,7 @@ _Also in .pdf:
 Task details: <https://gitlab.se.ifmo.ru/computer-systems/csa-rolling/-/blob/master/lab3-task.md>
 
 ## Table of Contents
+
 1. [Assembly Language](#assembly-language)
 2. [ISA](#isa)
 3. [Assembly Translator](#assembly-translator)
