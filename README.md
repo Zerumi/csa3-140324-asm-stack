@@ -8,20 +8,30 @@ Full variant --
 (source: `asm | stack | neum | mc -> hw | tick -> instr
 | struct | stream | port | cstr | prob2 | cache`)
 
-Aimed for 30/40 points (variant made w/o complication)
+Aimed for 30/40 points (variant made w/o complication).
 
-Full report (in Russian) you may see here (Markdown):
-[report](/docs/report.md)  
-Also in .pdf:
-[here](/docs/P3206%20Афанасьев_Кирилл_Александрович%20ЛР3%20Отчёт.pdf)
+**Full report (in Russian) you may see here (Markdown):
+[report](/docs/report.md)**  
+_Also in .pdf:
+[here](/docs/P3206%20Афанасьев_Кирилл_Александрович%20ЛР3%20Отчёт.pdf)_
 
 Task details: <https://gitlab.se.ifmo.ru/computer-systems/csa-rolling/-/blob/master/lab3-task.md>
+
+## Table of Contents
+1. [Assembly Language](#assembly-language)
+2. [ISA](#isa)
+3. [Assembly Translator](#assembly-translator)
+4. [Computer Simulation](#computer-simulation)
+5. [Tests](#tests)
+6. [Usage Example](#usage-example)
+7. [Testing Source Example](#testing-source-example)
+8. [General stats](#general-stats)
 
 ## Assembly language
 
 Syntax:
 
-```bnf
+```ebnf
 <line> ::= <label> <comment>? "\n"
        | <instr> <comment>? "\n"
        | <comment> "\n"
