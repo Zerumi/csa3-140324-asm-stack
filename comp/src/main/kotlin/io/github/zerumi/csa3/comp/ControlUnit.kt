@@ -324,6 +324,13 @@ class ControlUnit(
             "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!"
     }
 
+    private fun generateMemoryDump(): String = "Memory Dump:\n" +
+            dataPath.memory.mapIndexed { index, memoryCell ->
+                "$index: $memoryCell"
+            }.reduce { a, b ->
+                "$a\n$b"
+            }
+
     fun simulate() {
         try {
             while (true) {
@@ -337,7 +344,7 @@ class ControlUnit(
                 updateTick()
             }
         } catch (_: HaltedException) {
-            logger.info { "[HALTED]" }
+            logger.info { "[HALTED]\n" + generateMemoryDump() }
         }
     }
 

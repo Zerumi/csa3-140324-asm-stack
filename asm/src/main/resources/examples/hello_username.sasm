@@ -64,6 +64,18 @@ read_string:
                 jz              ; str_addr input
                 swap            ; input str_addr
                 over            ; str_addr input str_addr
+                dup             ; [...] str_addr -> str_addr
+                inc             ; str_addr + 1
+                load            ; zero/symbol
+                lit continue    ; zero/symbol continue
+                swap            ; continue zero/symbol
+                jz              ; str_addr input str_addr
+                drop            ; str_addr input
+                drop            ; str_addr
+                lit 0           ; str_addr 0
+                lit stop_read   ; because current symbol was nul-terminating
+                jump            ;
+continue:
                 store           ; str_addr
                 inc             ; str_addr + 1 -> str_addr
                 lit read_string ; str_addr read_string
@@ -115,20 +127,25 @@ start:
                 lit print_str   ; hello_user print_str
                 call            ;
 
+                lit user_input  ; user_input
+                lit print_str   ; user_input print_str
+                call
+
                 lit 33          ; '!'
                 lit print_char  ; '!' print_char
                 call            ;
 
                 halt            ;
 
-hello_user:
-                word 72         ; H
-                word 101        ; e
-                word 108        ; l
-                word 108        ; l
-                word 111        ; o
-                word 44         ; ,
-                word 32         ;
-
 user_input:
-                word 0
+                buf 30
+
+hello_user:
+                word 72         ; 'H'
+                word 101        ; 'e'
+                word 108        ; 'l'
+                word 108        ; 'l'
+                word 111        ; 'o'
+                word 44         ; ','
+                word 32         ; ' '
+                word 0          ; '\0'
