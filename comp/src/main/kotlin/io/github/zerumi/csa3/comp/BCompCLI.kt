@@ -126,7 +126,7 @@ class BCompCLI : CliktCommand() {
         ioUnit.outputBuffer.removeIf { x -> x == 0 }
 
         outputFile.toFile().printWriter().use { out ->
-            out.println(ioUnit.outputBuffer.map { x -> Char(x) }.joinToString(separator = ""))
+            out.print(ioUnit.outputBuffer.map { x -> Char(x) }.joinToString(separator = ""))
         }
     }
 }
