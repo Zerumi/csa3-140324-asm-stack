@@ -53,10 +53,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Golden tests
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
         run: |
-          ./gradlew :comp:integrationTest --tests "AlgorithmTest.catTest" 
-          ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloTest"
-          ./gradlew :comp:integrationTest --tests "AlgorithmTest.helloUserNameTest" 
-          ./gradlew :comp:integrationTest --tests "AlgorithmTest.prob2Test"
-          ./gradlew :comp:integrationTest --tests "AlgorithmTest.facTest"
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run tests and collect coverage
+        run: |
+          poetry run coverage run -m pytest .
+          poetry run coverage report -m
+
