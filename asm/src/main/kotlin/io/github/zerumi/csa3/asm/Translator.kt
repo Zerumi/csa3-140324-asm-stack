@@ -15,7 +15,11 @@ private fun meaningfulToken(line: String): String {
 
 data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
-private fun addLabelInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) : Int {
+private fun addLabelInstruction(
+    instructions: MutableList<LabelInstruction>,
+    parsedOpcode:
+    Opcode, operand: String
+): Int {
     var instructionsAdded = 1
 
     when (parsedOpcode) {
