@@ -1,4 +1,5 @@
 import os
+import subprocess
 import tempfile
 
 import pytest
@@ -18,8 +19,9 @@ def test_translator_and_machine(golden):
         with open(input_stream, "w", encoding="utf-8") as file:
             file.write(golden["in_stdin"])
 
-        os.system(f"cd .. && ./gradlew asm:run --args=\"{source} {target}\"")
-        os.system(f"cd .. && ./gradlew comp:run --args=\"-p {target} -i {input_stream} -o {output_stream} -l {log_stream}\"")
+        subprocess.call(f"cd .. && ./gradlew asm:run --args=\"{source} {target}\"", shell=True)
+        subprocess.call(f"cd .. && ./gradlew comp:run "
+                        f"--args=\"-p {target} -i {input_stream} -o {output_stream} -l {log_stream}\"", shell=True)
 
         with open(target, "r", encoding="utf-8") as file:
             code = file.read()
