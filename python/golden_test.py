@@ -4,6 +4,10 @@ import tempfile
 
 import pytest
 
+import shlex
+
+def run_command( command ):
+    subprocess.call(shlex.split(command), shell=False, cwd='..')
 
 @pytest.mark.golden_test("golden/*.yml")
 def test_translator_and_machine(golden):
@@ -19,9 +23,10 @@ def test_translator_and_machine(golden):
         with open(input_stream, "w", encoding="utf-8") as file:
             file.write(golden["in_stdin"])
 
-        subprocess.call(f"cd .. && ./gradlew asm:run --args=\"{source} {target}\"", shell=True)
-        subprocess.call(f"cd .. && ./gradlew comp:run "
-                        f"--args=\"-p {target} -i {input_stream} -o {output_stream} -l {log_stream}\"", shell=True)
+
+        run_command(f"./gradlew asm:run --args=\"{source} {target}\"")
+        run_command(f"./gradlew comp:run "
+                        f"--args=\"-p {target} -i {input_stream} -o {output_stream} -l {log_stream}\"")
 
         with open(target, "r", encoding="utf-8") as file:
             code = file.read()
