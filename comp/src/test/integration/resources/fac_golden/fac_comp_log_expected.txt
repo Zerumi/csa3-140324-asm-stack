@@ -3570,3 +3570,24 @@ Return stack (size = 0): []
 PC: 18 AR: 18 BR: 0
 
 [INFO]: io.github.zerumi.csa3.comp.ControlUnit - [HALTED]
+Memory Dump:
+0: Data(value=39916800)
+1: Instruction(opcode=DUP)
+2: OperandInstruction(opcode=LIT, operand=1)
+3: Instruction(opcode=SUB)
+4: OperandInstruction(opcode=LIT, operand=12)
+5: Instruction(opcode=SWAP)
+6: Instruction(opcode=JZ)
+7: Instruction(opcode=DUP)
+8: Instruction(opcode=DEC)
+9: OperandInstruction(opcode=LIT, operand=1)
+10: Instruction(opcode=CALL)
+11: Instruction(opcode=MUL)
+12: Instruction(opcode=RET)
+13: OperandInstruction(opcode=LIT, operand=11)
+14: OperandInstruction(opcode=LIT, operand=1)
+15: Instruction(opcode=CALL)
+16: OperandInstruction(opcode=LIT, operand=0)
+17: Instruction(opcode=STORE)
+18: Instruction(opcode=HALT)
+19: Data(value=0)

@@ -3,6 +3,7 @@ package io.github.zerumi.csa3.isa
 enum class Opcode {
     NOP, // No operation
     WORD, // Define a numeric constant
+    BUF, // Define a zeroed buffer
     LIT, // Push literal on stack
     LOAD, // Load value to data stack
     STORE, // Push value from data stack to memory

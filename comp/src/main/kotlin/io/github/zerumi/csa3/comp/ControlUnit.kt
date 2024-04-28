@@ -38,6 +38,9 @@ enum class Signal {
     ALUSum, ALUSub, ALUMul, ALUDiv, ALUMod, ALUAnd, ALUOr, ALUXor, ALUPlus1, ALUMinus1,
 }
 
+// there are 11 functions, limit - 10
+// suppress it because these functions are quite simple, and it's not a god-object
+@Suppress("TooManyFunctions")
 class ControlUnit(
     initPc: Int,
     private val dataPath: DataPath,
@@ -324,6 +327,13 @@ class ControlUnit(
             "NOW EXECUTING DATA INSTRUCTION PC: $pc --> value: ${currentInstr.value}. WATCH OUT!!!"
     }
 
+    private fun generateMemoryDump(): String = "Memory Dump:\n" +
+        dataPath.memory.mapIndexed { index, memoryCell ->
+            "$index: $memoryCell"
+        }.reduce { a, b ->
+            "$a\n$b"
+        }
+
     fun simulate() {
         try {
             while (true) {
@@ -337,7 +347,7 @@ class ControlUnit(
                 updateTick()
             }
         } catch (_: HaltedException) {
-            logger.info { "[HALTED]" }
+            logger.info { "[HALTED]\n" + generateMemoryDump() }
         }
     }
 

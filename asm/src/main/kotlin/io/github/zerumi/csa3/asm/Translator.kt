@@ -15,7 +15,13 @@ private fun meaningfulToken(line: String): String {
 
 data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
-private fun addLabelInstruction(instructions: MutableList<LabelInstruction>, parsedOpcode: Opcode, operand: String) {
+private fun addLabelInstruction(
+    instructions: MutableList<LabelInstruction>,
+    parsedOpcode: Opcode,
+    operand: String
+): Int {
+    var instructionsAdded = 1
+
     when (parsedOpcode) {
         Opcode.WORD -> {
             // data may be a number, otherwise this is a label
@@ -27,6 +33,18 @@ private fun addLabelInstruction(instructions: MutableList<LabelInstruction>, par
                 )
             )
             else instructions.add(LabelInstruction(MemoryCell.Data(), operand.lowercase()))
+        }
+
+        Opcode.BUF -> {
+            // for simplification purpose defining a buffer available only with constant value
+            instructions.addAll(
+                List(operand.toInt()) { _ ->
+                    LabelInstruction(
+                        MemoryCell.Data(0)
+                    )
+                }
+            )
+            instructionsAdded = operand.toInt()
         }
 
         in POSSIBLE_OPERAND_INSTRUCTIONS -> {
@@ -47,6 +65,8 @@ private fun addLabelInstruction(instructions: MutableList<LabelInstruction>, par
             instructions.add(LabelInstruction(MemoryCell.Instruction(parsedOpcode)))
         }
     }
+
+    return instructionsAdded
 }
 
 /**
@@ -63,12 +83,10 @@ private fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstr
         val token = meaningfulToken(line)
         if (token.isEmpty()) continue
 
-        nextInstructionLine++
-
         if (token.endsWith(":")) {
             // this is a label
             val label = token.substringBefore(":")
-            labels[label.lowercase()] = --nextInstructionLine
+            labels[label.lowercase()] = nextInstructionLine
         } else {
             // this is an opcode instruction
             val instruction = token.split(" ")
@@ -78,7 +96,7 @@ private fun translatePart1(text: String): Pair<Map<String, Int>, List<LabelInstr
 
             val operand = if (instruction.size == 2) instruction[1] else ""
 
-            addLabelInstruction(instructions, parsedOpcode, operand)
+            nextInstructionLine += addLabelInstruction(instructions, parsedOpcode, operand)
         }
     }
 
