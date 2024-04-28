@@ -360,7 +360,27 @@ CLI: `java -jar comp-1.0.jar [-p | --program-file <filepath>]
 
 ## Тестирование
 
-Тестирование выполняется при помощи golden-тестов на базе `JUnit Platform v.5`.
+Тестирование выполняется при помощи golden-тестов на базе `Pytest Golden`.
+
+1. Тестовый файл расположен в модуле
+[/python](/python/golden_test.py)
+2. Golden-файлы расположены в директории
+[/python/golden](/python/golden)
+
+Запустить тесты можно следующим образом:
+
+```shell
+poetry run pytest . -v
+```
+
+Обновить конфигурацию golden-тестов можно
+путем добавления флага `--update-goldens` к команде выше:
+
+```shell
+poetry run pytest . -v --update-goldens
+```
+
+Legacy way (Kotlin + JUnit Platform 5):
 
 1. Тестовый класс реализован в модуле
 [/comp/src/test/integration, в файле kotlin/Test.kt](
@@ -408,7 +428,7 @@ CLI: `java -jar comp-1.0.jar [-p | --program-file <filepath>]
 * build:
   * Gradle build
 * test:
-  * run gradlew (commands above)
+  * run poetry tests
 
 ## Пример использования
 
@@ -523,40 +543,26 @@ PC: 18 AR: 18 BR: 0
 ## Пример тестирования исходного кода
 
 ```zsh
-zerumi@MacBook-Air-Kirill csa3-140324-asm-stack % pwd
-/Users/zerumi/IdeaProjects/csa3-140324-asm-stack
-zerumi@MacBook-Air-Kirill csa3-140324-asm-stack % ./gradlew :comp:integrationTest --tests "AlgorithmTest.facTest"
-Starting a Gradle Daemon, 2 incompatible and 1 stopped Daemons could not be reused, use --status for details
+zerumi@MacBook-Air-Kirill python % cd python
+zerumi@MacBook-Air-Kirill python % pwd
+/Users/zerumi/IdeaProjects/csa3-140324-asm-stack/python
+zerumi@MacBook-Air-Kirill python % poetry run pytest . -v
+============================= test session starts ==============================
+platform darwin -- Python 3.12.3, pytest-8.2.0, pluggy-1.5.0 -- /opt/homebrew/opt/python@3.12/bin/python3.12
+cachedir: .pytest_cache
+rootdir: /Users/zerumi/IdeaProjects/csa3-140324-asm-stack/python
+configfile: pyproject.toml
+plugins: golden-0.2.2
+collected 6 items                                                              
 
-> Configure project :comp
-w: file:///Users/zerumi/IdeaProjects/csa3-140324-asm-stack/comp/build.gradle.kts:72:9: 'getter for testSourceDirs: (Mutable)Set<File!>!' is deprecated. Deprecated in Java
-w: file:///Users/zerumi/IdeaProjects/csa3-140324-asm-stack/comp/build.gradle.kts:72:9: 'getter for testSourceDirs: (Mutable)Set<File!>!' is deprecated. Deprecated in Java
+golden_test.py::test_translator_and_machine[golden/hello_username.yml] PASSED [ 16%]
+golden_test.py::test_translator_and_machine[golden/hello_username_overflow.yml] PASSED [ 33%]
+golden_test.py::test_translator_and_machine[golden/fac.yml] PASSED       [ 50%]
+golden_test.py::test_translator_and_machine[golden/cat.yml] PASSED       [ 66%]
+golden_test.py::test_translator_and_machine[golden/prob2.yml] PASSED     [ 83%]
+golden_test.py::test_translator_and_machine[golden/hello.yml] PASSED     [100%]
 
-The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. 
-This might happen in subprojects that apply the Kotlin plugins with the Gradle 'plugins { ... }' DSL if they specify explicit versions, even if the versions are equal.
-Please add the Kotlin plugin to the common parent project or the root project, then remove the versions in the subprojects.
-If the parent project does not need the plugin, add 'apply false' to the plugin line.
-See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
-The Kotlin plugin was loaded in the following projects: ':asm', ':isa'
-
-Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
-
-You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
-
-For more on this, please refer to https://docs.gradle.org/8.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
-
-BUILD SUCCESSFUL in 10s
-15 actionable tasks: 4 executed, 11 up-to-date
-
-The build scan was not published due to a configuration problem.
-
-The buildScan extension 'termsOfUseAgree' value must be exactly the string 'yes' (without quotes).
-The value given was 'no'.
-
-For more information, please see https://gradle.com/help/gradle-plugin-terms-of-use.
-
-Alternatively, if you are using Develocity, specify the server location.
-For more information, please see https://gradle.com/help/gradle-plugin-config.
+============================== 6 passed in 12.25s ==============================
 ```
 
 ## Общая статистика
