@@ -66,6 +66,7 @@ jobs:
 
       - name: Run tests and collect coverage
         run: |
+          cd python
           poetry run coverage run -m pytest .
           poetry run coverage report -m
 
