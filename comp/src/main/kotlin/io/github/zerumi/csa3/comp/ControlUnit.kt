@@ -328,11 +328,11 @@ class ControlUnit(
     }
 
     private fun generateMemoryDump(): String = "Memory Dump:\n" +
-            dataPath.memory.mapIndexed { index, memoryCell ->
-                "$index: $memoryCell"
-            }.reduce { a, b ->
-                "$a\n$b"
-            }
+        dataPath.memory.mapIndexed { index, memoryCell ->
+            "$index: $memoryCell"
+        }.reduce { a, b ->
+            "$a\n$b"
+        }
 
     fun simulate() {
         try {

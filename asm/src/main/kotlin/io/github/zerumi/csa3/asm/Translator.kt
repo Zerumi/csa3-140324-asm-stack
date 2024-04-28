@@ -17,8 +17,8 @@ data class LabelInstruction(val instruction: MemoryCell, val label: String = "")
 
 private fun addLabelInstruction(
     instructions: MutableList<LabelInstruction>,
-    parsedOpcode:
-    Opcode, operand: String
+    parsedOpcode: Opcode,
+    operand: String
 ): Int {
     var instructionsAdded = 1
 
