@@ -12,7 +12,7 @@ def run_command( command ):
 @pytest.mark.golden_test("golden/*.yml")
 def test_translator_and_machine(golden):
     with tempfile.TemporaryDirectory() as tmpdirname:
-        source = os.path.join(tmpdirname, "source.bf")
+        source = os.path.join(tmpdirname, "source.sasm")
         input_stream = os.path.join(tmpdirname, "input.txt")
         output_stream = os.path.join(tmpdirname, "output.txt")
         log_stream = os.path.join(tmpdirname, "comp_log.txt")
