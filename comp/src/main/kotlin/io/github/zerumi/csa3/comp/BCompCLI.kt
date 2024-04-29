@@ -12,6 +12,7 @@ import com.github.ajalt.clikt.parameters.types.path
 import io.github.zerumi.csa3.isa.readCode
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.readText
 import kotlin.streams.toList
 
@@ -86,9 +87,12 @@ class BCompCLI : CliktCommand() {
     ).int().default(DEFAULT_STACK_SIZE)
 
     override fun run() {
+        val logTempFile = kotlin.io.path.createTempFile()
+
         when (outputCompLog) {
             is LogPolicy.LogPolicyStdout -> {
                 System.setProperty("log.file.level", "off")
+                System.setProperty("logfile.name", logTempFile.toAbsolutePath().toString())
             }
 
             is LogPolicy.LogPolicyFile -> {
@@ -128,5 +132,7 @@ class BCompCLI : CliktCommand() {
         outputFile.toFile().printWriter().use { out ->
             out.print(ioUnit.outputBuffer.map { x -> Char(x) }.joinToString(separator = ""))
         }
+
+        logTempFile.deleteIfExists()
     }
 }
