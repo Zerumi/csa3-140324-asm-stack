@@ -117,8 +117,14 @@ start:
 
 ## ISA
 
-* `NOP` – no operation.
+Assembly-only instructions:
+
 * `WORD <literal>` – define a variable in memory.
+* `BUF <amount>` – define a zero-buffer in memory.
+
+Computer/Assembly instructions:
+
+* `NOP` – no operation.
 * `LIT <literal>` – push literal on top of the stack.
 * `LOAD { address }` – load value in memory by address.
 * `STORE { address, element }` – push value in memory by address.
@@ -192,7 +198,23 @@ Processor schema's available [here](/docs/csa-3-proc-scheme.pdf)
 
 ## Tests
 
-Implemented integration golden-tests (based on `JUnit Platform v.5`)
+Implemented integration golden-tests (based on `Pytest Golden`).
+
+For run test use this commands:
+
+```shell
+cd python
+poetry run pytest . -v
+```
+
+For update golden-files, use this command (just add `--update-goldens`):
+
+```shell
+cd python
+poetry run pytest . -v --update-goldens
+```
+
+Legacy-way (`Junit Platform 5`):
 
 For run test use this commands:
 
@@ -205,7 +227,7 @@ For run test use this commands:
   ./gradlew :comp:integrationTest --tests "AlgorithmTest.facTest"
 ```
 
-For update golden-configuration, use this commands (just add `-DupdateGolden=true`):
+For update golden-files, use this commands (just add `-DupdateGolden=true`):
 
 ```shell
   # pwd ./csa3-140324-asm-stack
@@ -364,4 +386,5 @@ golden_test.py::test_translator_and_machine[golden/hello.yml] PASSED     [100%]
 | Афанасьев Кирилл Александрович |  fac  | 23  |   -   |  18   |    133     | 566  | asm | stack | neum | mc -> hw | tick -> instr | struct | stream | port | cstr | prob2 | cache |
 ```
 
-v.1.0 by Zerumi, 22/04/2024
+v.1.0 by Zerumi, 22/04/2024  
+v.1.1 by Zerumi, 29/04/2024
