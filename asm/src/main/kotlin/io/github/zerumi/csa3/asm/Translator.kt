@@ -25,10 +25,10 @@ private fun addLabelInstruction(
     when (parsedOpcode) {
         Opcode.WORD -> {
             // data may be a number, otherwise this is a label
-            if (operand.toIntOrNull() != null) instructions.add(
+            if (operand.toIntOrNull() != null || operand.toFloatOrNull() != null) instructions.add(
                 LabelInstruction(
                     MemoryCell.Data(
-                        operand.toInt()
+                        if (operand.toIntOrNull() == null) operand.toFloat() else operand.toInt(),
                     )
                 )
             )
@@ -49,11 +49,11 @@ private fun addLabelInstruction(
 
         in POSSIBLE_OPERAND_INSTRUCTIONS -> {
             // operand may be a number, otherwise this is a label
-            if (operand.toIntOrNull() != null) instructions.add(
+            if (operand.toIntOrNull() != null || operand.toFloatOrNull() != null) instructions.add(
                 LabelInstruction(
                     MemoryCell.OperandInstruction(
                         parsedOpcode,
-                        operand.toInt()
+                        if (operand.toIntOrNull() == null) operand.toFloat() else operand.toInt()
                     )
                 )
             )

@@ -25,17 +25,23 @@ enum class Signal {
     TOSSelectMemory,
     TOSSelectDS,
     TOSSelectALU,
+    TOSSelectFPALU,
     TOSSelectBR,
     ARSelectTOS,
     ARSelectPC,
     ALULeftOPZero,
     ALULeftOPDataStack,
+    FPALULeftOPZero,
+    FPALULeftOPDataStack,
 
     // I/O, Memory
     MemoryWrite, Output,
 
     // ALU operations
     ALUSum, ALUSub, ALUMul, ALUDiv, ALUMod, ALUAnd, ALUOr, ALUXor, ALUPlus1, ALUMinus1,
+
+    // FP ALU operations
+    FPALUSum, FPALUSub, FPALUMul, FPALUDiv,
 }
 
 // there are 11 functions, limit - 10
@@ -248,6 +254,34 @@ class ControlUnit(
         /* 65 */ arrayOf(Signal.DataStackPop,
                     Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
                     Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* ADDF */
+        /* 66 */ arrayOf(Signal.FPALUSum, Signal.FPALULeftOPDataStack,
+            Signal.TOSSelectFPALU, Signal.LatchTOS,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 67 */ arrayOf(Signal.DataStackPop,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+            Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* SUBF */
+        /* 68 */ arrayOf(Signal.FPALUSub, Signal.FPALULeftOPDataStack,
+            Signal.TOSSelectFPALU, Signal.LatchTOS,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 69 */ arrayOf(Signal.DataStackPop,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+            Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* MULF */
+        /* 70 */ arrayOf(Signal.FPALUMul, Signal.FPALULeftOPDataStack,
+            Signal.TOSSelectFPALU, Signal.LatchTOS,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 71 */ arrayOf(Signal.DataStackPop,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+            Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DIVF */
+        /* 72 */ arrayOf(Signal.FPALUDiv, Signal.FPALULeftOPDataStack,
+            Signal.TOSSelectFPALU, Signal.LatchTOS,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 73 */ arrayOf(Signal.DataStackPop,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+            Signal.LatchPC, Signal.PCJumpTypeNext),
     )
 
     // suppress it because numbers matches with the microprogram above
@@ -279,6 +313,10 @@ class ControlUnit(
         Opcode.RET -> 59
         Opcode.IN -> 61
         Opcode.OUT -> 62
+        Opcode.ADDF -> 66
+        Opcode.SUBF -> 68
+        Opcode.MULF -> 70
+        Opcode.DIVF -> 72
         Opcode.HALT -> throw HaltedException()
         else -> throw UnknownOpcodeException() // WORD, etc..
     }
@@ -355,12 +393,12 @@ class ControlUnit(
         if (Signal.PCJumpTypeNext in microcode) {
             pc++
         } else if (Signal.PCJumpTypeTOS in microcode) {
-            pc = dataPath.tos
+            pc = dataPath.tos as Int
         } else if (Signal.PCJumpTypeJZ in microcode) {
-            if (dataPath.tos == 0) pc = dataPath.dataStack.last()
+            if (dataPath.tos == 0) pc = dataPath.dataStack.last() as Int
             else pc++
         } else if (Signal.PCJumpTypeJN in microcode) {
-            if (dataPath.tos < 0) pc = dataPath.dataStack.last()
+            if ((dataPath.tos as Int) < 0) pc = dataPath.dataStack.last() as Int
             else pc++
         } else if (Signal.PCJumpTypeRET in microcode) {
             pc = returnStack.last()

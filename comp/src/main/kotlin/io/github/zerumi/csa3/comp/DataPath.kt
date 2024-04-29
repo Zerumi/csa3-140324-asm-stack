@@ -14,9 +14,9 @@ class DataPath(
     lateinit var controlUnit: ControlUnit
     lateinit var ioController: IOController
 
-    val dataStack = ArrayDeque<Int>(dataStackSize)
-    var tos = 0
-    var br = 0
+    val dataStack = ArrayDeque<Number>(dataStackSize)
+    var tos : Number = 0
+    var br : Number = 0
     var ar = 0
     val memory = Array<MemoryCell>(memoryInitialSize) { MemoryCell.Data() }
 
@@ -25,6 +25,7 @@ class DataPath(
     }
 
     private val alu = ALU(this)
+    private val fpalu = FPAlu(this)
 
     fun onSignalDataStackPush() {
         dataStack.addLast(tos)
@@ -36,7 +37,7 @@ class DataPath(
 
     fun onSignalLatchAR(microcode: Array<Signal>) {
         if (Signal.ARSelectTOS in microcode) {
-            ar = tos
+            ar = tos as Int
         } else if (Signal.ARSelectPC in microcode) {
             ar = controlUnit.pc
         }
@@ -53,15 +54,17 @@ class DataPath(
             }
         } else if (Signal.TOSSelectALU in microcode) {
             tos = alu.output(microcode)
+        } else if (Signal.TOSSelectFPALU in microcode) {
+            tos = fpalu.output(microcode)
         } else if (Signal.TOSSelectInput in microcode) {
-            tos = ioController.input(tos)
+            tos = ioController.input(tos as Int)
         } else if (Signal.TOSSelectBR in microcode) {
             tos = br
         }
     }
 
     fun onSignalOutput() {
-        ioController.output(tos, dataStack.last())
+        ioController.output(tos as Int, dataStack.last() as Int)
     }
 
     fun generateMemoryReadLog(): String = "MEMORY READ VALUE: AR: $ar ---> ${memory[ar]}"
@@ -80,9 +83,9 @@ class DataPath(
 
 class ALU(private val dataPath: DataPath) {
     fun output(microcode: Array<Signal>): Int {
-        val rightOperand = dataPath.tos
+        val rightOperand = dataPath.tos as Int
         val leftOperand = if (Signal.ALULeftOPDataStack in microcode) {
-            dataPath.dataStack.last()
+            dataPath.dataStack.last() as Int
         } else if (Signal.ALULeftOPZero in microcode) {
             0
         } else {
@@ -114,6 +117,33 @@ class ALU(private val dataPath: DataPath) {
         if (Signal.ALUMinus1 in microcode) {
             result--
         }
+        return result
+    }
+}
+
+class FPAlu(private val dataPath: DataPath) {
+    fun output(microcode: Array<Signal>): Float {
+        val rightOperand = dataPath.tos as Float
+        val leftOperand = if (Signal.FPALULeftOPDataStack in microcode) {
+            dataPath.dataStack.last() as Float
+        } else if (Signal.FPALULeftOPZero in microcode) {
+            0.0f
+        } else {
+            0.0f // UB
+        }
+
+        val result = if (Signal.FPALUSum in microcode) {
+            leftOperand + rightOperand
+        } else if (Signal.FPALUSub in microcode) {
+            leftOperand - rightOperand
+        } else if (Signal.FPALUMul in microcode) {
+            leftOperand * rightOperand
+        } else if (Signal.FPALUDiv in microcode) {
+            leftOperand / rightOperand
+        } else {
+            0.0f // UB
+        }
+
         return result
     }
 }

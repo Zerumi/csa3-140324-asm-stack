@@ -11,6 +11,10 @@ enum class Opcode {
     SUB, // Subtract 2 elements from stack, push result on stack
     MUL, // Multiple 2 elements from stack, push result on stack
     DIV, // Divide 2 elements from stack, push result on stack
+    ADDF, // Add 2 float elements from stack, push result on stack
+    SUBF, // Subtract 2 float elements from stack, push result on stack
+    MULF, // Multiple 2 float elements from stack, push result on stack
+    DIVF, // Divide 2 float elements from stack, push result on stack
     MOD, // Get modulo of 2 elements from stack, push result on stack
     INC, // Increase TOS by 1
     DEC, // Decrease TOS by 1

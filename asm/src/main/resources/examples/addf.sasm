@@ -1,0 +1,9 @@
+result:
+        word 0
+start:
+        lit 2.2
+        lit 3.9
+        addf
+        lit result
+        store
+        halt
