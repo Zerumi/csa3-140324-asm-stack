@@ -59,14 +59,15 @@ Syntax:
       | "or"
       | "and"
       | "xor"
+      | "jmp"
+      | "jz"
+      | "call"
       | "ret"
       | "in"
       | "out"
       | "halt"
 
-<op1> ::= "jmp"
-      | "jz"
-      | "call"
+<op1> ::= "lit"
 
 <positive_integer> ::= [0-9]+
 <integer> ::= "-"? <positive_integer>
