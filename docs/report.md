@@ -39,7 +39,6 @@
         | <op1> " " <positive_integer>
 
 <op0> ::= "nop"
-      | "word"
       | "lit"
       | "load"
       | "store"
@@ -61,6 +60,8 @@
       | "halt"
 
 <op1> ::= "lit"
+      | "word"
+      | "buf"
 
 <positive_integer> ::= [0-9]+
 <integer> ::= "-"? <positive_integer>
@@ -312,7 +313,7 @@ CLI: `java -jar comp-1.0.jar [-p | --program-file <filepath>]
   функциям, реализующим конкретные сигналы передается вся микроинструкция,
   функция, в свою очередь, берут оттуда лишь то, что им нужно.
 
-Схемы DataPath и ControlUnit расположены [здесь](/docs/csa-3-proc-scheme.pdf)
+Схемы DataPath и ControlUnit расположены [здесь](/docs/csa-3-proc-scheme-1.1.pdf)
 
 Описание сигналов DataPath:
 

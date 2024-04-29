@@ -46,7 +46,6 @@ Syntax:
         | <op1> " " <positive_integer>
 
 <op0> ::= "nop"
-      | "word"
       | "lit"
       | "load"
       | "store"
@@ -68,6 +67,8 @@ Syntax:
       | "halt"
 
 <op1> ::= "lit"
+      | "word"
+      | "buf"
 
 <positive_integer> ::= [0-9]+
 <integer> ::= "-"? <positive_integer>
@@ -195,7 +196,7 @@ or `java -jar comp-1.0.jar [-h | --help]`
 
 Implemented in [comp](/comp) module.
 
-Processor schema's available [here](/docs/csa-3-proc-scheme.pdf)
+Processor schema's available [here](/docs/csa-3-proc-scheme-1.1.pdf)
 
 ## Tests
 
