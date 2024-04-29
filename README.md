@@ -46,7 +46,6 @@ Syntax:
         | <op1> " " <positive_integer>
 
 <op0> ::= "nop"
-      | "word"
       | "lit"
       | "load"
       | "store"
@@ -59,14 +58,17 @@ Syntax:
       | "or"
       | "and"
       | "xor"
+      | "jmp"
+      | "jz"
+      | "call"
       | "ret"
       | "in"
       | "out"
       | "halt"
 
-<op1> ::= "jmp"
-      | "jz"
-      | "call"
+<op1> ::= "lit"
+      | "word"
+      | "buf"
 
 <positive_integer> ::= [0-9]+
 <integer> ::= "-"? <positive_integer>
@@ -117,8 +119,14 @@ start:
 
 ## ISA
 
-* `NOP` – no operation.
+Assembly-only instructions:
+
 * `WORD <literal>` – define a variable in memory.
+* `BUF <amount>` – define a zero-buffer in memory.
+
+Computer/Assembly instructions:
+
+* `NOP` – no operation.
 * `LIT <literal>` – push literal on top of the stack.
 * `LOAD { address }` – load value in memory by address.
 * `STORE { address, element }` – push value in memory by address.
@@ -188,11 +196,27 @@ or `java -jar comp-1.0.jar [-h | --help]`
 
 Implemented in [comp](/comp) module.
 
-Processor schema's available [here](/docs/csa-3-proc-scheme.pdf)
+Processor schema's available [here](/docs/csa-3-proc-scheme-1.1.pdf)
 
 ## Tests
 
-Implemented integration golden-tests (based on `JUnit Platform v.5`)
+Implemented integration golden-tests (based on `Pytest Golden`).
+
+For run test use this commands:
+
+```shell
+cd python
+poetry run pytest . -v
+```
+
+For update golden-files, use this command (just add `--update-goldens`):
+
+```shell
+cd python
+poetry run pytest . -v --update-goldens
+```
+
+Legacy-way (`Junit Platform 5`):
 
 For run test use this commands:
 
@@ -205,7 +229,7 @@ For run test use this commands:
   ./gradlew :comp:integrationTest --tests "AlgorithmTest.facTest"
 ```
 
-For update golden-configuration, use this commands (just add `-DupdateGolden=true`):
+For update golden-files, use this commands (just add `-DupdateGolden=true`):
 
 ```shell
   # pwd ./csa3-140324-asm-stack
@@ -333,40 +357,26 @@ PC: 18 AR: 18 BR: 0
 ## Testing source example
 
 ```zsh
-zerumi@MacBook-Air-Kirill csa3-140324-asm-stack % pwd
-/Users/zerumi/IdeaProjects/csa3-140324-asm-stack
-zerumi@MacBook-Air-Kirill csa3-140324-asm-stack % ./gradlew :comp:integrationTest --tests "AlgorithmTest.facTest"
-Starting a Gradle Daemon, 2 incompatible and 1 stopped Daemons could not be reused, use --status for details
+zerumi@MacBook-Air-Kirill python % cd python
+zerumi@MacBook-Air-Kirill python % pwd
+/Users/zerumi/IdeaProjects/csa3-140324-asm-stack/python
+zerumi@MacBook-Air-Kirill python % poetry run pytest . -v
+============================= test session starts ==============================
+platform darwin -- Python 3.12.3, pytest-8.2.0, pluggy-1.5.0 -- /opt/homebrew/opt/python@3.12/bin/python3.12
+cachedir: .pytest_cache
+rootdir: /Users/zerumi/IdeaProjects/csa3-140324-asm-stack/python
+configfile: pyproject.toml
+plugins: golden-0.2.2
+collected 6 items                                                              
 
-> Configure project :comp
-w: file:///Users/zerumi/IdeaProjects/csa3-140324-asm-stack/comp/build.gradle.kts:72:9: 'getter for testSourceDirs: (Mutable)Set<File!>!' is deprecated. Deprecated in Java
-w: file:///Users/zerumi/IdeaProjects/csa3-140324-asm-stack/comp/build.gradle.kts:72:9: 'getter for testSourceDirs: (Mutable)Set<File!>!' is deprecated. Deprecated in Java
+golden_test.py::test_translator_and_machine[golden/hello_username.yml] PASSED [ 16%]
+golden_test.py::test_translator_and_machine[golden/hello_username_overflow.yml] PASSED [ 33%]
+golden_test.py::test_translator_and_machine[golden/fac.yml] PASSED       [ 50%]
+golden_test.py::test_translator_and_machine[golden/cat.yml] PASSED       [ 66%]
+golden_test.py::test_translator_and_machine[golden/prob2.yml] PASSED     [ 83%]
+golden_test.py::test_translator_and_machine[golden/hello.yml] PASSED     [100%]
 
-The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. 
-This might happen in subprojects that apply the Kotlin plugins with the Gradle 'plugins { ... }' DSL if they specify explicit versions, even if the versions are equal.
-Please add the Kotlin plugin to the common parent project or the root project, then remove the versions in the subprojects.
-If the parent project does not need the plugin, add 'apply false' to the plugin line.
-See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
-The Kotlin plugin was loaded in the following projects: ':asm', ':isa'
-
-Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
-
-You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
-
-For more on this, please refer to https://docs.gradle.org/8.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
-
-BUILD SUCCESSFUL in 10s
-15 actionable tasks: 4 executed, 11 up-to-date
-
-The build scan was not published due to a configuration problem.
-
-The buildScan extension 'termsOfUseAgree' value must be exactly the string 'yes' (without quotes).
-The value given was 'no'.
-
-For more information, please see https://gradle.com/help/gradle-plugin-terms-of-use.
-
-Alternatively, if you are using Develocity, specify the server location.
-For more information, please see https://gradle.com/help/gradle-plugin-config.
+============================== 6 passed in 12.25s ==============================
 ```
 
 ## General stats
@@ -378,4 +388,5 @@ For more information, please see https://gradle.com/help/gradle-plugin-config.
 | Афанасьев Кирилл Александрович |  fac  | 23  |   -   |  18   |    133     | 566  | asm | stack | neum | mc -> hw | tick -> instr | struct | stream | port | cstr | prob2 | cache |
 ```
 
-v.1.0 by Zerumi, 22/04/2024
+v.1.0 by Zerumi, 22/04/2024  
+v.1.1 by Zerumi, 29/04/2024
