@@ -1,0 +1,223 @@
+; defined port address
+port:
+                word 1          ; standard port
+
+; read char from defined port i/o address
+; consumed operand: nothing
+; return: symbol which read from i/o
+; usage: lit read_char + call
+read_char:
+                lit port        ; port_addr
+                load            ; port
+                in              ; in_symbol
+                ret             ; in_symbol
+
+; read string from defined port i/o address
+; consumed operand: zeroed_buffer_addr
+; returns nothing, but buffer will contain string which read from i/o
+; usage: lit arg + lit read_string + call
+read_string:
+                lit stop_read   ; str_addr stop_read
+                lit read_char   ; str_addr stop_read read_char
+                call            ; str_addr stop_read input
+                over            ; str_addr input stop_read input
+                jz              ; str_addr input
+                swap            ; input str_addr
+                over            ; str_addr input str_addr
+                dup             ; [...] str_addr -> str_addr
+                inc             ; str_addr + 1
+                load            ; zero/symbol
+                lit continue    ; zero/symbol continue
+                swap            ; continue zero/symbol
+                jz              ; str_addr input str_addr
+                drop            ; str_addr input
+                drop            ; str_addr
+                lit 0           ; str_addr 0
+                lit stop_read   ; because current symbol was nul-terminating
+                jump            ;
+continue:
+                store           ; str_addr
+                inc             ; str_addr + 1 -> str_addr
+                lit read_string ; str_addr read_string
+                jump            ; str_addr
+stop_read:
+                swap            ; input str_addr
+                store           ;
+                ret             ;
+
+; strlen function
+; consumed operand: str_addr
+; return: length of str given by str_addr
+; usage: lit arg + lit strlen + call
+strlen_temp:
+                word 0                  ; strlen_result
+strlen:
+                lit 0                   ; str_addr 0
+                lit strlen_temp         ; str_addr 0 strlen_temp
+                store                   ; str_addr
+strlen_impl:
+                dup                     ; str_addr str_addr
+                load                    ; str_addr symbol
+                lit strlen_exit         ; str_addr symbol strlen_exit
+                swap                    ; str_addr strlen_exit symbol
+                jz                      ; str_addr
+                lit strlen_temp         ; str_addr strlen_temp
+                dup                     ; str_addr strlen_temp strlen_temp
+                load                    ; str_addr strlen_temp strlen_result
+                inc                     ; str_addr strlen_temp strlen_result + 1
+                swap                    ; str_addr strlen_result + 1 strlen_temp
+                store                   ; str_addr
+                inc                     ; str_addr + 1 -> str_addr
+                lit strlen_impl         ; str_addr strlen_impl
+                jump                    ; str_addr
+strlen_exit:
+                drop                    ; <empty>
+                lit strlen_temp         ; strlen_temp
+                load                    ; strlen_result
+                ret                     ; strlen_result
+
+; parse single digit from char
+; consumed operand: symbol
+; return: digit
+; usage: lit arg + lit parse_digit + call
+parse_digit:
+                lit 48                  ; symbol 48
+                sub                     ; digit
+                ret                     ; digit
+
+; parse int function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_int + call
+number_length:
+                word 0
+parsed_number:
+                word 0
+number_multiplier:
+                word 1
+parse_int:
+                lit 0                   ; str_addr 0
+                lit parsed_number       ; str_addr 0 parsed_number
+                store                   ; str_addr
+                lit 1                   ; str_addr 1
+                lit number_multiplier   ; str_addr 1 number_multiplier
+                store                   ; str_addr
+parse_int_impl:
+                dup                     ; str_addr str_addr
+                dup                     ; str_addr str_addr str_addr
+                lit strlen              ; str_addr str_addr str_addr strlen
+                call                    ; str_addr str_addr strlen_res
+                dup                     ; str_addr str_addr strlen_res strlen_res
+                lit number_length       ; str_addr str_addr strlen_res strlen_res number_length
+                store                   ; str_addr str_addr strlen_res
+                add                     ; str_addr str_addr_plus_length -> m_str
+parse_int_loop:
+                dec                     ; str_addr m_str - 1 -> m_str
+                dup                     ; str_addr m_str m_str
+                load                    ; str_addr m_str digit_s
+                lit parse_digit         ; [..] digit_s parse_digit
+                call                    ; [..] digit
+                lit number_multiplier   ; digit number_multiplier_addr
+                load                    ; digit number_multiplier
+                over                    ; number_multiplier digit number_multiplier
+                mul                     ; number_multiplier digit * number_multiplier -> num_to_add
+                lit parsed_number       ; [..] num_to_add parsed_number_addr
+                load                    ; num_to_add parsed_number
+                add                     ; parsed_number + num_to_add -> parsed_number
+                lit parsed_number       ; parsed_number parsed_number_addr
+                store                   ; number_multiplier
+                lit 10                  ; number_multiplier 10
+                mul                     ; number_multiplier * 10 -> number_multiplier
+                lit number_multiplier   ; number_multiplier number_multiplier_addr
+                store                   ; str_addr m_str
+                swap                    ; m_str str_addr
+                over                    ; str_addr m_str str_addr
+                swap                    ; str_addr str_addr m_str
+                over                    ; str_addr m_str str_addr m_str
+                sub                     ; str_addr m_str 0/non zero
+                lit parse_int_exit      ; [..] 0/non zero parse_int_exit
+                swap                    ; parse_int_exit 0/non zero
+                jz                      ; str_addr m_str
+                lit parse_int_loop      ; str_addr m_str parse_int_loop
+                jump                    ; str_addr m_str
+parse_int_exit:
+                drop                    ; str_addr
+                drop                    ; <empty>
+                lit parsed_number       ; parsed_number
+                load                    ; result
+                ret                     ; result
+
+; print digit to port i/o
+; consumed operand: digit
+; returns nothing
+; usage: lit arg + lit print_digit + call
+print_digit:
+                lit 48              ; arg 48
+                add                 ; arg -> char
+                lit port            ; char port_addr
+                load                ; char port
+                out                 ;
+                ret                 ;
+
+; print number to port i/o
+; consumed operand: number
+; returns nothing
+; usage: lit arg + lit print_number + call
+print_number:
+                lit -1              ; num -1
+                swap                ; -1 num
+                dup                 ; -1 num num
+                lit negate          ; -1 num num negate
+                swap                ; -1 num negate num
+                jn                  ; -1 num
+                lit loop1           ; -1 num loop1
+                jump                ; -1 num
+negate:
+                lit 45              ; [...] 45
+                lit port            ; [...] 45 port_a
+                load                ; [...] 45 port
+                out                 ; [...]
+                lit -1              ; 0 num -1
+                mul                 ; 0 -num -> num
+loop1:
+                dup                 ; 0 num num
+                lit 10              ; 0 num num 10
+                mod                 ; 0 num digit
+                swap                ; 0 digit num
+                lit 10              ; 0 digit num 10
+                div                 ; 0 digit num/10 -> num
+                over                ; 0 num digit num
+                lit loop1exit       ; [...] num loop2
+                swap                ; [...] loop2 num
+                jz                  ; [...] num digit
+                swap
+                lit loop1           ; [...] num loop1
+                jump                ; [...] num
+loop1exit:
+                swap                ; [...] 0 digit
+                drop                ; [...] digit
+loop2:
+                dup                 ; digit digit
+                lit break           ; digit digit break
+                swap                ; digit break digit
+                jn                  ; digit
+                lit print_digit     ; digit print_digit
+                call                ; digit
+                lit loop2           ; loop2
+                jump                ;
+break:
+                ret                 ;
+
+num_to_parse:
+                buf 10
+
+start:
+                lit num_to_parse        ; num_to_parse
+                dup                     ; num_to_parse num_to_parse
+                lit read_string         ; num_to_parse num_to_parse read_string
+                call                    ; num_to_parse
+                lit parse_int           ; num_to_parse parse_int
+                call                    ; number
+                lit print_number        ; number print_number
+                call                    ; <empty>
+                halt                    ; <should be empty>
