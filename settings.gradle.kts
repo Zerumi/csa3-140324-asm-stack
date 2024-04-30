@@ -10,7 +10,7 @@ develocity {
     }
 }
 
-rootProject.name = "csa3-140324-asm-stack"
+rootProject.name = "cmath4_290424_1"
 
 include("asm")
 include("comp")
