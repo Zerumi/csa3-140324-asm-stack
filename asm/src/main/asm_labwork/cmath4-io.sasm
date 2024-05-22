@@ -232,16 +232,175 @@ loop2:
 break:
                 ret                 ;
 
-num_to_parse:
+
+; parse ufloat function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_uint + call
+uf_number_length:
+                word 0
+uf_parsed_number:
+                word 0
+uf_number_multiplier:
+                word 1
+uf_flag:
+                word 0
+uf_float_multiplier:
+                word 1
+parse_ufloat:
+                lit 0                       ; str_addr 0
+                lit uf_parsed_number        ; str_addr 0 parsed_number
+                store                       ; str_addr
+                lit 1                       ; str_addr 1
+                lit uf_number_multiplier    ; str_addr 1 number_multiplier
+                store                       ; str_addr
+                lit 0                       ; str_addr 0
+                lit uf_flag                 ; str_addr 0 uf_flag
+                store                       ; str_addr
+                lit 1                       ; str_addr 1
+                lit uf_float_multiplier     ; str_addr 1 uf_float_multiplier
+                store                       ; str_addr
+parse_ufloat_impl:
+                dup                         ; str_addr str_addr
+                dup                         ; str_addr str_addr str_addr
+                lit strlen                  ; str_addr str_addr str_addr strlen
+                call                        ; str_addr str_addr strlen_res
+                dup                         ; str_addr str_addr strlen_res strlen_res
+                lit uf_number_length        ; str_addr str_addr strlen_res strlen_res number_length
+                store                       ; str_addr str_addr strlen_res
+                add                         ; str_addr str_addr_plus_length -> m_str
+parse_ufloat_loop:
+                dec                         ; str_addr m_str - 1 -> m_str
+                dup                         ; str_addr m_str m_str
+                load                        ; str_addr m_str digit_s
+                dup                         ; str_addr m_str digit_s digit_s
+                lit 46                      ; str_addr m_str digit_s digit_s '.'
+                sub                         ; str_addr m_str digit_s 0/failed_test
+                lit uf_get_float_part_ln    ; str_addr m_str digit_s 0/failed_test uf_get_float_part_ln
+                swap                        ; str_addr m_str digit_s uf_get_float_part_ln 0/failed_test
+                jz                          ; str_addr m_str digit_s
+                lit parse_digit             ; [..] digit_s parse_digit
+                call                        ; [..] digit
+                lit uf_number_multiplier    ; digit number_multiplier_addr
+                load                        ; digit number_multiplier
+                over                        ; number_multiplier digit number_multiplier
+                mul                         ; number_multiplier digit * number_multiplier -> num_to_add
+                lit uf_parsed_number        ; [..] num_to_add parsed_number_addr
+                load                        ; num_to_add parsed_number
+                add                         ; parsed_number + num_to_add -> parsed_number
+                lit uf_parsed_number        ; parsed_number parsed_number_addr
+                store                       ; number_multiplier
+                lit 10                      ; number_multiplier 10
+                mul                         ; number_multiplier * 10 -> number_multiplier
+                lit uf_number_multiplier    ; number_multiplier number_multiplier_addr
+                store                       ; str_addr m_str
+                swap                        ; m_str str_addr
+                over                        ; str_addr m_str str_addr
+                swap                        ; str_addr str_addr m_str
+                over                        ; str_addr m_str str_addr m_str
+                sub                         ; str_addr m_str 0/non zero
+                lit parse_ufloat_exit       ; [..] 0/non zero parse_int_exit
+                swap                        ; parse_int_exit 0/non zero
+                jz                          ; str_addr m_str
+                lit parse_ufloat_loop       ; str_addr m_str parse_int_loop
+                jump                        ; str_addr m_str
+parse_ufloat_exit:
+                drop                        ; str_addr
+                drop                        ; <empty>
+                lit uf_parsed_number        ; parsed_number
+                load                        ; result
+                lit uf_float_multiplier     ; result uf_float_multiplier
+                load                        ;
+                divf                        ; result_float
+                ret                         ; result_float
+uf_get_float_part_ln:
+                drop                        ; str_addr m_str
+                swap                        ; m_str str_addr
+                over                        ; str_addr m_str str_addr
+                swap                        ; str_addr str_addr m_str
+                over                        ; str_addr m_str str_addr m_str
+                swap                        ; str_addr m_str m_str str_addr
+                sub                         ; str_addr m_str len
+uf_multiplier_loop:
+                lit uf_float_multiplier     ; len uf_float_multiplier
+                dup                         ; len uf_float_multiplier uf_float_multiplier
+                load                        ; len uf_float_multiplier uf_mp
+                lit 10                      ; len uf_float_multiplier uf_mp 10
+                mul                         ; len uf_float_multiplier uf_mp * 10 -> uf_mp
+                swap                        ; len uf_mp uf_float_multiplier
+                store                       ; len
+                dec                         ; len - 1 -> len
+                dup                         ; len len
+                lit uf_multiplier_loop_exit ; len len uf_multiplier_loop_exit
+                swap                        ; len uf_multiplier_loop_exit len
+                jz                          ; str_addr m_str len
+                lit uf_multiplier_loop      ; uf_multiplier_loop
+                jump                        ; str_addr m_str
+uf_multiplier_loop_exit:
+                drop                        ; str_addr m_str
+                lit parse_ufloat_loop       ; [...] parse_ufloat_loop
+                jump                        ; str_addr m_str
+
+
+; parse float function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_uint + call
+parse_float:
+                dup                     ; str_addr str_addr
+                load                    ; str_addr minus_or_not
+                lit 45                  ; str_addr minus_or_not 45
+                sub                     ; str_addr 0-negate/non-0-non-negate
+                lit parse_float_negate  ; str_addr negate/non-negate parse_int_negate
+                swap                    ; str_addr parse_int_negate negate/non-negate
+                jz                      ; str_addr
+                lit parse_ufloat        ; str_addr parse_uint
+                call                    ; number
+                ret                     ; number
+parse_float_negate:
+                inc                     ; str_addr w/o -
+                lit parse_ufloat        ; str_addr parse_uint
+                call                    ; number
+                lit -1                  ; number -1
+                mulf                    ; negate_number
+                ret                     ; negate_number
+
+
+bufSize:
+                word 10
+
+arrSize:
+                buf 10
+xArr:
+                buf 10
+yArr:
                 buf 10
 
+arrSizeNum:
+                word 12
+
+xArrNums:
+                buf 12
+
+yArrNums:
+                buf 12
+
 start:
-                lit num_to_parse        ; num_to_parse
-                dup                     ; num_to_parse num_to_parse
-                lit read_string         ; num_to_parse num_to_parse read_string
-                call                    ; num_to_parse
-                lit parse_int           ; num_to_parse parse_int
+                lit arrSize             ; arrSize
+                dup                     ; arrSize arrSize
+                lit read_string         ; arrSize arrSize read_string
+                call                    ; arrSize
+                lit parse_int           ; arrSize parse_int
                 call                    ; number
-                lit print_number        ; number print_number
-                call                    ; <empty>
+                dup                     ; number number
+                lit arrSizeNum          ; number number arrSizeNum
+                store                   ; number -> size
+                lit xArr                ; size xArr
+                dup                     ; size xArr xArr
+                lit read_string         ; xArr xArr read_string
+                call                    ; xArr
+                lit parse_float         ; xArr parse_float
+                call                    ; num
+                lit xArrNums            ; num xArrNums
+                store                   ; <empty>
                 halt                    ; <should be empty>

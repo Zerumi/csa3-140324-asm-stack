@@ -113,6 +113,7 @@ class BCompCLI : CliktCommand() {
         } else memoryInitialSize
 
         val inputBuffer = ArrayDeque(inputFile.readText(Charsets.UTF_8).chars().toList())
+        inputBuffer.replaceAll { x -> if (x == '\n'.code) 0 else x }
         inputBuffer.addLast(0)
 
         val dataPath = DataPath(dataStackSize, finalMemoryInitSize, program.program)

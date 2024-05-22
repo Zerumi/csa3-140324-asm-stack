@@ -15,8 +15,8 @@ class DataPath(
     lateinit var ioController: IOController
 
     val dataStack = ArrayDeque<Number>(dataStackSize)
-    var tos : Number = 0
-    var br : Number = 0
+    var tos: Number = 0
+    var br: Number = 0
     var ar = 0
     val memory = Array<MemoryCell>(memoryInitialSize) { MemoryCell.Data() }
 
@@ -123,9 +123,10 @@ class ALU(private val dataPath: DataPath) {
 
 class FPAlu(private val dataPath: DataPath) {
     fun output(microcode: Array<Signal>): Float {
-        val rightOperand = dataPath.tos as Float
+        val rightOperand = if (dataPath.tos is Int) dataPath.tos.toFloat() else dataPath.tos as Float
         val leftOperand = if (Signal.FPALULeftOPDataStack in microcode) {
-            dataPath.dataStack.last() as Float
+            if (dataPath.dataStack.last() is Int) dataPath.dataStack.last()
+                .toFloat() else dataPath.dataStack.last() as Float
         } else if (Signal.FPALULeftOPZero in microcode) {
             0.0f
         } else {
