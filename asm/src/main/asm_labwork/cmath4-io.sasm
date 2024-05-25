@@ -247,8 +247,6 @@ uf_parsed_number:
                 word 0
 uf_number_multiplier:
                 word 1
-uf_flag:
-                word 0
 uf_float_multiplier:
                 word 1
 parse_ufloat:
@@ -257,9 +255,6 @@ parse_ufloat:
                 store                       ; str_addr
                 lit 1                       ; str_addr 1
                 lit uf_number_multiplier    ; str_addr 1 number_multiplier
-                store                       ; str_addr
-                lit 0                       ; str_addr 0
-                lit uf_flag                 ; str_addr 0 uf_flag
                 store                       ; str_addr
                 lit 1                       ; str_addr 1
                 lit uf_float_multiplier     ; str_addr 1 uf_float_multiplier
@@ -611,6 +606,73 @@ laXY_sum_exit:
                 divf                    ; a b
                 ret                     ; a b
 
+; ###########
+; Approximation stats
+; ###########
+
+; calculate linear function (y = ax + b)
+; consumed operands: b, a, x
+; returns: y
+; usage: lit b + lit a + lit x + lit linear_func + call
+linear_func:
+                mulf                    ; ax
+                addf                    ; y
+                ret                     ; y
+
+; calculate linear function for array
+; consumed operands: size, b, a, xArr, yArr. xArr won't be changed
+; returns nothing
+; usage: lit size + lit b + lit a + lit xArr + lit yArr + lit linear_func_arr + call
+lfa_a:
+                word 0
+lfa_b:
+                word 0
+lfa_xArr:
+                word 0
+lfa_yArr:
+                word 0
+linear_func_arr:
+                lit lfa_yArr            ; size b a xArr yArr lfa_yArr
+                store                   ; size b a xArr
+                swap                    ; size b xArr a
+                lit lfa_a               ; size b xArr a lfa_a
+                store                   ; size b xArr
+                swap                    ; size xArr b
+                lit lfa_b               ; size xArr b lfa_b
+                store                   ; size xArr
+lfa_loop:
+                lit lfa_b               ; size xArr lfa_b
+                load                    ; size xArr b
+                swap                    ; size b xArr
+                lit lfa_a               ; size b xArr lfa_a
+                load                    ; size b xArr a
+                swap                    ; size b a xArr
+                dup                     ; size b a xArr xArr
+                inc                     ; size b a xArr xArr_next
+                lit lfa_xArr            ; size b a xArr xArr_next lfa_xArr
+                store                   ; size b a xArr
+                load                    ; size b a xArr_element
+                lit linear_func         ; size b a xArr_element linear_func
+                call                    ; size y
+                lit lfa_yArr            ; size y lfa_yArr
+                load                    ; size y yArr
+                over                    ; size yArr y yArr
+                store                   ; size yArr
+                inc                     ; size yArr_next
+                lit lfa_yArr            ; size yArr_next lfa_yArr
+                store                   ; size
+                dec                     ; size - 1 -> size
+                dup                     ; size size lfa_exit
+                lit lfa_exit            ; size lfa_exit
+                swap                    ; lfa_exit size
+                jz                      ; size
+                lit lfa_xArr            ; size lfa_xArr
+                load                    ; size xArr
+                lit lfa_loop            ; size xArr lfa_loop
+                jump                    ; size xArr
+lfa_exit:
+                drop                    ; <empty>
+                ret                     ; <empty>
 
 
 ; ###########
@@ -628,6 +690,14 @@ xArrNums:
 
 yArrNums:
                 buf 12
+
+pArrNums:
+                buf 12
+
+linear_a:
+                word 0
+linear_b:
+                word 0
 
 start:
                 lit arrSize             ; arrSize
@@ -648,8 +718,20 @@ start:
                 call                    ; <empty>
                 lit arrSizeNum          ; size
                 load                    ; size
-                lit xArrNums            ; size xArr
-                lit yArrNums            ; size xArr yArr
-                lit linear_approx       ; size xArr yArr linear_approx
+                dup                     ; size
+                lit xArrNums            ; size size xArr
+                lit yArrNums            ; size size xArr yArr
+                lit linear_approx       ; size size xArr yArr linear_approx
+                call                    ; size a b
+                dup                     ; size a b b
+                lit linear_b            ; size a b b linear_b
+                store                   ; size a b
+                swap                    ; size b a
+                dup                     ; size b a a
+                lit linear_a            ; size b a a linear_a
+                store                   ; size b a
+                lit xArrNums            ; size b a xArr
+                lit pArrNums            ; size b a xArr yArr
+                lit linear_func_arr     ; size b a xArr yArr linear_func_arr
                 call                    ; <empty>
                 halt                    ; <should be empty>
