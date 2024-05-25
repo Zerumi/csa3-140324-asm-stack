@@ -428,7 +428,7 @@ read_array_exit:
 
 ; Linear approximation (y = ax + b) by method of lowest squares
 ; consumed operands: size, xArr, yArr. There's guarantee that arrays won't changed
-; returns: a and b coefficients of y = ax + b approximation
+; return: a and b coefficients of y = ax + b approximation
 ; usage: lit size + lit xArr + lit yArr + lit linear_approx + call
 la_size:
                 word 0
@@ -612,7 +612,7 @@ laXY_sum_exit:
 
 ; calculate linear function (y = ax + b)
 ; consumed operands: b, a, x
-; returns: y
+; return: y
 ; usage: lit b + lit a + lit x + lit linear_func + call
 linear_func:
                 mulf                    ; ax
@@ -675,6 +675,104 @@ lfa_exit:
                 ret                     ; <empty>
 
 
+; calculate epsilon difference between two arrays
+; consumed operands: size, firstArr, secondArr, resultArr. 1st and 2nd arrays won't be changed
+; returns nothing
+; usage: lit size + lit firstArr + lit secondArr + lit resultArr + lit arr_difference + call
+ard_resArr:
+                word 0
+ard_firstArr:
+                word 0
+ard_secondArr:
+                word 0
+arr_difference:
+                lit ard_resArr          ; size firstArr secondArr resultArr ard_resArr
+                store                   ; size firstArr secondArr
+ard_loop:
+                dup                     ; size firstArr secondArr secondArr
+                inc                     ; size firstArr secondArr secondArr_next
+                lit ard_secondArr       ; size firstArr secondArr secondArr_next ard_secondArr
+                store                   ; size firstArr secondArr
+                load                    ; size firstArr secondArr_element
+                swap                    ; size secondArr_element firstArr
+                dup                     ; size secondArr_element firstArr firstArr
+                inc                     ; size secondArr_element firstArr firstArr_next
+                lit ard_firstArr        ; size secondArr_element firstArr firstArr_next ard_firstArr
+                store                   ; size secondArr_element firstArr
+                load                    ; size secondArr_element firstArr_element
+                subf                    ; size diff
+                lit ard_resArr          ; size diff ard_resArr
+                load                    ; size diff resArr
+                over                    ; size resArr diff resArr
+                store                   ; size resArr
+                inc                     ; size resArr_next
+                lit ard_resArr          ; size resArr_next ard_resArr
+                store                   ; size
+                dec                     ; size - 1 -> size
+                dup                     ; size size
+                lit ard_loop_exit       ; size size ard_loop
+                swap                    ; size ard_loop size
+                jz                      ; size
+                lit ard_firstArr        ; size ard_firstArr
+                load                    ; size firstArr
+                lit ard_secondArr       ; size firstArr ard_secondArr
+                load                    ; size firstArr secondArr
+                lit ard_loop            ; size firstArr secondArr ard_loop
+                jump                    ; size firstArr secondArr
+ard_loop_exit:
+                drop                    ; <empty>
+                ret                     ; <empty>
+
+; calculate sum of element squares in array
+; consumed operands: size, array. Array won't be changed
+; return: sum of squares
+; usage: lit size + lit array_square_sum + call
+assq_sum:
+                word 0
+array_square_sum:
+                lit 0                   ; size array 0
+                lit assq_sum            ; size array 0 assq_sum
+                store                   ; size array
+assq_loop:
+                dup                     ; size array array
+                load                    ; size array element
+                dup                     ; size array element element
+                mulf                    ; size array element^2
+                lit assq_sum            ; size array element^2 assq_sum
+                load                    ; size array element^2 sum
+                addf                    ; size array sum
+                lit assq_sum            ; size array sum assq_sum
+                store                   ; size array
+                inc                     ; size array + 1 -> array
+                swap                    ; array size
+                dec                     ; array size - 1 -> size
+                over                    ; size array
+                lit assq_exit           ; size array size assq_exit
+                swap                    ; size array assq_exit size
+                jz                      ; size array
+                lit assq_loop           ; size array assq_loop
+                jump                    ; size array
+assq_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit assq_sum            ; assq_sum
+                load                    ; result
+                ret                     ; result
+
+; calculate average array value
+; consumed operands: size, array
+; return: array average
+; usage: lit size + lit array + lit array_average + call
+array_average:
+                ret                     ; to/do
+
+; calculate correlation coefficient
+; consumed operands: size, xArr, yArr
+; return: correlation coefficient
+; usage: lit size + lit xArr + lit yArr + lit xy_correlation + call
+xy_correlation:
+                ret                     ; to/do
+
 ; ###########
 ; Program entry point
 ; ###########
@@ -693,6 +791,12 @@ yArrNums:
 
 pArrNums:
                 buf 12
+
+differences:
+                buf 12
+
+measure_S:
+                word 0
 
 linear_a:
                 word 0
@@ -718,20 +822,32 @@ start:
                 call                    ; <empty>
                 lit arrSizeNum          ; size
                 load                    ; size
-                dup                     ; size
-                lit xArrNums            ; size size xArr
-                lit yArrNums            ; size size xArr yArr
-                lit linear_approx       ; size size xArr yArr linear_approx
-                call                    ; size a b
-                dup                     ; size a b b
-                lit linear_b            ; size a b b linear_b
-                store                   ; size a b
-                swap                    ; size b a
-                dup                     ; size b a a
-                lit linear_a            ; size b a a linear_a
-                store                   ; size b a
-                lit xArrNums            ; size b a xArr
-                lit pArrNums            ; size b a xArr yArr
-                lit linear_func_arr     ; size b a xArr yArr linear_func_arr
-                call                    ; <empty>
+                dup                     ; size size
+                dup                     ; size size size
+                lit xArrNums            ; size size size xArr
+                lit yArrNums            ; size size size xArr yArr
+                lit linear_approx       ; size size size xArr yArr linear_approx
+                call                    ; size size a b
+                dup                     ; size size a b b
+                lit linear_b            ; size size a b b linear_b
+                store                   ; size size a b
+                swap                    ; size size b a
+                dup                     ; size size b a a
+                lit linear_a            ; size size b a a linear_a
+                store                   ; size size b a
+                lit xArrNums            ; size size b a xArr
+                lit pArrNums            ; size size b a xArr yArr
+                lit linear_func_arr     ; size size b a xArr yArr linear_func_arr
+                call                    ; size
+                dup                     ; size size
+                lit yArrNums            ; size size yArrNums
+                lit pArrNums            ; size size yArrNums pArrNums
+                lit differences         ; size size yArrNums pArrNums differences
+                lit arr_difference      ; size size yArrNums pArrNums differences arr_difference
+                call                    ; size
+                lit differences         ; size differences
+                lit array_square_sum    ; size differences array_square_sum
+                call                    ; sum
+                lit measure_S           ; sum measure_S
+                store                   ; <empty>
                 halt                    ; <should be empty>
