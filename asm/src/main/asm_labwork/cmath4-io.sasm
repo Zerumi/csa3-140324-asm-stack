@@ -759,19 +759,171 @@ assq_exit:
                 load                    ; result
                 ret                     ; result
 
+; calculate array sum value
+; consumed operands: size, array
+; return: array sum
+; usage: lit size + lit array + lit array_sum + call
+aav_sum:
+                word 0
+array_sum:
+                lit 0                   ; size array 0
+                lit aav_sum             ; size array 0 aav_sum
+                store                   ; size array
+aav_loop:
+                dup                     ; size array array
+                load                    ; size array element
+                lit aav_sum             ; size array element aav_sum
+                load                    ; size array element sum
+                addf                    ; size array sum
+                lit aav_sum             ; size array sum aav_sum
+                store                   ; size array
+                inc                     ; size array + 1 -> array
+                swap                    ; array size
+                dec                     ; array size - 1 -> size
+                over                    ; size array
+                lit aav_exit            ; size array size aav_exit
+                swap                    ; size array aav_exit size
+                jz                      ; size array
+                lit aav_loop            ; size array aav_loop
+                jump                    ; size array
+aav_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit aav_sum             ; aav_sum
+                load                    ; result
+                ret                     ; result
+
 ; calculate average array value
 ; consumed operands: size, array
 ; return: array average
 ; usage: lit size + lit array + lit array_average + call
 array_average:
-                ret                     ; to/do
+                swap                    ; array size
+                over                    ; size array size
+                swap                    ; size size array
+                lit array_sum           ; size size array array_sum
+                call                    ; size sum
+                swap                    ; sum size
+                divf                    ; average
+                ret                     ; average
+
 
 ; calculate correlation coefficient
 ; consumed operands: size, xArr, yArr
 ; return: correlation coefficient
 ; usage: lit size + lit xArr + lit yArr + lit xy_correlation + call
+xyc_size:
+                word 0
+xyc_xy_sum:
+                word 0
+xyc_x2_sum:
+                word 0
+xyc_y2_sum:
+                word 0
+xyc_xAvg:
+                word 0
+xyc_yAvg:
+                word 0
+xyc_xArr:
+                word 0
+xyc_yArr:
+                word 0
 xy_correlation:
-                ret                     ; to/do
+                lit 0                   ; size xArr yArr 0
+                lit xyc_xy_sum          ; size xArr yArr 0 xyc_xy_sum
+                store                   ; size xArr yArr
+                lit 0                   ; size xArr yArr 0
+                lit xyc_x2_sum          ; size xArr yArr 0 xyc_x2_sum
+                store                   ; size xArr yArr
+                lit 0                   ; size xArr yArr 0
+                lit xyc_y2_sum          ; size xArr yArr 0 xyc_y2_sum
+                store                   ; size xArr yArr
+                lit xyc_yArr            ; size xArr yArr xyc_yArr
+                store                   ; size xArr
+                lit xyc_xArr            ; size xArr xyc_xArr
+                store                   ; size
+                dup                     ; size size
+                lit xyc_size            ; size size xyc_size
+                store                   ; size
+                dup                     ; size size
+                lit xyc_xArr            ; size size xyc_xArr
+                load                    ; size size xArr
+                lit array_average       ; size size xArr array_average
+                call                    ; size xArrAvg
+                lit xyc_xAvg            ; size xArrAvg xyc_xAvg
+                store                   ; size
+                dup                     ; size size
+                lit xyc_yArr            ; size size xyc_yArr
+                load                    ; size size yArr
+                lit array_average       ; size size yArr array_average
+                call                    ; size yArrAvg
+                lit xyc_yAvg            ; size yArrAvg xyc_yAvg
+                store                   ; size
+xyc_calc_l1:
+                lit xyc_xArr            ; size xyc_xArr
+                load                    ; size xArr
+                dup                     ; size xArr xArr
+                load                    ; size xArr xArr_element
+                swap                    ; size xArr_element xArr
+                inc                     ; size xArr_element xArr + 1 -> xArr
+                lit xyc_xArr            ; size xArr_element xArr xyc_xArr
+                store                   ; size xArr_element
+                lit xyc_xAvg            ; size xArr_element xyc_xAvg
+                load                    ; size xArr_element xAvg
+                subf                    ; size X
+                dup                     ; size X X
+                dup                     ; size X X X
+                mulf                    ; size X X^2
+                lit xyc_x2_sum          ; size X X^2 xyc_x2_sum
+                load                    ; size X X^2 x2_sum
+                addf                    ; size X x2_sum
+                lit xyc_x2_sum          ; size X x2_sum xyc_x2_sum
+                store                   ; size X
+                lit xyc_yArr            ; size X xyc_yArr
+                load                    ; size X yArr
+                dup                     ; size X yArr yArr
+                load                    ; size X yArr yArr_element
+                swap                    ; size X yArr_element yArr
+                inc                     ; size X yArr_element yArr + 1 -> yArr
+                lit xyc_yArr            ; size X yArr_element yArr xyc_yArr
+                store                   ; size X yArr_element
+                lit xyc_yAvg            ; size X yArr_element xyc_yAvg
+                load                    ; size X yArr_element yAvg
+                subf                    ; size X Y
+                dup                     ; size X Y Y
+                dup                     ; size X Y Y Y
+                mulf                    ; size X Y Y^2
+                lit xyc_y2_sum          ; size X Y Y^2 xyc_y2_sum
+                load                    ; size X Y Y^2 y2_sum
+                addf                    ; size X Y y2_sum
+                lit xyc_y2_sum          ; size X Y y2_sum xyc_y2_sum
+                store                   ; size X Y
+                mulf                    ; size xy
+                lit xyc_xy_sum          ; size xy xyc_xy_sum
+                load                    ; size xy xy_sum
+                addf                    ; size xy_sum
+                lit xyc_xy_sum          ; size xy_sum xyc_xy_sum
+                store                   ; size
+                dec                     ; size - 1 -> size
+                dup                     ; size size
+                lit xyc_calc_l1_exit    ; size size xyc_calc_l1_exit
+                swap                    ; size xyc_calc_l1_exit size
+                jz                      ; size
+                lit xyc_calc_l1         ; size xyc_calc_l1
+                jump                    ; size
+xyc_calc_l1_exit:
+                drop                    ; <empty>
+                lit xyc_xy_sum          ; xyc_xy_sum
+                load                    ; xy_sum
+                dup                     ; xy_sum xy_sum
+                mulf                    ; xy_sum^2
+                lit xyc_x2_sum          ; xy_sum^2 xyc_x2_sum
+                load                    ; xy_sum^2 x2_sum
+                lit xyc_y2_sum          ; xy_sum^2 x2_sum xyc_y2_sum
+                load                    ; xy_sum^2 x2_sum y2_sum
+                mulf                    ; xy_sum^2 x2_sum*y2_sum
+                divf                    ; correlation -> result
+                ret                     ; result
 
 ; ###########
 ; Program entry point
@@ -796,6 +948,9 @@ differences:
                 buf 12
 
 measure_S:
+                word 0
+
+correlation_R:
                 word 0
 
 linear_a:
@@ -845,9 +1000,31 @@ start:
                 lit differences         ; size size yArrNums pArrNums differences
                 lit arr_difference      ; size size yArrNums pArrNums differences arr_difference
                 call                    ; size
-                lit differences         ; size differences
-                lit array_square_sum    ; size differences array_square_sum
-                call                    ; sum
-                lit measure_S           ; sum measure_S
+                dup                     ; size size
+                lit differences         ; size size differences
+                lit array_square_sum    ; size size differences array_square_sum
+                call                    ; size sum
+                lit measure_S           ; size sum measure_S
+                store                   ; size
+                lit xArrNums            ; size xArrNums
+                lit yArrNums            ; size xArrNums yArrNums
+                lit xy_correlation      ; size xArrNums yArrNums xy_correlation
+                call                    ; correlation
+                lit correlation_R       ; correlation correlation_R
                 store                   ; <empty>
+                lit output              ; output
+                call                    ; <empty>
                 halt                    ; <should be empty>
+
+; ############
+; Print section
+; ############
+
+
+
+output:
+                lit linear_a
+                load
+                lit print_number
+                call
+                ret
