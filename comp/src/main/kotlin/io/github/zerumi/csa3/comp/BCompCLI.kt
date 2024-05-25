@@ -21,7 +21,7 @@ class BCompCLI : CliktCommand() {
     companion object {
         private const val UNINITIALIZED_MEMORY_SIZE = -1
         private const val DEFAULT_STACK_SIZE = 20
-        private const val DEFAULT_MEMORY_SCALE = 1.1
+        private const val DEFAULT_MEMORY_SCALE = 1.01
     }
 
     private val programFile: Path by option(
