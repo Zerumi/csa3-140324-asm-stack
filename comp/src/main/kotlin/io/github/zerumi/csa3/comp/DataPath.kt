@@ -122,7 +122,7 @@ class ALU(private val dataPath: DataPath) {
 }
 
 class FPAlu(private val dataPath: DataPath) {
-    fun output(microcode: Array<Signal>): Float {
+    fun output(microcode: Array<Signal>): Number {
         val rightOperand = if (dataPath.tos is Int) dataPath.tos.toFloat() else dataPath.tos as Float
         val leftOperand = if (Signal.FPALULeftOPDataStack in microcode) {
             if (dataPath.dataStack.last() is Int) dataPath.dataStack.last()
@@ -143,6 +143,10 @@ class FPAlu(private val dataPath: DataPath) {
             leftOperand / rightOperand
         } else {
             0.0f // UB
+        }
+
+        if (Signal.FPAluFTOI in microcode) {
+            return result.toInt()
         }
 
         return result

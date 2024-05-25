@@ -187,6 +187,101 @@ print_digit:
                 out                 ;
                 ret                 ;
 
+; print float number to port i/o
+; consumed operand: number
+; returns nothing
+; usage: lit arg + lit print_number + call
+number_mp:
+                word 10000          ; this value should never change
+pf_digits:
+                word 0
+pf_points:
+                word 4
+print_float:
+                lit 0               ; num 0
+                lit pf_digits       ; num 0 pf_digits
+                store               ; num
+                lit 4               ; num 4
+                lit pf_points       ; num 4 pf_points
+                store               ; num
+                lit number_mp       ; num number_mp_addr
+                load                ; num number_mp
+                mulf                ; num
+                ftoi                ; num
+                lit -1              ; num -1
+                swap                ; -1 num
+                dup                 ; -1 num num
+                lit pf_negate       ; -1 num num negate
+                swap                ; -1 num negate num
+                jn                  ; -1 num
+                lit pf_loop1        ; -1 num loop1
+                jump                ; -1 num
+pf_negate:
+                lit 45              ; [...] 45
+                lit port            ; [...] 45 port_a
+                load                ; [...] 45 port
+                out                 ; [...]
+                lit -1              ; 0 num -1
+                mul                 ; 0 -num -> num
+pf_loop1:
+                lit pf_digits       ; [...] pf_digits
+                load                ; [...] digits
+                inc                 ; [...] digits + 1 -> digits
+                lit pf_digits       ; [...] digits pf_digits
+                store               ; [...]
+                dup                 ; 0 num num
+                lit 10              ; 0 num num 10
+                mod                 ; 0 num digit
+                swap                ; 0 digit num
+                lit 10              ; 0 digit num 10
+                div                 ; 0 digit num/10 -> num
+                over                ; 0 num digit num
+                lit pf_loop1exit    ; [...] num loop2
+                swap                ; [...] loop2 num
+                jz                  ; [...] num digit
+                swap
+                lit pf_loop1        ; [...] num loop1
+                jump                ; [...] num
+pf_loop1exit:
+                swap                ; [...] 0 digit
+                drop                ; [...] digit
+                lit pf_digits       ; [...] pf_digits
+                load                ; [...] digits
+                lit pf_points       ; [...] digits pf_points
+                load                ; [...] digits points
+                sub                 ; [...] digits_after_decimal
+                inc                 ; [...] digits_after_decimal + 1 -> digits_after_decimal
+                lit pf_points       ; [...] digits_after_decimal pf_points
+                store               ; [...]
+pf_loop2:
+                lit pf_points       ; [...] pf_points
+                load                ; [...] points
+                dec                 ; [...] points - 1 -> points
+                dup                 ; [...] points points
+                lit pf_points       ; [...] points points pf_points
+                store               ; [...] points
+                lit pf_print_dot    ; [...] points pf_print_dot
+                swap                ; [...] pf_print_dot points
+                jz                  ; [...]
+                lit pf_go_loop1     ; [...] pf_go_loop1
+                jump                ; [...]
+pf_print_dot:
+                lit 46              ; 46
+                lit port            ; 46 port_addr
+                load                ; 46 port
+                out                 ;
+pf_go_loop1:
+                dup                 ; digit digit
+                lit pf_break        ; digit digit break
+                swap                ; digit break digit
+                jn                  ; digit
+                lit print_digit     ; digit print_digit
+                call                ; digit
+                lit pf_loop2        ; loop2
+                jump                ;
+pf_break:
+                ret                 ;
+
 ; print number to port i/o
 ; consumed operand: number
 ; returns nothing
@@ -1020,11 +1115,9 @@ start:
 ; Print section
 ; ############
 
-
-
 output:
                 lit linear_a
                 load
-                lit print_number
+                lit print_float
                 call
                 ret
