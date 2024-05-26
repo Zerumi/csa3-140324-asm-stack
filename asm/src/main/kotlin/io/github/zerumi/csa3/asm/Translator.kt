@@ -28,7 +28,7 @@ private fun addLabelInstruction(
             if (operand.toIntOrNull() != null || operand.toFloatOrNull() != null) instructions.add(
                 LabelInstruction(
                     MemoryCell.Data(
-                        if (operand.toIntOrNull() == null) operand.toFloat() else operand.toInt(),
+                        if (operand.toIntOrNull() == null) operand.toFloat() else operand.toInt()
                     )
                 )
             )
