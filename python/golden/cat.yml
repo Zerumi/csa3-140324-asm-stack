@@ -24,7 +24,7 @@ in_stdin: |
   girls sometimes may be beautiful...
 out_code: |-
   {"initCommand":1,"program":[{"type":"io.github.zerumi.csa3.isa.MemoryCell.Data","value":"1"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT","operand":"16"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"LOAD"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"IN"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"OVER"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"JZ"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT","operand":"16"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"SWAP"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"LOAD"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"OVER"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"OUT"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"IN"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.OperandInstruction","opcode":"LIT","operand":"5"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"JUMP"},{"type":"io.github.zerumi.csa3.isa.MemoryCell.Instruction","opcode":"HALT"}]}
-out_stdout: |
+out_stdout: |-
   girls sometimes may be beautiful...
 out_log: |
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 1 --> LIT 16
@@ -13256,35 +13256,35 @@ out_log: |
   Return stack (size = 0): []
   PC: 13 AR: 13 BR: 1
 
-  [INFO]: io.github.zerumi.csa3.comp.IOController - I/O OPERATION OCCURS (IN): port: 1 ---> value: 10
+  [INFO]: io.github.zerumi.csa3.comp.IOController - I/O OPERATION OCCURS (IN): port: 1 ---> value: 0
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2105 -- MPC: 61 / MicroInstruction: LatchTOS, TOSSelectInput, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 14 AR: 13 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 14 --> LIT 5
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2106 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 14 AR: 14 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2107 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 14 AR: 14 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2108 -- MPC: 3 / MicroInstruction: DataStackPush, LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 10, 16, 0]
+  Stack (size = 4): [0 | 0, 16, 0]
   Return stack (size = 0): []
   PC: 14 AR: 14 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2109 -- MPC: 4 / MicroInstruction: LatchTOS, TOSSelectMemory, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 4): [5 | 10, 16, 0]
+  Stack (size = 4): [5 | 0, 16, 0]
   Return stack (size = 0): []
   PC: 15 AR: 14 BR: 1
   MEMORY READ VALUE: AR: 14 ---> OperandInstruction(opcode=LIT, operand=5)
@@ -13292,506 +13292,129 @@ out_log: |
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 15 --> JUMP
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2110 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [5 | 10, 16, 0]
+  Stack (size = 4): [5 | 0, 16, 0]
   Return stack (size = 0): []
   PC: 15 AR: 15 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2111 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 4): [5 | 10, 16, 0]
+  Stack (size = 4): [5 | 0, 16, 0]
   Return stack (size = 0): []
   PC: 15 AR: 15 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2112 -- MPC: 52 / MicroInstruction: LatchPC, PCJumpTypeTOS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [5 | 10, 16, 0]
+  Stack (size = 4): [5 | 0, 16, 0]
   Return stack (size = 0): []
   PC: 5 AR: 15 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2113 -- MPC: 53 / MicroInstruction: LatchTOS, TOSSelectDS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 10, 16, 0]
+  Stack (size = 4): [0 | 0, 16, 0]
   Return stack (size = 0): []
   PC: 5 AR: 15 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2114 -- MPC: 54 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterZero 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 5 AR: 15 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 5 --> OVER
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2115 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2116 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 1
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2117 -- MPC: 31 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 16, 0]
+  Stack (size = 3): [0 | 16, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 16
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
   TICK 2118 -- MPC: 32 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 2): [10 | 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 16
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2119 -- MPC: 33 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 10, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 16
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2120 -- MPC: 34 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [16 | 10, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 16
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2121 -- MPC: 35 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [16 | 10, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2122 -- MPC: 36 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [16 | 16, 10, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2123 -- MPC: 37 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 4): [10 | 16, 10, 0]
-  Return stack (size = 0): []
-  PC: 6 AR: 5 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 6 --> JZ
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2124 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 16, 10, 0]
-  Return stack (size = 0): []
-  PC: 6 AR: 6 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2125 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 4): [10 | 16, 10, 0]
-  Return stack (size = 0): []
-  PC: 6 AR: 6 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2126 -- MPC: 44 / MicroInstruction: LatchPC, PCJumpTypeJZ, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 16, 10, 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 6 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2127 -- MPC: 45 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 10, 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 6 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2128 -- MPC: 46 / MicroInstruction: LatchTOS, TOSSelectDS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 10, 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 6 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2129 -- MPC: 47 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterZero 
-  Stack (size = 2): [10 | 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 6 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 7 --> LIT 16
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2130 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 2): [10 | 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 7 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2131 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 2): [10 | 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 7 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2132 -- MPC: 3 / MicroInstruction: DataStackPush, LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 10, 0]
-  Return stack (size = 0): []
-  PC: 7 AR: 7 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2133 -- MPC: 4 / MicroInstruction: LatchTOS, TOSSelectMemory, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 3): [16 | 10, 0]
-  Return stack (size = 0): []
-  PC: 8 AR: 7 BR: 10
-  MEMORY READ VALUE: AR: 7 ---> OperandInstruction(opcode=LIT, operand=16)
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 8 --> SWAP
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2134 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [16 | 10, 0]
-  Return stack (size = 0): []
-  PC: 8 AR: 8 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2135 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [16 | 10, 0]
-  Return stack (size = 0): []
-  PC: 8 AR: 8 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2136 -- MPC: 27 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [16 | 10, 0]
-  Return stack (size = 0): []
-  PC: 8 AR: 8 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2137 -- MPC: 28 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 2): [16 | 0]
-  Return stack (size = 0): []
-  PC: 8 AR: 8 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2138 -- MPC: 29 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [16 | 16, 0]
-  Return stack (size = 0): []
-  PC: 8 AR: 8 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2139 -- MPC: 30 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 3): [10 | 16, 0]
-  Return stack (size = 0): []
-  PC: 9 AR: 8 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 9 --> LIT 0
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2140 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [10 | 16, 0]
-  Return stack (size = 0): []
-  PC: 9 AR: 9 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2141 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [10 | 16, 0]
-  Return stack (size = 0): []
-  PC: 9 AR: 9 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2142 -- MPC: 3 / MicroInstruction: DataStackPush, LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 9 AR: 9 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2143 -- MPC: 4 / MicroInstruction: LatchTOS, TOSSelectMemory, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 4): [0 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 10 AR: 9 BR: 10
-  MEMORY READ VALUE: AR: 9 ---> OperandInstruction(opcode=LIT, operand=0)
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 10 --> LOAD
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2144 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [0 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 10 AR: 10 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2145 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 4): [0 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 10 AR: 10 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2146 -- MPC: 5 / MicroInstruction: LatchAR, ARSelectTOS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [0 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 10 AR: 0 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2147 -- MPC: 6 / MicroInstruction: LatchTOS, TOSSelectMemory, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 4): [1 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 0 BR: 10
-  MEMORY READ VALUE: AR: 0 ---> Data(value=1)
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 11 --> OVER
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2148 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [1 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2149 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 4): [1 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2150 -- MPC: 31 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [1 | 10, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2151 -- MPC: 32 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [1 | 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2152 -- MPC: 33 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [1 | 1, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2153 -- MPC: 34 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 1, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 10
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2154 -- MPC: 35 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [10 | 1, 16, 0]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2155 -- MPC: 36 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 5): [10 | 10, 1, 16]
-  Return stack (size = 0): []
-  PC: 11 AR: 11 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2156 -- MPC: 37 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 5): [1 | 10, 1, 16]
-  Return stack (size = 0): []
-  PC: 12 AR: 11 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 12 --> OUT
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2157 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 5): [1 | 10, 1, 16]
-  Return stack (size = 0): []
-  PC: 12 AR: 12 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2158 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 5): [1 | 10, 1, 16]
-  Return stack (size = 0): []
-  PC: 12 AR: 12 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.IOController - I/O OPERATION OCCURS (OUT): port: 1 <--- value: 10
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2159 -- MPC: 62 / MicroInstruction: Output, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 5): [1 | 10, 1, 16]
-  Return stack (size = 0): []
-  PC: 12 AR: 12 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2160 -- MPC: 63 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [1 | 1, 16, 0]
-  Return stack (size = 0): []
-  PC: 12 AR: 12 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2161 -- MPC: 64 / MicroInstruction: LatchTOS, TOSSelectDS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [1 | 1, 16, 0]
-  Return stack (size = 0): []
-  PC: 12 AR: 12 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2162 -- MPC: 65 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 3): [1 | 16, 0]
-  Return stack (size = 0): []
-  PC: 13 AR: 12 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 13 --> IN
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2163 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [1 | 16, 0]
-  Return stack (size = 0): []
-  PC: 13 AR: 13 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2164 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [1 | 16, 0]
-  Return stack (size = 0): []
-  PC: 13 AR: 13 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.IOController - I/O OPERATION OCCURS (IN): port: 1 ---> value: 0
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2165 -- MPC: 61 / MicroInstruction: LatchTOS, TOSSelectInput, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 14 AR: 13 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 14 --> LIT 5
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2166 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 14 AR: 14 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2167 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 14 AR: 14 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2168 -- MPC: 3 / MicroInstruction: DataStackPush, LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [0 | 0, 16, 0]
-  Return stack (size = 0): []
-  PC: 14 AR: 14 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2169 -- MPC: 4 / MicroInstruction: LatchTOS, TOSSelectMemory, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
-  Stack (size = 4): [5 | 0, 16, 0]
-  Return stack (size = 0): []
-  PC: 15 AR: 14 BR: 1
-  MEMORY READ VALUE: AR: 14 ---> OperandInstruction(opcode=LIT, operand=5)
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 15 --> JUMP
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2170 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [5 | 0, 16, 0]
-  Return stack (size = 0): []
-  PC: 15 AR: 15 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2171 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 4): [5 | 0, 16, 0]
-  Return stack (size = 0): []
-  PC: 15 AR: 15 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2172 -- MPC: 52 / MicroInstruction: LatchPC, PCJumpTypeTOS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [5 | 0, 16, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 15 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2173 -- MPC: 53 / MicroInstruction: LatchTOS, TOSSelectDS, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 4): [0 | 0, 16, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 15 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2174 -- MPC: 54 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterZero 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 15 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 5 --> OVER
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2175 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2176 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 1
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2177 -- MPC: 31 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
-  Stack (size = 3): [0 | 16, 0]
-  Return stack (size = 0): []
-  PC: 5 AR: 5 BR: 16
-
-  [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2178 -- MPC: 32 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 2): [0 | 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 16
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2179 -- MPC: 33 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2119 -- MPC: 33 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 3): [0 | 0, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 16
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2180 -- MPC: 34 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2120 -- MPC: 34 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 3): [16 | 0, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 16
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2181 -- MPC: 35 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2121 -- MPC: 35 / MicroInstruction: LatchBR, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 3): [16 | 0, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2182 -- MPC: 36 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2122 -- MPC: 36 / MicroInstruction: DataStackPush, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 4): [16 | 16, 0, 0]
   Return stack (size = 0): []
   PC: 5 AR: 5 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2183 -- MPC: 37 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
+  TICK 2123 -- MPC: 37 / MicroInstruction: LatchTOS, TOSSelectBR, LatchMPCounter, MicroProgramCounterZero, LatchPC, PCJumpTypeNext 
   Stack (size = 4): [0 | 16, 0, 0]
   Return stack (size = 0): []
   PC: 6 AR: 5 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 6 --> JZ
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2184 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2124 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 4): [0 | 16, 0, 0]
   Return stack (size = 0): []
   PC: 6 AR: 6 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2185 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
+  TICK 2125 -- MPC: 1 / MicroInstruction: LatchMPCounter, MicroProgramCounterOpcode 
   Stack (size = 4): [0 | 16, 0, 0]
   Return stack (size = 0): []
   PC: 6 AR: 6 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2186 -- MPC: 44 / MicroInstruction: LatchPC, PCJumpTypeJZ, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2126 -- MPC: 44 / MicroInstruction: LatchPC, PCJumpTypeJZ, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 4): [0 | 16, 0, 0]
   Return stack (size = 0): []
   PC: 16 AR: 6 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2187 -- MPC: 45 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2127 -- MPC: 45 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 3): [0 | 0, 0]
   Return stack (size = 0): []
   PC: 16 AR: 6 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2188 -- MPC: 46 / MicroInstruction: LatchTOS, TOSSelectDS, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2128 -- MPC: 46 / MicroInstruction: LatchTOS, TOSSelectDS, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 3): [0 | 0, 0]
   Return stack (size = 0): []
   PC: 16 AR: 6 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2189 -- MPC: 47 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterZero 
+  TICK 2129 -- MPC: 47 / MicroInstruction: DataStackPop, LatchMPCounter, MicroProgramCounterZero 
   Stack (size = 2): [0 | 0]
   Return stack (size = 0): []
   PC: 16 AR: 6 BR: 0
 
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - NOW EXECUTING INSTRUCTION PC: 16 --> HALT
   [INFO]: io.github.zerumi.csa3.comp.ControlUnit - 
-  TICK 2190 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
+  TICK 2130 -- MPC: 0 / MicroInstruction: LatchAR, ARSelectPC, LatchMPCounter, MicroProgramCounterNext 
   Stack (size = 2): [0 | 0]
   Return stack (size = 0): []
   PC: 16 AR: 16 BR: 0
@@ -13815,4 +13438,3 @@ out_log: |
   14: OperandInstruction(opcode=LIT, operand=5)
   15: Instruction(opcode=JUMP)
   16: Instruction(opcode=HALT)
-  17: Data(value=0)

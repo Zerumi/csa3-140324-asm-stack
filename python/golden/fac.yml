@@ -3622,4 +3622,3 @@ out_log: |
   16: OperandInstruction(opcode=LIT, operand=0)
   17: Instruction(opcode=STORE)
   18: Instruction(opcode=HALT)
-  19: Data(value=0)
