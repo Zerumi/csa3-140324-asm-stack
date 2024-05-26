@@ -41,7 +41,7 @@ enum class Signal {
     ALUSum, ALUSub, ALUMul, ALUDiv, ALUMod, ALUAnd, ALUOr, ALUXor, ALUPlus1, ALUMinus1,
 
     // FP ALU operations
-    FPALUSum, FPALUSub, FPALUMul, FPALUDiv,
+    FPALUSum, FPALUSub, FPALUMul, FPALUDiv, FPAluFTOI
 }
 
 // there are 11 functions, limit - 10
@@ -282,6 +282,13 @@ class ControlUnit(
         /* 73 */ arrayOf(Signal.DataStackPop,
             Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
             Signal.LatchPC, Signal.PCJumpTypeNext),
+        /* DIVF */
+        /* 72 */ arrayOf(Signal.FPALUSum, Signal.FPALULeftOPZero, Signal.FPAluFTOI,
+            Signal.TOSSelectFPALU, Signal.LatchTOS,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterNext),
+        /* 73 */ arrayOf(Signal.DataStackPop,
+            Signal.LatchMPCounter, Signal.MicroProgramCounterZero,
+            Signal.LatchPC, Signal.PCJumpTypeNext),
     )
 
     // suppress it because numbers matches with the microprogram above
@@ -317,6 +324,7 @@ class ControlUnit(
         Opcode.SUBF -> 68
         Opcode.MULF -> 70
         Opcode.DIVF -> 72
+        Opcode.FTOI -> 74
         Opcode.HALT -> throw HaltedException()
         else -> throw UnknownOpcodeException() // WORD, etc..
     }

@@ -21,7 +21,7 @@ class BCompCLI : CliktCommand() {
     companion object {
         private const val UNINITIALIZED_MEMORY_SIZE = -1
         private const val DEFAULT_STACK_SIZE = 20
-        private const val DEFAULT_MEMORY_SCALE = 1.1
+        private const val DEFAULT_MEMORY_SCALE = 1.01
     }
 
     private val programFile: Path by option(
@@ -113,6 +113,7 @@ class BCompCLI : CliktCommand() {
         } else memoryInitialSize
 
         val inputBuffer = ArrayDeque(inputFile.readText(Charsets.UTF_8).chars().toList())
+        inputBuffer.replaceAll { x -> if (x == '\n'.code) 0 else x }
         inputBuffer.addLast(0)
 
         val dataPath = DataPath(dataStackSize, finalMemoryInitSize, program.program)

@@ -1,0 +1,1432 @@
+; ##############
+; I/O section
+; ##############
+
+; defined port address
+port:
+                word 1          ; standard port
+
+; read char from defined port i/o address
+; consumed operand: nothing
+; return: symbol which read from i/o
+; usage: lit read_char + call
+read_char:
+                lit port        ; port_addr
+                load            ; port
+                in              ; in_symbol
+                ret             ; in_symbol
+
+; read string from defined port i/o address
+; consumed operand: zeroed_buffer_addr
+; returns nothing, but buffer will contain string which read from i/o
+; usage: lit arg + lit read_string + call
+read_string:
+                lit stop_read   ; str_addr stop_read
+                lit read_char   ; str_addr stop_read read_char
+                call            ; str_addr stop_read input
+                over            ; str_addr input stop_read input
+                jz              ; str_addr input
+                swap            ; input str_addr
+                over            ; str_addr input str_addr
+                dup             ; [...] str_addr -> str_addr
+                inc             ; str_addr + 1
+                load            ; zero/symbol
+                lit continue    ; zero/symbol continue
+                swap            ; continue zero/symbol
+                jz              ; str_addr input str_addr
+                drop            ; str_addr input
+                drop            ; str_addr
+                lit 0           ; str_addr 0
+                lit stop_read   ; because current symbol was nul-terminating
+                jump            ;
+continue:
+                store           ; str_addr
+                inc             ; str_addr + 1 -> str_addr
+                lit read_string ; str_addr read_string
+                jump            ; str_addr
+stop_read:
+                swap            ; input str_addr
+                store           ;
+                ret             ;
+
+; strlen function
+; consumed operand: str_addr
+; return: length of str given by str_addr
+; usage: lit arg + lit strlen + call
+strlen_temp:
+                word 0                  ; strlen_result
+strlen:
+                lit 0                   ; str_addr 0
+                lit strlen_temp         ; str_addr 0 strlen_temp
+                store                   ; str_addr
+strlen_impl:
+                dup                     ; str_addr str_addr
+                load                    ; str_addr symbol
+                lit strlen_exit         ; str_addr symbol strlen_exit
+                swap                    ; str_addr strlen_exit symbol
+                jz                      ; str_addr
+                lit strlen_temp         ; str_addr strlen_temp
+                dup                     ; str_addr strlen_temp strlen_temp
+                load                    ; str_addr strlen_temp strlen_result
+                inc                     ; str_addr strlen_temp strlen_result + 1
+                swap                    ; str_addr strlen_result + 1 strlen_temp
+                store                   ; str_addr
+                inc                     ; str_addr + 1 -> str_addr
+                lit strlen_impl         ; str_addr strlen_impl
+                jump                    ; str_addr
+strlen_exit:
+                drop                    ; <empty>
+                lit strlen_temp         ; strlen_temp
+                load                    ; strlen_result
+                ret                     ; strlen_result
+
+; parse single digit from char
+; consumed operand: symbol
+; return: digit
+; usage: lit arg + lit parse_digit + call
+parse_digit:
+                lit 48                  ; symbol 48
+                sub                     ; digit
+                ret                     ; digit
+
+; parse uint function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_uint + call
+number_length:
+                word 0
+parsed_number:
+                word 0
+number_multiplier:
+                word 1
+parse_uint:
+                lit 0                   ; str_addr 0
+                lit parsed_number       ; str_addr 0 parsed_number
+                store                   ; str_addr
+                lit 1                   ; str_addr 1
+                lit number_multiplier   ; str_addr 1 number_multiplier
+                store                   ; str_addr
+parse_uint_impl:
+                dup                     ; str_addr str_addr
+                dup                     ; str_addr str_addr str_addr
+                lit strlen              ; str_addr str_addr str_addr strlen
+                call                    ; str_addr str_addr strlen_res
+                dup                     ; str_addr str_addr strlen_res strlen_res
+                lit number_length       ; str_addr str_addr strlen_res strlen_res number_length
+                store                   ; str_addr str_addr strlen_res
+                add                     ; str_addr str_addr_plus_length -> m_str
+parse_uint_loop:
+                dec                     ; str_addr m_str - 1 -> m_str
+                dup                     ; str_addr m_str m_str
+                load                    ; str_addr m_str digit_s
+                lit parse_digit         ; [..] digit_s parse_digit
+                call                    ; [..] digit
+                lit number_multiplier   ; digit number_multiplier_addr
+                load                    ; digit number_multiplier
+                over                    ; number_multiplier digit number_multiplier
+                mul                     ; number_multiplier digit * number_multiplier -> num_to_add
+                lit parsed_number       ; [..] num_to_add parsed_number_addr
+                load                    ; num_to_add parsed_number
+                add                     ; parsed_number + num_to_add -> parsed_number
+                lit parsed_number       ; parsed_number parsed_number_addr
+                store                   ; number_multiplier
+                lit 10                  ; number_multiplier 10
+                mul                     ; number_multiplier * 10 -> number_multiplier
+                lit number_multiplier   ; number_multiplier number_multiplier_addr
+                store                   ; str_addr m_str
+                swap                    ; m_str str_addr
+                over                    ; str_addr m_str str_addr
+                swap                    ; str_addr str_addr m_str
+                over                    ; str_addr m_str str_addr m_str
+                sub                     ; str_addr m_str 0/non zero
+                lit parse_uint_exit     ; [..] 0/non zero parse_int_exit
+                swap                    ; parse_int_exit 0/non zero
+                jz                      ; str_addr m_str
+                lit parse_uint_loop     ; str_addr m_str parse_int_loop
+                jump                    ; str_addr m_str
+parse_uint_exit:
+                drop                    ; str_addr
+                drop                    ; <empty>
+                lit parsed_number       ; parsed_number
+                load                    ; result
+                ret                     ; result
+
+; parse int function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_uint + call
+parse_int:
+                dup                     ; str_addr str_addr
+                load                    ; str_addr minus_or_not
+                lit 45                  ; str_addr minus_or_not 45
+                sub                     ; str_addr 0-negate/non-0-non-negate
+                lit parse_int_negate    ; str_addr negate/non-negate parse_int_negate
+                swap                    ; str_addr parse_int_negate negate/non-negate
+                jz                      ; str_addr
+                lit parse_uint          ; str_addr parse_uint
+                call                    ; number
+                ret                     ; number
+parse_int_negate:
+                inc                     ; str_addr w/o -
+                lit parse_uint          ; str_addr parse_uint
+                call                    ; number
+                lit -1                  ; number -1
+                mul                     ; negate_number
+                ret                     ; negate_number
+
+; prints char to standard port
+; consumed operand: symbol
+; returns nothing
+; usage: lit char + lit print_char + call
+print_char:
+                lit port        ; symbol port_addr
+                load            ; symbol port
+                out             ;
+                ret             ;
+
+; prints char array to standard port
+; consumed operand: str_address
+; returns nothing
+; usage: lit str_address + lit print_char + call
+print_str:
+                dup             ; str_addr str_addr
+                load            ; str_addr symbol
+                dup             ; str_addr symbol symbol
+                lit ps_ret      ; str_addr symbol symbol ps_ret
+                swap            ; str_addr symbol ps_ret symbol
+                jz              ; str_addr symbol
+                lit print_char  ; str_addr symbol
+                call            ; str_addr
+                inc             ; str_addr + 1 -> str_addr
+                lit print_str   ; str_addr print_str
+                jump            ; str_addr
+ps_ret:
+                drop            ; str_addr (symbol)
+                drop            ; (str_addr)
+                ret             ;
+
+; print digit to port i/o
+; consumed operand: digit
+; returns nothing
+; usage: lit arg + lit print_digit + call
+print_digit:
+                lit 48              ; arg 48
+                add                 ; arg -> char
+                lit port            ; char port_addr
+                load                ; char port
+                out                 ;
+                ret                 ;
+
+; print float number to port i/o
+; consumed operand: number
+; returns nothing
+; usage: lit arg + lit print_float + call
+number_mp:
+                word 10000          ; this value should never change
+pf_digits:
+                word 0
+pf_points:
+                word 4
+print_float:
+                lit 0               ; num 0
+                lit pf_digits       ; num 0 pf_digits
+                store               ; num
+                lit 4               ; num 4
+                lit pf_points       ; num 4 pf_points
+                store               ; num
+                lit number_mp       ; num number_mp_addr
+                load                ; num number_mp
+                mulf                ; num
+                ftoi                ; num
+                lit -1              ; num -1
+                swap                ; -1 num
+                dup                 ; -1 num num
+                lit pf_negate       ; -1 num num negate
+                swap                ; -1 num negate num
+                jn                  ; -1 num
+                lit pf_loop1        ; -1 num loop1
+                jump                ; -1 num
+pf_negate:
+                lit 45              ; [...] 45
+                lit port            ; [...] 45 port_a
+                load                ; [...] 45 port
+                out                 ; [...]
+                lit -1              ; 0 num -1
+                mul                 ; 0 -num -> num
+pf_loop1:
+                lit pf_digits       ; [...] pf_digits
+                load                ; [...] digits
+                inc                 ; [...] digits + 1 -> digits
+                lit pf_digits       ; [...] digits pf_digits
+                store               ; [...]
+                dup                 ; 0 num num
+                lit 10              ; 0 num num 10
+                mod                 ; 0 num digit
+                swap                ; 0 digit num
+                lit 10              ; 0 digit num 10
+                div                 ; 0 digit num/10 -> num
+                over                ; 0 num digit num
+                lit pf_loop1exit    ; [...] num loop2
+                swap                ; [...] loop2 num
+                jz                  ; [...] num digit
+                swap
+                lit pf_loop1        ; [...] num loop1
+                jump                ; [...] num
+pf_loop1exit:
+                swap                ; [...] 0 digit
+                drop                ; [...] digit
+                lit pf_digits       ; [...] pf_digits
+                load                ; [...] digits
+                lit pf_points       ; [...] digits pf_points
+                load                ; [...] digits points
+                sub                 ; [...] digits_after_decimal
+                dup                 ; [...] digits_after_decimal digits_after_decimal
+                lit pf_zeroing      ; [...] digits_after_decimal digits_after_decimal pf_zeroing
+                swap                ; [...] digits_after_decimal pf_zeroing digits_after_decimal
+                jz                  ; [...] digits_after_decimal
+                dup                 ; [...] digits_after_decimal digits_after_decimal
+                lit pf_zeroing_more ; [...] digits_after_decimal digits_after_decimal pf_zeroing_more
+                swap                ; [...] digits_after_decimal pf_zeroing_more digits_after_decimal
+                jn                  ; [...] digits_after_decimal
+pf_pre_loop2:
+                inc                 ; [...] digits_after_decimal + 1 -> digits_after_decimal
+                lit pf_points       ; [...] digits_after_decimal pf_points
+                store               ; [...]
+pf_loop2:
+                lit pf_points       ; [...] pf_points
+                load                ; [...] points
+                dec                 ; [...] points - 1 -> points
+                dup                 ; [...] points points
+                lit pf_points       ; [...] points points pf_points
+                store               ; [...] points
+                lit pf_print_dot    ; [...] points pf_print_dot
+                swap                ; [...] pf_print_dot points
+                jz                  ; [...]
+                lit pf_go_loop1     ; [...] pf_go_loop1
+                jump                ; [...]
+pf_print_dot:
+                lit 46              ; 46
+                lit port            ; 46 port_addr
+                load                ; 46 port
+                out                 ;
+pf_go_loop1:
+                dup                 ; digit digit
+                lit pf_break        ; digit digit break
+                swap                ; digit break digit
+                jn                  ; digit
+                lit print_digit     ; digit print_digit
+                call                ; digit
+                lit pf_loop2        ; loop2
+                jump                ;
+pf_break:
+                inc                 ;
+                ret                 ;
+pf_zeroing:
+                lit 0               ; 0
+                lit print_digit     ; 0 print_digit
+                call                ; <empty>
+                lit pf_pre_loop2    ; pf_pre_loop2
+                jump                ; <empty>
+pf_zeroing_more:
+                lit 0               ; digits 0
+                lit print_digit     ; digits 0 print_digit
+                call                ; digits
+                lit 46              ; '.'
+                lit print_char      ; '.' print_char
+                call                ; digits
+pf_zeroing_loop:
+                lit 0               ; digits 0
+                lit print_digit     ; digits 0 print_digit
+                call                ; digits
+                lit pf_zeroing_exit ; digits pr_zeroing_exit
+                swap                ; pf_zeroing_exit digits
+                inc                 ; pf_zeroing_exit digits + 1 -> digits
+                over                ; digits pf_zeroing_exit digits
+                jz                  ; digits
+                lit pf_zeroing_loop ; digits pf_zeroing_loop
+                jump                ; digits
+pf_zeroing_exit:
+                inc                 ; digits + 1 -> digits
+                inc                 ; digits + 1 -> digits
+                inc                 ; digits + 1 -> digits
+                inc                 ; digits + 1 -> digits
+                lit pf_pre_loop2    ; pf_pre_loop2
+                jump                ; <empty>
+
+
+
+; print float number array to port i/o
+; consumed operand: size, numArray
+; returns nothing
+; usage: lit size + lit numArray + lit print_float_array + call
+separator:
+                word 32
+                word 124
+                word 32
+                word 0
+print_float_array:
+                lit separator       ; [...] separator
+                lit print_str       ; [...] separator print_str
+                call                ; [...]
+pfa_loop:
+                dup                 ; size numArray numArray
+                dup                 ; size numArray numArray numArray
+                load                ; size numArray numArray num
+                lit print_float     ; size numArray numArray num print_float
+                call                ; size numArray numArray
+                drop                ; size numArray
+                lit separator       ; [...] separator
+                lit print_str       ; [...] separator print_str
+                call                ; [...]
+                inc                 ; size numArray + 1 -> numArray
+                swap                ; numArray size
+                dec                 ; numArray size - 1 -> size
+                over                ; size numArray size
+                lit pfa_loop_exit   ; size numArray size pfa_loop_exit
+                swap                ; size numArray pfa_loop_exit size
+                jz                  ; size numArray
+                lit pfa_loop        ; size numArray pfa_loop
+                jump                ; size numArray
+pfa_loop_exit:
+                drop                ; size (size = 0)
+                drop                ; <empty>
+                ret                 ; <empty>
+
+
+; print number to port i/o
+; consumed operand: number
+; returns nothing
+; usage: lit arg + lit print_number + call
+print_number:
+                lit -1              ; num -1
+                swap                ; -1 num
+                dup                 ; -1 num num
+                lit negate          ; -1 num num negate
+                swap                ; -1 num negate num
+                jn                  ; -1 num
+                lit loop1           ; -1 num loop1
+                jump                ; -1 num
+negate:
+                lit 45              ; [...] 45
+                lit port            ; [...] 45 port_a
+                load                ; [...] 45 port
+                out                 ; [...]
+                lit -1              ; 0 num -1
+                mul                 ; 0 -num -> num
+loop1:
+                dup                 ; 0 num num
+                lit 10              ; 0 num num 10
+                mod                 ; 0 num digit
+                swap                ; 0 digit num
+                lit 10              ; 0 digit num 10
+                div                 ; 0 digit num/10 -> num
+                over                ; 0 num digit num
+                lit loop1exit       ; [...] num loop2
+                swap                ; [...] loop2 num
+                jz                  ; [...] num digit
+                swap
+                lit loop1           ; [...] num loop1
+                jump                ; [...] num
+loop1exit:
+                swap                ; [...] 0 digit
+                drop                ; [...] digit
+loop2:
+                dup                 ; digit digit
+                lit break           ; digit digit break
+                swap                ; digit break digit
+                jn                  ; digit
+                lit print_digit     ; digit print_digit
+                call                ; digit
+                lit loop2           ; loop2
+                jump                ;
+break:
+                ret                 ;
+
+
+; parse ufloat function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_uint + call
+uf_number_length:
+                word 0
+uf_parsed_number:
+                word 0
+uf_number_multiplier:
+                word 1
+uf_float_multiplier:
+                word 1
+parse_ufloat:
+                lit 0                       ; str_addr 0
+                lit uf_parsed_number        ; str_addr 0 parsed_number
+                store                       ; str_addr
+                lit 1                       ; str_addr 1
+                lit uf_number_multiplier    ; str_addr 1 number_multiplier
+                store                       ; str_addr
+                lit 1                       ; str_addr 1
+                lit uf_float_multiplier     ; str_addr 1 uf_float_multiplier
+                store                       ; str_addr
+parse_ufloat_impl:
+                dup                         ; str_addr str_addr
+                dup                         ; str_addr str_addr str_addr
+                lit strlen                  ; str_addr str_addr str_addr strlen
+                call                        ; str_addr str_addr strlen_res
+                dup                         ; str_addr str_addr strlen_res strlen_res
+                lit uf_number_length        ; str_addr str_addr strlen_res strlen_res number_length
+                store                       ; str_addr str_addr strlen_res
+                add                         ; str_addr str_addr_plus_length -> m_str
+parse_ufloat_loop:
+                dec                         ; str_addr m_str - 1 -> m_str
+                dup                         ; str_addr m_str m_str
+                load                        ; str_addr m_str digit_s
+                dup                         ; str_addr m_str digit_s digit_s
+                lit 46                      ; str_addr m_str digit_s digit_s '.'
+                sub                         ; str_addr m_str digit_s 0/failed_test
+                lit uf_get_float_part_ln    ; str_addr m_str digit_s 0/failed_test uf_get_float_part_ln
+                swap                        ; str_addr m_str digit_s uf_get_float_part_ln 0/failed_test
+                jz                          ; str_addr m_str digit_s
+                lit parse_digit             ; [..] digit_s parse_digit
+                call                        ; [..] digit
+                lit uf_number_multiplier    ; digit number_multiplier_addr
+                load                        ; digit number_multiplier
+                over                        ; number_multiplier digit number_multiplier
+                mul                         ; number_multiplier digit * number_multiplier -> num_to_add
+                lit uf_parsed_number        ; [..] num_to_add parsed_number_addr
+                load                        ; num_to_add parsed_number
+                add                         ; parsed_number + num_to_add -> parsed_number
+                lit uf_parsed_number        ; parsed_number parsed_number_addr
+                store                       ; number_multiplier
+                lit 10                      ; number_multiplier 10
+                mul                         ; number_multiplier * 10 -> number_multiplier
+                lit uf_number_multiplier    ; number_multiplier number_multiplier_addr
+                store                       ; str_addr m_str
+                swap                        ; m_str str_addr
+                over                        ; str_addr m_str str_addr
+                swap                        ; str_addr str_addr m_str
+                over                        ; str_addr m_str str_addr m_str
+                sub                         ; str_addr m_str 0/non zero
+                lit parse_ufloat_exit       ; [..] 0/non zero parse_int_exit
+                swap                        ; parse_int_exit 0/non zero
+                jz                          ; str_addr m_str
+                lit parse_ufloat_loop       ; str_addr m_str parse_int_loop
+                jump                        ; str_addr m_str
+parse_ufloat_exit:
+                drop                        ; str_addr
+                drop                        ; <empty>
+                lit uf_parsed_number        ; parsed_number
+                load                        ; result
+                lit uf_float_multiplier     ; result uf_float_multiplier
+                load                        ;
+                divf                        ; result_float
+                ret                         ; result_float
+uf_get_float_part_ln:
+                drop                        ; str_addr m_str
+                swap                        ; m_str str_addr
+                over                        ; str_addr m_str str_addr
+                swap                        ; str_addr str_addr m_str
+                over                        ; str_addr m_str str_addr m_str
+                swap                        ; str_addr m_str m_str str_addr
+                sub                         ; str_addr m_str len
+                lit uf_number_length        ; str_addr m_str len uf_number_length
+                load                        ; str_addr m_str len number_length
+                dec                         ; str_addr m_str len number_length_wo_dot
+                swap                        ; str_addr m_str number_length_wo_dot len
+                sub                         ; str_addr m_str len
+uf_multiplier_loop:
+                lit uf_float_multiplier     ; len uf_float_multiplier
+                dup                         ; len uf_float_multiplier uf_float_multiplier
+                load                        ; len uf_float_multiplier uf_mp
+                lit 10                      ; len uf_float_multiplier uf_mp 10
+                mul                         ; len uf_float_multiplier uf_mp * 10 -> uf_mp
+                swap                        ; len uf_mp uf_float_multiplier
+                store                       ; len
+                dec                         ; len - 1 -> len
+                dup                         ; len len
+                lit uf_multiplier_loop_exit ; len len uf_multiplier_loop_exit
+                swap                        ; len uf_multiplier_loop_exit len
+                jz                          ; str_addr m_str len
+                lit uf_multiplier_loop      ; uf_multiplier_loop
+                jump                        ; str_addr m_str
+uf_multiplier_loop_exit:
+                drop                        ; str_addr m_str
+                lit parse_ufloat_loop       ; [...] parse_ufloat_loop
+                jump                        ; str_addr m_str
+
+
+; parse float function
+; consumed operand: str_addr
+; return: parsed number
+; usage: lit arg + lit parse_float + call
+parse_float:
+                dup                     ; str_addr str_addr
+                load                    ; str_addr minus_or_not
+                lit 45                  ; str_addr minus_or_not 45
+                sub                     ; str_addr 0-negate/non-0-non-negate
+                lit parse_float_negate  ; str_addr negate/non-negate parse_int_negate
+                swap                    ; str_addr parse_int_negate negate/non-negate
+                jz                      ; str_addr
+                lit parse_ufloat        ; str_addr parse_uint
+                call                    ; number
+                ret                     ; number
+parse_float_negate:
+                inc                     ; str_addr w/o -
+                lit parse_ufloat        ; str_addr parse_uint
+                call                    ; number
+                lit -1                  ; number -1
+                mulf                    ; negate_number
+                ret                     ; negate_number
+
+; read float array function
+; consumed operands: size array_pointer
+; returns nothing
+; usage: lit arg1 + lit arg2 + lit read_array + call
+bufSize:
+                word 10                 ; should never change
+xArr:
+                buf 10                  ; should be the same as bufSize
+read_array:
+                lit xArr                ; size arr_addr xArr
+                dup                     ; size arr_addr xArr xArr
+                lit bufSize             ; size arr_addr xArr xArr buf_size_addr
+                load                    ; size arr_addr xArr xArr buf_size
+buffer_zeroing:
+                swap                    ; size arr_addr xArr buf_size xArr
+                dup                     ; size arr_addr xArr buf_size xArr xArr
+                lit 0                   ; size arr_addr xArr buf_size xArr xArr 0
+                swap                    ; size arr_addr xArr buf_size xArr 0 xArr
+                store                   ; size arr_addr xArr buf_size xArr
+                inc                     ; size arr_addr xArr buf_size xArr + 1 -> xArr
+                swap                    ; size arr_addr xArr xArr buf_size
+                dec                     ; size arr_addr xArr xArr buf_size - 1 -> buf_size
+                dup                     ; size arr_addr xArr xArr buf_size buf_size
+                lit buffer_zeroed       ; size arr_addr xArr xArr buf_size buf_size buffer_zeroed
+                swap                    ; size arr_addr xArr xArr buf_size buffer_zeroed buf_size
+                jz                      ; size arr_addr xArr xArr buf_size
+                lit buffer_zeroing      ; size arr_addr xArr xArr buf_size buffer_zeroing
+                jump                    ; size arr_addr xArr xArr buf_size
+buffer_zeroed:
+                drop                    ; size arr_addr xArr xArr_m
+                drop                    ; size arr_addr xArr
+                dup                     ; size arr_addr xArr xArr
+                lit read_string         ; size arr_addr xArr xArr read_string
+                call                    ; size arr_addr xArr
+                lit parse_float         ; size arr_addr xArr parse_float
+                call                    ; size arr_addr num
+                swap                    ; size num arr_addr
+                over                    ; size arr_addr num arr_addr
+                store                   ; size arr_addr
+                inc                     ; size arr_addr + 1 -> arr_addr
+                swap                    ; arr_addr size
+                dec                     ; arr_addr size - 1 -> size
+                over                    ; size arr_addr size
+                lit read_array_exit     ; size arr_addr size main
+                swap                    ; size arr_addr main size
+                jz                      ; size arr_addr
+                lit read_array          ; size arr_addr read_array/input_loop
+                jump                    ; size arr_addr
+read_array_exit:
+                drop                    ; size
+                drop                    ; <empty>
+                ret                     ; <should be empty>
+
+; ###########
+; Approximation methods
+; ###########
+
+; Linear approximation (y = ax + b) by method of lowest squares
+; consumed operands: size, xArr, yArr. There's guarantee that arrays won't changed
+; return: a and b coefficients of y = ax + b approximation
+; usage: lit size + lit xArr + lit yArr + lit linear_approx + call
+la_size:
+                word 0
+la_xArr:
+                word 0
+la_yArr:
+                word 0
+la_arrX_sum:
+                word 0
+la_arrY_sum:
+                word 0
+la_arrX_square_sum:
+                word 0
+la_arrXY_sum:
+                word 0
+linear_approx:
+                lit 0                   ; [args...] 0
+                lit la_arrX_sum         ; [args...] 0 la_arrX_sum
+                store                   ; [args...]
+                lit 0                   ; [args...] 0
+                lit la_arrY_sum         ; [args...] 0 la_arrY_sum
+                store                   ; [args...]
+                lit 0                   ; [args...] 0
+                lit la_arrX_square_sum  ; [args...] 0 la_arrX_square_sum
+                store                   ; [args...]
+                lit 0                   ; [args...] 0
+                lit la_arrXY_sum        ; [args...] 0 la_arrXY_sum
+                store                   ; [args...]
+                lit la_yArr             ; size xArr yArr la_yArr
+                store                   ; size xArr
+                lit la_xArr             ; size xArr la_xArr
+                store                   ; size
+                dup                     ; size size
+                lit la_size             ; size size la_size
+                store                   ; size
+laX_sum_acc:
+                lit la_xArr             ; size la_xArr
+                load                    ; size xArr
+laX_sum_loop:
+                dup                     ; size xArr xArr
+                load                    ; size xArr xArr_element
+                dup                     ; size xArr xArr_element xArr_element
+                dup                     ; size xArr xArr_element xArr_element xArr_element
+                mulf                    ; size xArr xArr_element xArr_element^2
+                lit la_arrX_square_sum  ; size xArr xArr_element xArr_element^2 la_arrX_square_sum
+                load                    ; size xArr xArr_element xArr_element^2 arrX_square_sum
+                addf                    ; size xArr xArr_element arrX_square_sum
+                lit la_arrX_square_sum  ; size xArr xArr_element arrX_square_sum la_arrX_square_sum
+                store                   ; size xArr xArr_element
+                lit la_arrX_sum         ; size xArr xArr_element la_arrX_sum
+                load                    ; size xArr xArr_element xArr_sum
+                addf                    ; size xArr xArr_sum
+                lit la_arrX_sum         ; size xArr xArr_sum la_arrX_sum
+                store                   ; size xArr
+                inc                     ; size xArr + 1 -> xArr
+                swap                    ; xArr size
+                dec                     ; xArr size - 1 -> size
+                over                    ; size xArr size
+                lit laX_sum_exit        ; size xArr size laX_sum_exit
+                swap                    ; size xArr laX_sum_exit size
+                jz                      ; size xArr
+                lit laX_sum_loop        ; size xArr laX_sum_loop
+                jump                    ; size xArr
+laX_sum_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit la_size             ; la_size
+                load                    ; size
+                lit la_yArr             ; size la_yArr
+                load                    ; size yArr
+laY_sum_loop:
+                dup                     ; size yArr yArr
+                load                    ; size yArr yArr_element
+                lit la_arrY_sum         ; size xArr yArr_element la_arrY_sum
+                load                    ; size yArr yArr_element yArr_sum
+                addf                    ; size yArr yArr_sum
+                lit la_arrY_sum         ; size yArr yArr_sum la_arrY_sum
+                store                   ; size yArr
+                inc                     ; size yArr + 1 -> xArr
+                swap                    ; yArr size
+                dec                     ; yArr size - 1 -> size
+                over                    ; size yArr size
+                lit laY_sum_exit        ; size yArr size laY_sum_exit
+                swap                    ; size yArr laY_sum_exit size
+                jz                      ; size yArr
+                lit laY_sum_loop        ; size yArr laY_sum_loop
+                jump                    ; size yArr
+laY_sum_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit la_size             ; la_size
+                load                    ; size
+                lit la_xArr             ; size la_xArr
+                load                    ; size xArr
+                lit la_yArr             ; size xArr la_yArr
+                load                    ; size xArr yArr
+                lit laXY_sum_loop       ; size xArr yArr laXY_sum_loop
+                jump                    ; size xArr yArr
+actual_yArr:
+                word 0
+laXY_sum_loop:
+                dup                     ; size xArr yArr yArr
+                load                    ; size xArr yArr yArr_element
+                swap                    ; size xArr yArr_element yArr
+                inc                     ; size xArr yArr_element yArr + 1 -> yArr
+                lit actual_yArr         ; size xArr yArr_element yArr actual_yArr
+                store                   ; size xArr yArr_element
+                swap                    ; size yArr_element xArr
+                inc                     ; size yArr_element xArr + 1 -> xArr_next
+                over                    ; size xArr_next yArr_element xArr_next
+                dec                     ; size xArr_next -> xArr yArr_element xArr
+                load                    ; size xArr yArr_element xArr_element
+                mulf                    ; size xArr xy
+                lit la_arrXY_sum        ; size xArr xy la_arrXY_sum
+                load                    ; size xArr xy yArr_sum
+                addf                    ; size xArr yArr_sum
+                lit la_arrXY_sum        ; size xArr yArr_sum la_arrY_sum
+                store                   ; size xArr
+                swap                    ; xArr size
+                dec                     ; xArr size - 1 -> size
+                over                    ; size xArr size
+                lit laXY_sum_exit       ; size xArr size laY_sum_exit
+                swap                    ; size xArr laY_sum_exit size
+                jz                      ; size xArr
+                lit actual_yArr         ; size xArr actual_yArr
+                load                    ; size xArr yArr
+                lit laXY_sum_loop       ; size xArr laY_sum_loop
+                jump                    ; size xArr
+la_delta2:
+                word 0
+laXY_sum_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit la_arrX_square_sum  ; la_arrX_square_sum
+                load                    ; arrX_square_sum
+                lit la_size             ; arrX_square_sum la_size
+                load                    ; arrX_square_sum size
+                mulf                    ; sxx*n
+                lit la_arrX_sum         ; sxx*n la_arrX_sum
+                load                    ; sxx*n arrX_sum
+                dup                     ; sxx*n arrX_sum arrX_sum
+                mulf                    ; sxx*n sx*sx
+                subf                    ; delta
+                lit la_arrXY_sum        ; delta la_arrXY_sum
+                load                    ; delta arrXY_sum
+                lit la_size             ; delta arrXY_sum la_size
+                load                    ; delta arrXY_sum size
+                mulf                    ; delta sxy*n
+                lit la_arrX_sum         ; delta sxy*n la_arrX_sum
+                load                    ; delta sxy*n arrX_sum
+                lit la_arrY_sum         ; delta sxy*n arrX_sum la_arrY_sum
+                load                    ; delta sxy*n arrX_sum arrY_sum
+                mulf                    ; delta sxy*n sx*sy
+                subf                    ; delta delta1
+                lit la_arrX_square_sum  ; delta delta1 la_arrX_square_sum
+                load                    ; delta delta1 arrX_square_sum
+                lit la_arrY_sum         ; delta delta1 arrX_square_sum la_arrY_sum
+                load                    ; delta delta1 arrX_square_sum arrY_sum
+                mulf                    ; delta delta1 sxx*sy
+                lit la_arrX_sum         ; delta delta1 sxx*sy la_arrX_sum
+                load                    ; delta delta1 sxx*sy arrX_sum
+                lit la_arrXY_sum        ; delta delta1 sxx*sy arrX_sum la_arrXY_sum
+                load                    ; delta delta1 sxx*sy arrX_sum arrXY_sum
+                mulf                    ; delta delta1 sxx*sy sx*sxy
+                subf                    ; delta delta1 delta2
+                lit la_delta2           ; delta delta1 delta2 la_delta2
+                store                   ; delta delta1
+                swap                    ; delta1 delta
+                over                    ; delta delta1 delta
+                divf                    ; delta a
+                swap                    ; a delta
+                lit la_delta2           ; a delta la_delta2
+                load                    ; a delta delta2
+                swap                    ; a delta2 delta
+                divf                    ; a b
+                ret                     ; a b
+
+; ###########
+; Approximation stats
+; ###########
+
+; calculate linear function (y = ax + b)
+; consumed operands: b, a, x
+; return: y
+; usage: lit b + lit a + lit x + lit linear_func + call
+linear_func:
+                mulf                    ; ax
+                addf                    ; y
+                ret                     ; y
+
+; calculate linear function for array
+; consumed operands: size, b, a, xArr, yArr. xArr won't be changed
+; returns nothing
+; usage: lit size + lit b + lit a + lit xArr + lit yArr + lit linear_func_arr + call
+lfa_a:
+                word 0
+lfa_b:
+                word 0
+lfa_xArr:
+                word 0
+lfa_yArr:
+                word 0
+linear_func_arr:
+                lit lfa_yArr            ; size b a xArr yArr lfa_yArr
+                store                   ; size b a xArr
+                swap                    ; size b xArr a
+                lit lfa_a               ; size b xArr a lfa_a
+                store                   ; size b xArr
+                swap                    ; size xArr b
+                lit lfa_b               ; size xArr b lfa_b
+                store                   ; size xArr
+lfa_loop:
+                lit lfa_b               ; size xArr lfa_b
+                load                    ; size xArr b
+                swap                    ; size b xArr
+                lit lfa_a               ; size b xArr lfa_a
+                load                    ; size b xArr a
+                swap                    ; size b a xArr
+                dup                     ; size b a xArr xArr
+                inc                     ; size b a xArr xArr_next
+                lit lfa_xArr            ; size b a xArr xArr_next lfa_xArr
+                store                   ; size b a xArr
+                load                    ; size b a xArr_element
+                lit linear_func         ; size b a xArr_element linear_func
+                call                    ; size y
+                lit lfa_yArr            ; size y lfa_yArr
+                load                    ; size y yArr
+                over                    ; size yArr y yArr
+                store                   ; size yArr
+                inc                     ; size yArr_next
+                lit lfa_yArr            ; size yArr_next lfa_yArr
+                store                   ; size
+                dec                     ; size - 1 -> size
+                dup                     ; size size lfa_exit
+                lit lfa_exit            ; size lfa_exit
+                swap                    ; lfa_exit size
+                jz                      ; size
+                lit lfa_xArr            ; size lfa_xArr
+                load                    ; size xArr
+                lit lfa_loop            ; size xArr lfa_loop
+                jump                    ; size xArr
+lfa_exit:
+                drop                    ; <empty>
+                ret                     ; <empty>
+
+
+; calculate epsilon difference between two arrays
+; consumed operands: size, firstArr, secondArr, resultArr. 1st and 2nd arrays won't be changed
+; returns nothing
+; usage: lit size + lit firstArr + lit secondArr + lit resultArr + lit arr_difference + call
+ard_resArr:
+                word 0
+ard_firstArr:
+                word 0
+ard_secondArr:
+                word 0
+arr_difference:
+                lit ard_resArr          ; size firstArr secondArr resultArr ard_resArr
+                store                   ; size firstArr secondArr
+ard_loop:
+                dup                     ; size firstArr secondArr secondArr
+                inc                     ; size firstArr secondArr secondArr_next
+                lit ard_secondArr       ; size firstArr secondArr secondArr_next ard_secondArr
+                store                   ; size firstArr secondArr
+                load                    ; size firstArr secondArr_element
+                swap                    ; size secondArr_element firstArr
+                dup                     ; size secondArr_element firstArr firstArr
+                inc                     ; size secondArr_element firstArr firstArr_next
+                lit ard_firstArr        ; size secondArr_element firstArr firstArr_next ard_firstArr
+                store                   ; size secondArr_element firstArr
+                load                    ; size secondArr_element firstArr_element
+                subf                    ; size diff
+                lit ard_resArr          ; size diff ard_resArr
+                load                    ; size diff resArr
+                over                    ; size resArr diff resArr
+                store                   ; size resArr
+                inc                     ; size resArr_next
+                lit ard_resArr          ; size resArr_next ard_resArr
+                store                   ; size
+                dec                     ; size - 1 -> size
+                dup                     ; size size
+                lit ard_loop_exit       ; size size ard_loop
+                swap                    ; size ard_loop size
+                jz                      ; size
+                lit ard_firstArr        ; size ard_firstArr
+                load                    ; size firstArr
+                lit ard_secondArr       ; size firstArr ard_secondArr
+                load                    ; size firstArr secondArr
+                lit ard_loop            ; size firstArr secondArr ard_loop
+                jump                    ; size firstArr secondArr
+ard_loop_exit:
+                drop                    ; <empty>
+                ret                     ; <empty>
+
+; calculate sum of element squares in array
+; consumed operands: size, array. Array won't be changed
+; return: sum of squares
+; usage: lit size + lit array_square_sum + call
+assq_sum:
+                word 0
+array_square_sum:
+                lit 0                   ; size array 0
+                lit assq_sum            ; size array 0 assq_sum
+                store                   ; size array
+assq_loop:
+                dup                     ; size array array
+                load                    ; size array element
+                dup                     ; size array element element
+                mulf                    ; size array element^2
+                lit assq_sum            ; size array element^2 assq_sum
+                load                    ; size array element^2 sum
+                addf                    ; size array sum
+                lit assq_sum            ; size array sum assq_sum
+                store                   ; size array
+                inc                     ; size array + 1 -> array
+                swap                    ; array size
+                dec                     ; array size - 1 -> size
+                over                    ; size array
+                lit assq_exit           ; size array size assq_exit
+                swap                    ; size array assq_exit size
+                jz                      ; size array
+                lit assq_loop           ; size array assq_loop
+                jump                    ; size array
+assq_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit assq_sum            ; assq_sum
+                load                    ; result
+                ret                     ; result
+
+; calculate array sum value
+; consumed operands: size, array
+; return: array sum
+; usage: lit size + lit array + lit array_sum + call
+aav_sum:
+                word 0
+array_sum:
+                lit 0                   ; size array 0
+                lit aav_sum             ; size array 0 aav_sum
+                store                   ; size array
+aav_loop:
+                dup                     ; size array array
+                load                    ; size array element
+                lit aav_sum             ; size array element aav_sum
+                load                    ; size array element sum
+                addf                    ; size array sum
+                lit aav_sum             ; size array sum aav_sum
+                store                   ; size array
+                inc                     ; size array + 1 -> array
+                swap                    ; array size
+                dec                     ; array size - 1 -> size
+                over                    ; size array
+                lit aav_exit            ; size array size aav_exit
+                swap                    ; size array aav_exit size
+                jz                      ; size array
+                lit aav_loop            ; size array aav_loop
+                jump                    ; size array
+aav_exit:
+                drop                    ; size (size = 0)
+                drop                    ; <empty>
+                lit aav_sum             ; aav_sum
+                load                    ; result
+                ret                     ; result
+
+; calculate average array value
+; consumed operands: size, array
+; return: array average
+; usage: lit size + lit array + lit array_average + call
+array_average:
+                swap                    ; array size
+                over                    ; size array size
+                swap                    ; size size array
+                lit array_sum           ; size size array array_sum
+                call                    ; size sum
+                swap                    ; sum size
+                divf                    ; average
+                ret                     ; average
+
+
+; calculate correlation coefficient
+; consumed operands: size, xArr, yArr
+; return: correlation coefficient
+; usage: lit size + lit xArr + lit yArr + lit xy_correlation + call
+xyc_size:
+                word 0
+xyc_xy_sum:
+                word 0
+xyc_x2_sum:
+                word 0
+xyc_y2_sum:
+                word 0
+xyc_xAvg:
+                word 0
+xyc_yAvg:
+                word 0
+xyc_xArr:
+                word 0
+xyc_yArr:
+                word 0
+xy_correlation:
+                lit 0                   ; size xArr yArr 0
+                lit xyc_xy_sum          ; size xArr yArr 0 xyc_xy_sum
+                store                   ; size xArr yArr
+                lit 0                   ; size xArr yArr 0
+                lit xyc_x2_sum          ; size xArr yArr 0 xyc_x2_sum
+                store                   ; size xArr yArr
+                lit 0                   ; size xArr yArr 0
+                lit xyc_y2_sum          ; size xArr yArr 0 xyc_y2_sum
+                store                   ; size xArr yArr
+                lit xyc_yArr            ; size xArr yArr xyc_yArr
+                store                   ; size xArr
+                lit xyc_xArr            ; size xArr xyc_xArr
+                store                   ; size
+                dup                     ; size size
+                lit xyc_size            ; size size xyc_size
+                store                   ; size
+                dup                     ; size size
+                lit xyc_xArr            ; size size xyc_xArr
+                load                    ; size size xArr
+                lit array_average       ; size size xArr array_average
+                call                    ; size xArrAvg
+                lit xyc_xAvg            ; size xArrAvg xyc_xAvg
+                store                   ; size
+                dup                     ; size size
+                lit xyc_yArr            ; size size xyc_yArr
+                load                    ; size size yArr
+                lit array_average       ; size size yArr array_average
+                call                    ; size yArrAvg
+                lit xyc_yAvg            ; size yArrAvg xyc_yAvg
+                store                   ; size
+xyc_calc_l1:
+                lit xyc_xArr            ; size xyc_xArr
+                load                    ; size xArr
+                dup                     ; size xArr xArr
+                load                    ; size xArr xArr_element
+                swap                    ; size xArr_element xArr
+                inc                     ; size xArr_element xArr + 1 -> xArr
+                lit xyc_xArr            ; size xArr_element xArr xyc_xArr
+                store                   ; size xArr_element
+                lit xyc_xAvg            ; size xArr_element xyc_xAvg
+                load                    ; size xArr_element xAvg
+                subf                    ; size X
+                dup                     ; size X X
+                dup                     ; size X X X
+                mulf                    ; size X X^2
+                lit xyc_x2_sum          ; size X X^2 xyc_x2_sum
+                load                    ; size X X^2 x2_sum
+                addf                    ; size X x2_sum
+                lit xyc_x2_sum          ; size X x2_sum xyc_x2_sum
+                store                   ; size X
+                lit xyc_yArr            ; size X xyc_yArr
+                load                    ; size X yArr
+                dup                     ; size X yArr yArr
+                load                    ; size X yArr yArr_element
+                swap                    ; size X yArr_element yArr
+                inc                     ; size X yArr_element yArr + 1 -> yArr
+                lit xyc_yArr            ; size X yArr_element yArr xyc_yArr
+                store                   ; size X yArr_element
+                lit xyc_yAvg            ; size X yArr_element xyc_yAvg
+                load                    ; size X yArr_element yAvg
+                subf                    ; size X Y
+                dup                     ; size X Y Y
+                dup                     ; size X Y Y Y
+                mulf                    ; size X Y Y^2
+                lit xyc_y2_sum          ; size X Y Y^2 xyc_y2_sum
+                load                    ; size X Y Y^2 y2_sum
+                addf                    ; size X Y y2_sum
+                lit xyc_y2_sum          ; size X Y y2_sum xyc_y2_sum
+                store                   ; size X Y
+                mulf                    ; size xy
+                lit xyc_xy_sum          ; size xy xyc_xy_sum
+                load                    ; size xy xy_sum
+                addf                    ; size xy_sum
+                lit xyc_xy_sum          ; size xy_sum xyc_xy_sum
+                store                   ; size
+                dec                     ; size - 1 -> size
+                dup                     ; size size
+                lit xyc_calc_l1_exit    ; size size xyc_calc_l1_exit
+                swap                    ; size xyc_calc_l1_exit size
+                jz                      ; size
+                lit xyc_calc_l1         ; size xyc_calc_l1
+                jump                    ; size
+xyc_calc_l1_exit:
+                drop                    ; <empty>
+                lit xyc_xy_sum          ; xyc_xy_sum
+                load                    ; xy_sum
+                dup                     ; xy_sum xy_sum
+                mulf                    ; xy_sum^2
+                lit xyc_x2_sum          ; xy_sum^2 xyc_x2_sum
+                load                    ; xy_sum^2 x2_sum
+                lit xyc_y2_sum          ; xy_sum^2 x2_sum xyc_y2_sum
+                load                    ; xy_sum^2 x2_sum y2_sum
+                mulf                    ; xy_sum^2 x2_sum*y2_sum
+                divf                    ; correlation -> result
+                ret                     ; result
+
+; ###########
+; Program entry point
+; ###########
+
+arrSize:
+                buf 10
+
+arrSizeNum:
+                word 12
+
+xArrNums:
+                buf 12
+
+yArrNums:
+                buf 12
+
+pArrNums:
+                buf 12
+
+differences:
+                buf 12
+
+measure_S:
+                word 0
+
+correlation_R:
+                word 0
+
+linear_a:
+                word 0
+linear_b:
+                word 0
+
+start:
+                lit arrSize             ; arrSize
+                dup                     ; arrSize arrSize
+                lit read_string         ; arrSize arrSize read_string
+                call                    ; arrSize
+                lit parse_int           ; arrSize parse_int
+                call                    ; number
+                dup                     ; number number
+                lit arrSizeNum          ; number number arrSizeNum
+                store                   ; number -> size
+                dup                     ; size size
+                lit xArrNums            ; size size arr_addr
+                lit read_array          ; size size arr_addr read_array
+                call                    ; size
+                lit yArrNums            ; size yArrNums
+                lit read_array          ; size yArrNums read_array
+                call                    ; <empty>
+                lit arrSizeNum          ; size
+                load                    ; size
+                dup                     ; size size
+                dup                     ; size size size
+                lit xArrNums            ; size size size xArr
+                lit yArrNums            ; size size size xArr yArr
+                lit linear_approx       ; size size size xArr yArr linear_approx
+                call                    ; size size a b
+                dup                     ; size size a b b
+                lit linear_b            ; size size a b b linear_b
+                store                   ; size size a b
+                swap                    ; size size b a
+                dup                     ; size size b a a
+                lit linear_a            ; size size b a a linear_a
+                store                   ; size size b a
+                lit xArrNums            ; size size b a xArr
+                lit pArrNums            ; size size b a xArr yArr
+                lit linear_func_arr     ; size size b a xArr yArr linear_func_arr
+                call                    ; size
+                dup                     ; size size
+                lit yArrNums            ; size size yArrNums
+                lit pArrNums            ; size size yArrNums pArrNums
+                lit differences         ; size size yArrNums pArrNums differences
+                lit arr_difference      ; size size yArrNums pArrNums differences arr_difference
+                call                    ; size
+                dup                     ; size size
+                lit differences         ; size size differences
+                lit array_square_sum    ; size size differences array_square_sum
+                call                    ; size sum
+                lit measure_S           ; size sum measure_S
+                store                   ; size
+                lit xArrNums            ; size xArrNums
+                lit yArrNums            ; size xArrNums yArrNums
+                lit xy_correlation      ; size xArrNums yArrNums xy_correlation
+                call                    ; correlation
+                lit correlation_R       ; correlation correlation_R
+                store                   ; <empty>
+                lit output              ; output
+                call                    ; <empty>
+                halt                    ; <should be empty>
+
+; ############
+; Print section
+; ############
+
+copyright_notice:
+                word 99
+                word 109
+                word 97
+                word 116
+                word 104
+                word 52
+                word 95
+                word 50
+                word 57
+                word 48
+                word 52
+                word 50
+                word 52
+                word 95
+                word 49
+                word 32
+                word 98
+                word 121
+                word 32
+                word 90
+                word 101
+                word 114
+                word 117
+                word 109
+                word 105
+                word 10
+                word 10
+                word 0
+
+linear_approx_str:
+                word 76
+                word 105
+                word 110
+                word 101
+                word 97
+                word 114
+                word 32
+                word 97
+                word 112
+                word 112
+                word 114
+                word 111
+                word 120
+                word 105
+                word 109
+                word 97
+                word 116
+                word 105
+                word 111
+                word 110
+                word 58
+                word 32
+                word 121
+                word 32
+                word 61
+                word 32
+                word 0
+
+linear_approx_str_fa:
+                word 120
+                word 32
+                word 43
+                word 32
+                word 0
+
+newline_doubled:
+                word 10
+                word 10
+                word 0
+
+measurement_str:
+                word 69
+                word 114
+                word 114
+                word 111
+                word 114
+                word 32
+                word 109
+                word 101
+                word 97
+                word 115
+                word 117
+                word 114
+                word 101
+                word 109
+                word 101
+                word 110
+                word 116
+                word 58
+                word 32
+                word 0
+
+correlation_str:
+                word 67
+                word 111
+                word 114
+                word 114
+                word 101
+                word 108
+                word 97
+                word 116
+                word 105
+                word 111
+                word 110
+                word 32
+                word 99
+                word 111
+                word 101
+                word 102
+                word 102
+                word 105
+                word 99
+                word 105
+                word 101
+                word 110
+                word 116
+                word 58
+                word 32
+                word 0
+
+output:
+                lit copyright_notice        ; copyright_notice
+                lit print_str               ; copyright_notice print_str
+                call                        ; <empty>
+                lit linear_approx_str       ; linear_approx_str
+                lit print_str               ; linear_approx_str print_str
+                call                        ; <empty>
+                lit linear_a                ; linear_a
+                load                        ; a
+                lit print_float             ; a print_float
+                call                        ; <empty>
+                lit linear_approx_str_fa    ; linear_approx_str_fa
+                lit print_str               ; linear_approx_str_fa print_str
+                call                        ; <empty>
+                lit linear_b                ; linear_b
+                load                        ; b
+                lit print_float             ; b print_float
+                call                        ; <empty>
+                lit newline_doubled         ; newline_doubled
+                lit print_str               ; newline_doubled print_str
+                call                        ; <empty>
+                lit 120                     ; 'x'
+                lit print_char              ; 'x' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit xArrNums                ; size xArrNums
+                lit print_float_array       ; size xArrNums print_float_array
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit 121                     ; 'y'
+                lit print_char              ; 'y' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit yArrNums                ; size yArrNums
+                lit print_float_array       ; size yArrNums print_float_array
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit 112                     ; 'p'
+                lit print_char              ; 'p' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit pArrNums                ; size pArrNums
+                lit print_float_array       ; size pArrNums print_float_array
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit 101                     ; 'e'
+                lit print_char              ; 'e' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit differences             ; size differences
+                lit print_float_array       ; size differences print_float_array
+                call                        ; <empty>
+                lit newline_doubled         ; newline_doubled
+                lit print_str               ; newline_doubled print_str
+                call                        ; <empty>
+                lit measurement_str         ; measurement_str
+                lit print_str               ; measurement_str print_str
+                call                        ; <empty>
+                lit measure_S               ; measure_S_addr
+                load                        ; measure_S
+                lit print_float             ; measure_S print_float
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit correlation_str         ; correlation_str
+                lit print_str               ; correlation_str print_str
+                call                        ; <empty>
+                lit correlation_R           ; correlation_R_addr
+                load                        ; correlation_R
+                lit print_float             ; correlation_R print_float
+                call                        ; <empty>
+                ret                         ; <empty>

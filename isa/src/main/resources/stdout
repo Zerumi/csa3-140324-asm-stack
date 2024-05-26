@@ -1,3 +1,11 @@
-> Hello, what is your name?
-< This is a quiiiiiiite long us
-> Hello, This is a quiiiiiiite long us!
+cmath4_290424_1 by Zerumi
+
+Linear approximation: y = 1.4543x + 5.2910
+
+x | 1.2000 | 2.9000 | 4.1000 | 5.5000 | 6.7000 | 7.8000 | 9.2000 | 10.3000 | 
+y | 7.4000 | 9.5000 | 11.1000 | 12.9000 | 14.6000 | 17.3000 | 18.2000 | 20.7000 | 
+p | 7.0362 | 9.5086 | 11.2538 | 13.2898 | 15.0350 | 16.6348 | 18.6708 | 20.2706 | 
+e | -0.3637 | 0.0086 | 0.1538 | 0.3898 | 0.4350 | -0.6651 | 0.4708 | -0.4293 | 
+
+Error measurement: 1.3458
+Correlation coefficient: 0.9908

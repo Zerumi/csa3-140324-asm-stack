@@ -16,6 +16,7 @@ enum class Opcode {
     MULF, // Multiple 2 float elements from stack, push result on stack
     DIVF, // Divide 2 float elements from stack, push result on stack
     MOD, // Get modulo of 2 elements from stack, push result on stack
+    FTOI, // Convert float value to int
     INC, // Increase TOS by 1
     DEC, // Decrease TOS by 1
     DROP, // Throw out value from stack
