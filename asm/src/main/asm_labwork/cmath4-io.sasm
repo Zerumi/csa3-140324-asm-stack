@@ -174,6 +174,36 @@ parse_int_negate:
                 mul                     ; negate_number
                 ret                     ; negate_number
 
+; prints char to standard port
+; consumed operand: symbol
+; returns nothing
+; usage: lit char + lit print_char + call
+print_char:
+                lit port        ; symbol port_addr
+                load            ; symbol port
+                out             ;
+                ret             ;
+
+; prints char array to standard port
+; consumed operand: str_address
+; returns nothing
+; usage: lit str_address + lit print_char + call
+print_str:
+                dup             ; str_addr str_addr
+                load            ; str_addr symbol
+                dup             ; str_addr symbol symbol
+                lit ps_ret      ; str_addr symbol symbol ps_ret
+                swap            ; str_addr symbol ps_ret symbol
+                jz              ; str_addr symbol
+                lit print_char  ; str_addr symbol
+                call            ; str_addr
+                inc             ; str_addr + 1 -> str_addr
+                lit print_str   ; str_addr print_str
+                jump            ; str_addr
+ps_ret:
+                drop            ; str_addr (symbol)
+                drop            ; (str_addr)
+                ret             ;
 
 ; print digit to port i/o
 ; consumed operand: digit
@@ -190,7 +220,7 @@ print_digit:
 ; print float number to port i/o
 ; consumed operand: number
 ; returns nothing
-; usage: lit arg + lit print_number + call
+; usage: lit arg + lit print_float + call
 number_mp:
                 word 10000          ; this value should never change
 pf_digits:
@@ -250,6 +280,15 @@ pf_loop1exit:
                 lit pf_points       ; [...] digits pf_points
                 load                ; [...] digits points
                 sub                 ; [...] digits_after_decimal
+                dup                 ; [...] digits_after_decimal digits_after_decimal
+                lit pf_zeroing      ; [...] digits_after_decimal digits_after_decimal pf_zeroing
+                swap                ; [...] digits_after_decimal pf_zeroing digits_after_decimal
+                jz                  ; [...] digits_after_decimal
+                dup                 ; [...] digits_after_decimal digits_after_decimal
+                lit pf_zeroing_more ; [...] digits_after_decimal digits_after_decimal pf_zeroing_more
+                swap                ; [...] digits_after_decimal pf_zeroing_more digits_after_decimal
+                jn                  ; [...] digits_after_decimal
+pf_pre_loop2:
                 inc                 ; [...] digits_after_decimal + 1 -> digits_after_decimal
                 lit pf_points       ; [...] digits_after_decimal pf_points
                 store               ; [...]
@@ -280,7 +319,79 @@ pf_go_loop1:
                 lit pf_loop2        ; loop2
                 jump                ;
 pf_break:
+                inc                 ;
                 ret                 ;
+pf_zeroing:
+                lit 0               ; 0
+                lit print_digit     ; 0 print_digit
+                call                ; <empty>
+                lit pf_pre_loop2    ; pf_pre_loop2
+                jump                ; <empty>
+pf_zeroing_more:
+                lit 0               ; digits 0
+                lit print_digit     ; digits 0 print_digit
+                call                ; digits
+                lit 46              ; '.'
+                lit print_char      ; '.' print_char
+                call                ; digits
+pf_zeroing_loop:
+                lit 0               ; digits 0
+                lit print_digit     ; digits 0 print_digit
+                call                ; digits
+                lit pf_zeroing_exit ; digits pr_zeroing_exit
+                swap                ; pf_zeroing_exit digits
+                inc                 ; pf_zeroing_exit digits + 1 -> digits
+                over                ; digits pf_zeroing_exit digits
+                jz                  ; digits
+                lit pf_zeroing_loop ; digits pf_zeroing_loop
+                jump                ; digits
+pf_zeroing_exit:
+                inc                 ; digits + 1 -> digits
+                inc                 ; digits + 1 -> digits
+                inc                 ; digits + 1 -> digits
+                inc                 ; digits + 1 -> digits
+                lit pf_pre_loop2    ; pf_pre_loop2
+                jump                ; <empty>
+
+
+
+; print float number array to port i/o
+; consumed operand: size, numArray
+; returns nothing
+; usage: lit size + lit numArray + lit print_float_array + call
+separator:
+                word 32
+                word 124
+                word 32
+                word 0
+print_float_array:
+                lit separator       ; [...] separator
+                lit print_str       ; [...] separator print_str
+                call                ; [...]
+pfa_loop:
+                dup                 ; size numArray numArray
+                dup                 ; size numArray numArray numArray
+                load                ; size numArray numArray num
+                lit print_float     ; size numArray numArray num print_float
+                call                ; size numArray numArray
+                drop                ; size numArray
+                lit separator       ; [...] separator
+                lit print_str       ; [...] separator print_str
+                call                ; [...]
+                inc                 ; size numArray + 1 -> numArray
+                swap                ; numArray size
+                dec                 ; numArray size - 1 -> size
+                over                ; size numArray size
+                lit pfa_loop_exit   ; size numArray size pfa_loop_exit
+                swap                ; size numArray pfa_loop_exit size
+                jz                  ; size numArray
+                lit pfa_loop        ; size numArray pfa_loop
+                jump                ; size numArray
+pfa_loop_exit:
+                drop                ; size (size = 0)
+                drop                ; <empty>
+                ret                 ; <empty>
+
 
 ; print number to port i/o
 ; consumed operand: number
@@ -1115,9 +1226,207 @@ start:
 ; Print section
 ; ############
 
+copyright_notice:
+                word 99
+                word 109
+                word 97
+                word 116
+                word 104
+                word 52
+                word 95
+                word 50
+                word 57
+                word 48
+                word 52
+                word 50
+                word 52
+                word 95
+                word 49
+                word 32
+                word 98
+                word 121
+                word 32
+                word 90
+                word 101
+                word 114
+                word 117
+                word 109
+                word 105
+                word 10
+                word 10
+                word 0
+
+linear_approx_str:
+                word 76
+                word 105
+                word 110
+                word 101
+                word 97
+                word 114
+                word 32
+                word 97
+                word 112
+                word 112
+                word 114
+                word 111
+                word 120
+                word 105
+                word 109
+                word 97
+                word 116
+                word 105
+                word 111
+                word 110
+                word 58
+                word 32
+                word 121
+                word 32
+                word 61
+                word 32
+                word 0
+
+linear_approx_str_fa:
+                word 120
+                word 32
+                word 43
+                word 32
+                word 0
+
+newline_doubled:
+                word 10
+                word 10
+                word 0
+
+measurement_str:
+                word 69
+                word 114
+                word 114
+                word 111
+                word 114
+                word 32
+                word 109
+                word 101
+                word 97
+                word 115
+                word 117
+                word 114
+                word 101
+                word 109
+                word 101
+                word 110
+                word 116
+                word 58
+                word 32
+                word 0
+
+correlation_str:
+                word 67
+                word 111
+                word 114
+                word 114
+                word 101
+                word 108
+                word 97
+                word 116
+                word 105
+                word 111
+                word 110
+                word 32
+                word 99
+                word 111
+                word 101
+                word 102
+                word 102
+                word 105
+                word 99
+                word 105
+                word 101
+                word 110
+                word 116
+                word 58
+                word 32
+                word 0
+
 output:
-                lit linear_a
-                load
-                lit print_float
-                call
-                ret
+                lit copyright_notice        ; copyright_notice
+                lit print_str               ; copyright_notice print_str
+                call                        ; <empty>
+                lit linear_approx_str       ; linear_approx_str
+                lit print_str               ; linear_approx_str print_str
+                call                        ; <empty>
+                lit linear_a                ; linear_a
+                load                        ; a
+                lit print_float             ; a print_float
+                call                        ; <empty>
+                lit linear_approx_str_fa    ; linear_approx_str_fa
+                lit print_str               ; linear_approx_str_fa print_str
+                call                        ; <empty>
+                lit linear_b                ; linear_b
+                load                        ; b
+                lit print_float             ; b print_float
+                call                        ; <empty>
+                lit newline_doubled         ; newline_doubled
+                lit print_str               ; newline_doubled print_str
+                call                        ; <empty>
+                lit 120                     ; 'x'
+                lit print_char              ; 'x' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit xArrNums                ; size xArrNums
+                lit print_float_array       ; size xArrNums print_float_array
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit 121                     ; 'y'
+                lit print_char              ; 'y' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit yArrNums                ; size yArrNums
+                lit print_float_array       ; size yArrNums print_float_array
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit 112                     ; 'p'
+                lit print_char              ; 'p' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit pArrNums                ; size pArrNums
+                lit print_float_array       ; size pArrNums print_float_array
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit 101                     ; 'e'
+                lit print_char              ; 'e' print_char
+                call                        ; <empty>
+                lit arrSizeNum              ; arrSizeNum
+                load                        ; size
+                lit differences             ; size differences
+                lit print_float_array       ; size differences print_float_array
+                call                        ; <empty>
+                lit newline_doubled         ; newline_doubled
+                lit print_str               ; newline_doubled print_str
+                call                        ; <empty>
+                lit measurement_str         ; measurement_str
+                lit print_str               ; measurement_str print_str
+                call                        ; <empty>
+                lit measure_S               ; measure_S_addr
+                load                        ; measure_S
+                lit print_float             ; measure_S print_float
+                call                        ; <empty>
+                lit 10                      ; '\n'
+                lit print_char              ; '\n' print_char
+                call                        ; <empty>
+                lit correlation_str         ; correlation_str
+                lit print_str               ; correlation_str print_str
+                call                        ; <empty>
+                lit correlation_R           ; correlation_R_addr
+                load                        ; correlation_R
+                lit print_float             ; correlation_R print_float
+                call                        ; <empty>
+                ret                         ; <empty>
