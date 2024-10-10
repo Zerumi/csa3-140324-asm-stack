@@ -19,12 +19,15 @@ Task details: <https://gitlab.se.ifmo.ru/computer-systems/csa-rolling/-/blob/mas
 
 ---
 
-# What is this?
+## What is this?
 
 This is a stack-machine CPU emulator!
-- ISA & Assembly language translator
-- Microcoded CPU with Data & Return stacks [(full schema)](/docs/csa-3-proc-scheme-1.1.pdf)
-- Execution logs contains CPU state after every microinstruction + Memory Dump after HALT execution
+
+* ISA & Assembly language translator
+* Microcoded CPU with Data & Return stacks [(full schema)](/docs/csa-3-proc-scheme-1.1.pdf)
+* Execution logs contains CPU state after every
+  microinstruction + Memory Dump after HALT execution
+* Written in pure Kotlin/JVM.
 
 ## Table of Contents
 
